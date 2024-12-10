@@ -21,6 +21,11 @@ Mesh::~Mesh()
 	}
 }
 
+glm::vec3 Mesh::getPosition()
+{
+	return this->position;
+}
+
 void Mesh::setPosition(const glm::vec3 &position)
 {
 	this->position = position;
