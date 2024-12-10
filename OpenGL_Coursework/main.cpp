@@ -168,21 +168,11 @@ int main() {
 		glm::vec3(0.3f, 0.1f, 0.1f)
 	};
 
-	GLuint VBO, containerVAO;
-	glGenVertexArrays(1, &containerVAO);
+	GLuint VBO; 
 	glGenBuffers(1, &VBO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	glBindVertexArray(containerVAO);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3*sizeof(GLfloat)));
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(2);
-	glBindVertexArray(0);
 
 	GLuint lightVAO;
 	glGenVertexArrays(1, &lightVAO);
@@ -309,19 +299,6 @@ int main() {
 		diffuseMap.bindTexture();
 		specularMap.bindTexture();
 
-		glBindVertexArray(containerVAO);	
-
-		/*for (unsigned int i = 0; i < 10; i++)
-		{
-			glm::mat4 model(1.0f);
-			model = glm::translate(model, cubePositions[i]);
-			float angle = 20.0f * i;
-			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-			lightingShader.get()->setMat4("model", model);
-
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}*/
-
 		test1.move(glm::vec3(0.0001f, 0.f, 0.f));
 		test.render(lightingShader.get());
 		test1.render(lightingShader.get());
@@ -353,7 +330,6 @@ int main() {
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	glDeleteVertexArrays(1, &containerVAO);
 	glDeleteVertexArrays(1, &lightVAO);
 	glDeleteBuffers(1, &VBO);
 
