@@ -40,62 +40,11 @@ int main() {
 	std::unique_ptr<Shader> lampShader = std::make_unique<Shader>
 		("lamp.vs", "lamp.frag");
 
-	Vertex testVertices[] = {
-		// Задняя грань (красная)
-		{{-0.5f, -0.5f, -0.5f}, {0.0f,  0.0f, -1.0f}, {0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}},
-		{{ 0.5f, -0.5f, -0.5f}, {0.0f,  0.0f, -1.0f}, {1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}},
-		{{ 0.5f,  0.5f, -0.5f}, {0.0f,  0.0f, -1.0f}, {1.0f, 1.0f}, {1.0f, 0.0f, 0.0f}},
-		{{ 0.5f,  0.5f, -0.5f}, {0.0f,  0.0f, -1.0f}, {1.0f, 1.0f}, {1.0f, 0.0f, 0.0f}},
-		{{-0.5f,  0.5f, -0.5f}, {0.0f,  0.0f, -1.0f}, {0.0f, 1.0f}, {1.0f, 0.0f, 0.0f}},
-		{{-0.5f, -0.5f, -0.5f}, {0.0f,  0.0f, -1.0f}, {0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}},
-
-		// Передняя грань (зеленая)
-		{{-0.5f, -0.5f,  0.5f}, {0.0f,  0.0f,  1.0f}, {0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},
-		{{-0.5f,  0.5f,  0.5f}, {0.0f,  0.0f,  1.0f}, {0.0f, 1.0f}, {0.0f, 1.0f, 0.0f}},
-		{{ 0.5f,  0.5f,  0.5f}, {0.0f,  0.0f,  1.0f}, {1.0f, 1.0f}, {0.0f, 1.0f, 0.0f}},
-		{{ 0.5f,  0.5f,  0.5f}, {0.0f,  0.0f,  1.0f}, {1.0f, 1.0f}, {0.0f, 1.0f, 0.0f}},
-		{{ 0.5f, -0.5f,  0.5f}, {0.0f,  0.0f,  1.0f}, {1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},
-		{{-0.5f, -0.5f,  0.5f}, {0.0f,  0.0f,  1.0f}, {0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}},
-
-		// Левая грань (синяя)
-		{{-0.5f, -0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f}, {0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
-		{{-0.5f,  0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f}, {0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}},
-		{{-0.5f,  0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f}, {1.0f, 1.0f}, {0.0f, 0.0f, 1.0f}},
-		{{-0.5f,  0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f}, {1.0f, 1.0f}, {0.0f, 0.0f, 1.0f}},
-		{{-0.5f, -0.5f,  0.5f}, {-1.0f,  0.0f,  0.0f}, {1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
-		{{-0.5f, -0.5f, -0.5f}, {-1.0f,  0.0f,  0.0f}, {0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
-
-		// Правая грань (желтая)
-		{{ 0.5f,  0.5f,  0.5f}, {1.0f,  0.0f,  0.0f}, {1.0f, 1.0f}, {1.0f, 1.0f, 0.0f}},
-		{{ 0.5f,  0.5f, -0.5f}, {1.0f,  0.0f,  0.0f}, {0.0f, 1.0f}, {1.0f, 1.0f, 0.0f}},
-		{{ 0.5f, -0.5f, -0.5f}, {1.0f,  0.0f,  0.0f}, {0.0f, 0.0f}, {1.0f, 1.0f, 0.0f}},
-		{{ 0.5f, -0.5f, -0.5f}, {1.0f,  0.0f,  0.0f}, {0.0f, 0.0f}, {1.0f, 1.0f, 0.0f}},
-		{{ 0.5f, -0.5f,  0.5f}, {1.0f,  0.0f,  0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f, 0.0f}},
-		{{ 0.5f,  0.5f,  0.5f}, {1.0f,  0.0f,  0.0f}, {1.0f, 1.0f}, {1.0f, 1.0f, 0.0f}},
-
-		// Нижняя грань (оранжевая)
-		{{-0.5f, -0.5f, -0.5f}, {0.0f, -1.0f,  0.0f}, {0.0f, 1.0f}, {1.0f, 0.5f, 0.0f}},
-		{{-0.5f, -0.5f,  0.5f}, {0.0f, -1.0f,  0.0f}, {0.0f, 0.0f}, {1.0f, 0.5f, 0.0f}},
-		{{ 0.5f, -0.5f,  0.5f}, {0.0f, -1.0f,  0.0f}, {1.0f, 0.0f}, {1.0f, 0.5f, 0.0f}},
-		{{ 0.5f, -0.5f,  0.5f}, {0.0f, -1.0f,  0.0f}, {1.0f, 0.0f}, {1.0f, 0.5f, 0.0f}},
-		{{ 0.5f, -0.5f, -0.5f}, {0.0f, -1.0f,  0.0f}, {1.0f, 1.0f}, {1.0f, 0.5f, 0.0f}},
-		{{-0.5f, -0.5f, -0.5f}, {0.0f, -1.0f,  0.0f}, {0.0f, 1.0f}, {1.0f, 0.5f, 0.0f}},
-
-		// Верхняя грань (пурпурная)
-		{{-0.5f,  0.5f, -0.5f}, {0.0f,  1.0f,  0.0f}, {0.0f, 1.0f}, {0.5f, 0.0f, 0.5f}},
-		{{ 0.5f,  0.5f, -0.5f}, {0.0f,  1.0f,  0.0f}, {1.0f, 1.0f}, {0.5f, 0.0f, 0.5f}},
-		{{ 0.5f,  0.5f,  0.5f}, {0.0f,  1.0f,  0.0f}, {1.0f, 0.0f}, {0.5f, 0.0f, 0.5f}},
-		{{ 0.5f,  0.5f,  0.5f}, {0.0f,  1.0f,  0.0f}, {1.0f, 0.0f}, {0.5f, 0.0f, 0.5f}},
-		{{-0.5f,  0.5f,  0.5f}, {0.0f,  1.0f,  0.0f}, {0.0f, 0.0f}, {0.5f, 0.0f, 0.5f}},
-		{{-0.5f,  0.5f, -0.5f}, {0.0f,  1.0f,  0.0f}, {0.0f, 1.0f}, {0.5f, 0.0f, 0.5f}},
-	};
-
-	Cube testCube;
-	
-
-	Mesh testLamp(testVertices, 36, nullptr, 0,glm::vec3(2.f,2.f,-2.f));
-	Mesh testObj(testCube.getVertices(), testCube.getNrOfVertices(),
-		testCube.getIndices(), testCube.getNrOfIndices());
+	Cube cube;
+	Quad quad;
+	Mesh testQuadMesh(quad,glm::vec3(-3.0f,-1.0f,0.0f));
+	Mesh testLamp(cube, glm::vec3(2.f, 2.f, -2.f));
+	Mesh testObj(cube);
 	testObj.setScale(glm::vec3(1.5f));
 
 	float vertices[] = {
@@ -178,7 +127,7 @@ int main() {
 
 
 		//default
-	/*	lightingShader.get()->setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
+		lightingShader.get()->setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
 		lightingShader.get()->setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
 		lightingShader.get()->setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
 		lightingShader.get()->setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
@@ -199,31 +148,30 @@ int main() {
 		lightingShader.get()->setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
 		lightingShader.get()->setFloat("spotLight.constant", 1.0f);
 		lightingShader.get()->setFloat("spotLight.linear", 0.09f);
-		lightingShader.get()->setFloat("spotLight.quadratic", 0.032f);*/
-
-		//horror
-		lightingShader.get()->setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
-		lightingShader.get()->setVec3("dirLight.ambient", 0.0f, 0.0f, 0.0f);
-		lightingShader.get()->setVec3("dirLight.diffuse", 0.05f, 0.05f, 0.05f);
-		lightingShader.get()->setVec3("dirLight.specular", 0.2f, 0.2f, 0.2f);
-		// Point light
-		lightingShader.get()->setVec3("pointLights[0].position", testLamp.getPosition());
-		lightingShader.get()->setVec3("pointLights[0].ambient", pointLightColors[0] * 0.1f);
-		lightingShader.get()->setVec3("pointLights[0].diffuse", pointLightColors[0]);
-		lightingShader.get()->setVec3("pointLights[0].specular", pointLightColors[0]);
-		lightingShader.get()->setFloat("pointLights[0].constant", 1.0f);
-		lightingShader.get()->setFloat("pointLights[0].linear", 0.14f);
-		lightingShader.get()->setFloat("pointLights[0].quadratic", 0.07f);
-
-		// SpotLight
-		lightingShader.get()->setVec3("spotLight.position",camera.GetPoistion());
-		lightingShader.get()->setVec3("spotLight.direction", camera.GetFront());
-		lightingShader.get()->setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
-		lightingShader.get()->setVec3("spotLight.diffuse", pointLightColors[0]);
-		lightingShader.get()->setVec3("spotLight.specular", pointLightColors[0]);
-		lightingShader.get()->setFloat("spotLight.constant", 1.0f);
-		lightingShader.get()->setFloat("spotLight.linear", 0.09f);
 		lightingShader.get()->setFloat("spotLight.quadratic", 0.032f);
+
+		////horror0.0
+		//lightingShader.get()->setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
+		//lightingShader.get()->setVec3("dirLight.ambient", 0.0f, 0.0f, 0.0f);
+		//lightingShader.get()->setVec3("dirLight.diffuse", 0.05f, 0.05f, 0.05f);
+		//lightingShader.get()->setVec3("dirLight.specular", 0.2f, 0.2f, 0.2f);
+		//// Point light
+		//lightingShader.get()->setVec3("pointLights[0].position", testLamp.getPosition());
+		//lightingShader.get()->setVec3("pointLights[0].ambient", pointLightColors[0] * 0.1f);
+		//lightingShader.get()->setVec3("pointLights[0].diffuse", pointLightColors[0]);
+		//lightingShader.get()->setVec3("pointLights[0].specular", pointLightColors[0]);
+		//lightingShader.get()->setFloat("pointLights[0].constant", 1.0f);
+		//lightingShader.get()->setFloat("pointLights[0].linear", 0.14f);
+		//lightingShader.get()->setFloat("pointLights[0].quadratic", 0.07f);
+		//// SpotLight
+		//lightingShader.get()->setVec3("spotLight.position",camera.GetPoistion());
+		//lightingShader.get()->setVec3("spotLight.direction", camera.GetFront());
+		//lightingShader.get()->setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+		//lightingShader.get()->setVec3("spotLight.diffuse", pointLightColors[0]);
+		//lightingShader.get()->setVec3("spotLight.specular", pointLightColors[0]);
+		//lightingShader.get()->setFloat("spotLight.constant", 1.0f);
+		//lightingShader.get()->setFloat("spotLight.linear", 0.09f);
+		//lightingShader.get()->setFloat("spotLight.quadratic", 0.032f);
 
 		lightingShader.get()->setFloat("spotLight.cutOff", glm::cos(glm::radians(radCutOff)));
 		lightingShader.get()->setFloat("spotLight.outerCutOff", glm::cos(glm::radians(radOuterCutOff)));
@@ -243,6 +191,9 @@ int main() {
 
 		testObj.move(glm::vec3(0.0001f, 0.f, 0.f));
 		testObj.render(lightingShader.get());
+		
+		testQuadMesh.scaleUp(glm::vec3(0.00001f));
+		testQuadMesh.render(lightingShader.get());
 
 		glBindVertexArray(0);
 
@@ -254,6 +205,8 @@ int main() {
 		lampShader.get()->setVec3("lightColor", pointLightColors[0]);
 
 		testLamp.move(glm::vec3(-0.0001f,0.0f,0.0001f));
+
+		testLamp.rotate(glm::vec3(0.001f));
 
 		testLamp.render(lampShader.get());
 

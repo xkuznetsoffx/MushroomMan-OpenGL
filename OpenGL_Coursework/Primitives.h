@@ -29,8 +29,15 @@ private:
 
 };
 
+class Quad : public Primitive
+{
+public:
+	Quad();
+};
+
 class Cube : public Primitive
 {
 public:
 	Cube();
 };
+

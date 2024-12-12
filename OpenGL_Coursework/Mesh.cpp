@@ -1,5 +1,15 @@
 #include "Mesh.h"
 
+Mesh::Mesh(Primitive& primitive, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale) :
+	position(position), rotation(rotation), scale(scale)
+{
+	this->nrOfVertices = primitive.getNrOfVertices();
+	this->nrOfIndices = primitive.getNrOfIndices();
+
+	initVAO(primitive.getVertices(), primitive.getIndices());
+}
+
+
 Mesh::Mesh(Vertex* vertexArray, const unsigned nrOfVertices,
 	GLuint* indexArray, const unsigned nrOfIndices,
 	glm::vec3 position, glm::vec3 rotation, glm::vec3 scale) : 
@@ -51,7 +61,7 @@ void Mesh::rotate(const glm::vec3 rotation)
 	this->rotation += rotation;
 }
 
-void Mesh::doScale(const glm::vec3 scale)
+void Mesh::scaleUp(const glm::vec3 scale)
 {
 	this->scale += scale;
 }
