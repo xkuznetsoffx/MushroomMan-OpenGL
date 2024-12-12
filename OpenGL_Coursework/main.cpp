@@ -30,15 +30,19 @@ float radOuterCutOff = 0.0f;
 bool flashlight = false;
 
 int main() {
+	const int GLmajorVersion = 4;
+	const int GLminorVersion = 4;
+
 	Window window("Coursework");
 	window.keyboardInput(key_callback);
 	window.mouseInput(mouse_callback);
 	window.scrolInput(scroll_callback);
-
+	
 	std::unique_ptr<Shader> lightingShader = std::make_unique<Shader>
-		("objects.vs", "objects.frag");
+		(GLmajorVersion, GLminorVersion, "objects.vs", "objects.frag");
+
 	std::unique_ptr<Shader> lampShader = std::make_unique<Shader>
-		("lamp.vs", "lamp.frag");
+		(GLmajorVersion, GLminorVersion, "lamp.vs", "lamp.frag");
 
 	Cube cube;
 	Quad quad;

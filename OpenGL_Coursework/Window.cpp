@@ -34,7 +34,7 @@ Window::Window(const char* title) {
 
 	renderer = std::make_unique<Renderer>();
 
-	shader = std::make_unique<Shader>("vertex_core.glsl", "fragment_core.glsl");
+	shader = std::make_unique<Shader>(4,4,"vertex_core.glsl", "fragment_core.glsl");
 	glfwSetFramebufferSizeCallback(window.get(), framebufferResizeCallback);
 }
 

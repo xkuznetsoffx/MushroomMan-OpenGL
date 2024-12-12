@@ -1,6 +1,9 @@
 #include "Shader.h"
 
-Shader::Shader(const char* vertexFile, const char* fragmentFile, const char* geometryFile) {
+Shader::Shader(const int versionMajor, const int versionMinor,
+	const char* vertexFile, const char* fragmentFile, const char* geometryFile) 
+	: versionMajor(versionMajor), versionMinor(versionMinor)
+{
 	GLuint vertexShader = 0;
 	GLuint fragmentShader = 0;
 	GLuint geometryShader = 0;
@@ -16,6 +19,8 @@ Shader::Shader(const char* vertexFile, const char* fragmentFile, const char* geo
 	glDeleteShader(fragmentShader);
 	glDeleteShader(geometryShader);
 }
+
+
 
 Shader::~Shader() {
 	glDeleteProgram(ID);
@@ -73,6 +78,14 @@ std::string Shader::loadShaderCode(const char* path) {
 	}
 
 	inFile.close();
+
+	std::string versionNr =
+		std::to_string(this->versionMajor) +
+		std::to_string(this->versionMinor) +
+		"0";
+
+	shaderCode.replace(shaderCode.find("#version"), 12, ("#version " + versionNr));
+
 	return shaderCode;
 }
 

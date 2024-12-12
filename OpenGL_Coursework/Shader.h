@@ -12,7 +12,8 @@
 
 class Shader {
 public:
-	Shader(const char* vertexFile, const char* fragmentFile, const char* geometryFile = "");
+	Shader(const int versionMajor, const int versionMinor, 
+		const char* vertexFile, const char* fragmentFile, const char* geometryFile = "");
 
 	~Shader();
 
@@ -34,6 +35,8 @@ public:
 
 private:
 	GLuint ID;
+	const int versionMajor;
+	const int versionMinor;
 
 	std::string loadShaderCode(const char* path);
 	GLuint loadShader(GLenum shaderType, const char* path);
