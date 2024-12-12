@@ -1,6 +1,5 @@
 #include "libs.h"
 #include "Window.h"
-#include <array>
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -91,8 +90,12 @@ int main() {
 		{{-0.5f,  0.5f, -0.5f}, {0.0f,  1.0f,  0.0f}, {0.0f, 1.0f}, {0.5f, 0.0f, 0.5f}},
 	};
 
+	Cube testCube;
+	
+
 	Mesh testLamp(testVertices, 36, nullptr, 0,glm::vec3(2.f,2.f,-2.f));
-	Mesh testObj(testVertices, 36, nullptr, 0);
+	Mesh testObj(testCube.getVertices(), testCube.getNrOfVertices(),
+		testCube.getIndices(), testCube.getNrOfIndices());
 	testObj.setScale(glm::vec3(1.5f));
 
 	float vertices[] = {
