@@ -1,4 +1,4 @@
-#include "libs.h"
+#include "Game.h"
 #include "Window.h"
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
@@ -206,7 +206,7 @@ int main() {
 		lampShader.get()->setMat4("view", view);
 		lampShader.get()->setMat4("projection", projection);
 
-		lampShader.get()->setVec3("lightColor", pointLightColors[0]);
+		lampShader.get()->setVec3("lightColor", glm::vec3(1.f));
 
 		testLamp.move(glm::vec3(-0.0001f,0.0f,0.0001f));
 
