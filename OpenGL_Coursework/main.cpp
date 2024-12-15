@@ -11,7 +11,7 @@ int screenWidth = 1920;
 int screenHeight = 1080;
 int framebufferWidth = 1920;
 int framebufferHeight = 1080;
-Camera camera(glm::vec3(0.0f, 0.0f, 6.0f));
+Camera camera(glm::vec3(-2.0f, 0.0f, 6.0f));
 
 
 bool keys[1024];
@@ -112,7 +112,7 @@ int main() {
 		window.processEvents();
 		do_movement();
 
-		glClearColor(0.f, 0.f,0.f, 1.0f);
+		glClearColor(0.f, 0.f, 0.f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		/*for (int i = 0; i < 4; ++i)

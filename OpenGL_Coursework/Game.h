@@ -33,11 +33,20 @@ private:
 	const int GL_VERSION_MAJOR;
 	const int GL_VERSION_MINOR;
 
+	Camera camera;
+
+	glm::mat4 viewMatrix;
+
+	glm::mat4 projectionMatrix;
+	float nearPlane;
+	float farPlane;
+
 	//functions
 	void initGLFW();
 	void initWindow(const char* title, bool resizable);
 	void initGLEW();
 	void initOpenGLOptions();
+	void initMatrices();
 
 	//static functions
 public:

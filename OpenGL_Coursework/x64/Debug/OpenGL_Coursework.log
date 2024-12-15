@@ -1,4 +1,12 @@
-﻿  main.cpp
+﻿  Camera.cpp
+  Game.cpp
+  Material.cpp
+  Mesh.cpp
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Mesh.cpp(6,48): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Mesh.cpp(7,46): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+  Renderer.cpp
+  Window.cpp
+  main.cpp
 D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\main.cpp(109,24): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
 D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\main.cpp(257,11): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
 D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\main.cpp(258,11): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
@@ -7,4 +15,11 @@ D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\main.cpp(263,18): warning C4244:
 D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\main.cpp(265,10): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
 D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\main.cpp(266,10): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
 D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\main.cpp(272,28): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+  Generating Code...
+  LINK : D:\CppProjs\OpenGL_Coursework\x64\Debug\OpenGL_Coursework.exe not found or not built by the last incremental link; performing full link
+glew32sd.lib(glew.obj) : warning LNK4099: PDB '' was not found with 'glew32sd.lib(glew.obj)' or at ''; linking object as if no debug info
+soil2-debug.lib(SOIL2.obj) : warning LNK4099: PDB '' was not found with 'soil2-debug.lib(SOIL2.obj)' or at ''; linking object as if no debug info
+soil2-debug.lib(image_DXT.obj) : warning LNK4099: PDB '' was not found with 'soil2-debug.lib(image_DXT.obj)' or at ''; linking object as if no debug info
+soil2-debug.lib(wfETC.obj) : warning LNK4099: PDB '' was not found with 'soil2-debug.lib(wfETC.obj)' or at ''; linking object as if no debug info
+soil2-debug.lib(image_helper.obj) : warning LNK4099: PDB '' was not found with 'soil2-debug.lib(image_helper.obj)' or at ''; linking object as if no debug info
   OpenGL_Coursework.vcxproj -> D:\CppProjs\OpenGL_Coursework\x64\Debug\OpenGL_Coursework.exe
