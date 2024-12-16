@@ -59,6 +59,18 @@ private:
 	float nearPlane;
 	float farPlane;
 
+	//Frames time
+	GLfloat currentFrame = 0.0f;
+	GLfloat deltaTime = 0.0f;
+	GLfloat lastFrame = 0.0f;
+
+	//Mouse
+	GLfloat lastX;
+	GLfloat lastY;
+	bool firstMouse = true;
+
+	bool keys[1024];
+
 	//Shaders
 	std::vector<std::unique_ptr<Shader>> shaders;
 
@@ -73,8 +85,9 @@ private:
 	std::vector<std::unique_ptr<Mesh>> meshesLamps;
 
 	//Lights
-	float radCutOff = 10.0f;
-	float radOuterCutOff = 15.0f;
+	bool isFlashlightOn = false;
+	float radCutOff = 0.0f;
+	float radOuterCutOff = 0.0f;
 
 	//functions
 	void initGLFW();
@@ -90,8 +103,16 @@ private:
 	void initUniforms();
 
 	void updateUniforms();
+
+	void updateInput(int key, int action);
+	void updateMouse(double xpos, double ypos);
+	void updateDeltaTime();
+
+	void do_movment();
 	//static functions
 public:
 	static void framebuffer_resize_callback(GLFWwindow* window, int fbW, int fbH);
+	static void  key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	static void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 };
 

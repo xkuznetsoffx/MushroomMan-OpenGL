@@ -16,6 +16,10 @@ Game::Game(const char* title,
 	nearPlane = 0.1f;
 	farPlane = 100.0f;
 
+	lastX = static_cast<GLfloat>(WINDOW_WIDTH / 2);
+	lastY = static_cast<GLfloat>(WINDOW_HEIGHT / 2);
+
+	//init functions
 	initGLFW();
 	initWindow(title, resizable);
 	initGLEW();
@@ -27,6 +31,12 @@ Game::Game(const char* title,
 	initMeshes();
 	initLights();
 	initUniforms();
+
+
+	//callback functions
+	glfwSetWindowUserPointer(window, this);
+	glfwSetKeyCallback(window, key_callback);
+	glfwSetCursorPosCallback(window, mouse_callback);
 }
 
 Game::~Game()
@@ -48,6 +58,8 @@ void Game::setWindowShouldCloes()
 void Game::update()
 {
 	glfwPollEvents();
+	updateDeltaTime();
+	do_movment();
 }
 
 void Game::render()
@@ -128,6 +140,8 @@ void Game::initOpenGLOptions()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 void Game::initMatrices()
@@ -159,12 +173,12 @@ void Game::initTextures()
 {
 	textures.push_back(
 		std::make_unique<Texture>
-		("Images/container2.png", GL_TEXTURE_2D, TEX_CONTAINER_DIFMAP)
+		("Images/container2.png", GL_TEXTURE_2D)
 	);
 
 	textures.push_back(
 		std::make_unique<Texture>
-		("Images/container2_specular.png", GL_TEXTURE_2D, TEX_CONTAINER_SPECMAP)
+		("Images/container2_specular.png", GL_TEXTURE_2D)
 	);
 }
 
@@ -172,8 +186,8 @@ void Game::initMaterials()
 {
 	materials.push_back(
 		std::make_unique<Material>(
-			textures[TEX_CONTAINER_DIFMAP].get()->getUnit(),
-			textures[TEX_CONTAINER_SPECMAP].get()->getUnit(),
+			TEX_CONTAINER_DIFMAP,
+			TEX_CONTAINER_SPECMAP,
 			32.f
 		)
 	);
@@ -267,8 +281,8 @@ void Game::updateUniforms()
 	shaders[SHADER_OBJ]->setMat4("view", viewMatrix);
 	shaders[SHADER_OBJ]->setMat4("projection", projectionMatrix);
 
-	textures[TEX_CONTAINER_DIFMAP]->bindTexture();
-	textures[TEX_CONTAINER_SPECMAP]->bindTexture();
+	textures[TEX_CONTAINER_DIFMAP]->bindTexture(TEX_CONTAINER_DIFMAP);
+	textures[TEX_CONTAINER_SPECMAP]->bindTexture(TEX_CONTAINER_SPECMAP);
 
 	shaders[SHADER_LAMP]->Use();
 
@@ -278,7 +292,91 @@ void Game::updateUniforms()
 	shaders[SHADER_LAMP]->setVec3("lightColor", glm::vec3(1.f));
 }
 
+void Game::updateInput(int key, int action)
+{
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+		setWindowShouldCloes();
+	if (key == GLFW_KEY_F && action == GLFW_PRESS) {
+		if (isFlashlightOn)
+		{
+			radCutOff = 0.0f;
+			radOuterCutOff = 0.0f;
+			isFlashlightOn = false;
+		}
+		else {
+			radCutOff = 10.0f;
+			radOuterCutOff = 15.0f;
+			isFlashlightOn = true;
+		}
+	}
+	if (action == GLFW_PRESS)
+		keys[key] = true;
+	else if (action == GLFW_RELEASE)
+		keys[key] = false;
+}
+
+void Game::updateMouse(double xpos, double ypos)
+{
+	if (firstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+
+	GLfloat xoffset = xpos - lastX;
+	GLfloat yoffset = lastY - ypos;
+
+	lastX = xpos;
+	lastY = ypos;
+
+	camera.ProcessMouseMovement(xoffset, yoffset);
+}
+
+void Game::updateDeltaTime()
+{
+		currentFrame = static_cast<GLfloat>(glfwGetTime());
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+}
+
+void Game::do_movment()
+{
+
+	if (keys[GLFW_KEY_W])
+		camera.ProcessKeyboard(FORWARD, deltaTime);
+	if (keys[GLFW_KEY_S])
+		camera.ProcessKeyboard(BACKWARD, deltaTime);
+	if (keys[GLFW_KEY_A])
+		camera.ProcessKeyboard(LEFT, deltaTime);
+	if (keys[GLFW_KEY_D])
+		camera.ProcessKeyboard(RIGHT, deltaTime);
+	if (keys[GLFW_KEY_SPACE])
+		camera.ProcessKeyboard(UP, deltaTime);
+	if (keys[GLFW_KEY_LEFT_SHIFT])
+		camera.ProcessKeyboard(DOWN, deltaTime);
+	
+}
+
 void Game::framebuffer_resize_callback(GLFWwindow* window, int fbW, int fbH)
 {
 	glViewport(0, 0, fbW, fbH);
 }
+
+void Game::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	Game* game = static_cast<Game*>(glfwGetWindowUserPointer(window));
+	if (game) {
+		game->updateInput(key, action);
+	}
+}
+
+void Game::mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	Game* game = static_cast<Game*>(glfwGetWindowUserPointer(window));
+	if (game) {
+		game->updateMouse(xpos, ypos);
+	}
+}
+	
+

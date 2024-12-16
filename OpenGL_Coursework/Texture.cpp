@@ -1,7 +1,7 @@
 #include "Texture.h"
 
-Texture::Texture(const char* path, GLenum type, GLint texture_unit) : 
-	textureType(type), textureUnit(texture_unit) {
+Texture::Texture(const char* path, GLenum type) : 
+	textureType(type){
 	unsigned char* image = SOIL_load_image(path, &width, &height, NULL, SOIL_LOAD_RGBA);
 
 	glGenTextures(1, &textureId);
@@ -35,12 +35,8 @@ GLuint Texture::getID() const {
 	return textureId;
 }
 
-GLuint Texture::getUnit() const
-{
-	return textureUnit;
-}
 
-void Texture::bindTexture() {
+void Texture::bindTexture(const GLuint textureUnit) {
 	glActiveTexture(GL_TEXTURE0 + textureUnit);
 	glBindTexture(textureType, textureId);
 }
