@@ -1,6 +1,24 @@
 #pragma once
 #include "libs.h"
 
+enum ShaderType
+{
+	SHADER_OBJ = 0,
+	SHADER_LAMP = 1
+};
+
+enum TextureType
+{
+	TEX_CONTAINER_DIFMAP = 0,
+	TEX_CONTAINER_SPECMAP
+};
+
+enum MeshEnum
+{
+	MESH_QUAD = 0,
+	MESH_BOX,
+	MESH_LAMP
+};
 
 class Game
 {
@@ -23,23 +41,40 @@ public:
 
 private:
 	//variables
+	//Window options
 	GLFWwindow* window;
-
 	const int WINDOW_WIDTH;
 	const int WINDOW_HEIGHT;
 	int framebufferWidth;
 	int framebufferHeight;
 
+	//OpenGL options
 	const int GL_VERSION_MAJOR;
 	const int GL_VERSION_MINOR;
 
+	//Camera and matrices
 	Camera camera;
-
 	glm::mat4 viewMatrix;
-
 	glm::mat4 projectionMatrix;
 	float nearPlane;
 	float farPlane;
+
+	//Shaders
+	std::vector<std::unique_ptr<Shader>> shaders;
+
+	//Textures
+	std::vector<std::unique_ptr<Texture>> textures;
+
+	//Materials
+	std::vector<std::unique_ptr<Material>> materials;
+
+	//Meshes
+	std::vector<std::unique_ptr<Mesh>> meshesObjects;
+	std::vector<std::unique_ptr<Mesh>> meshesLamps;
+
+	//Lights
+	float radCutOff = 10.0f;
+	float radOuterCutOff = 15.0f;
 
 	//functions
 	void initGLFW();
@@ -47,7 +82,14 @@ private:
 	void initGLEW();
 	void initOpenGLOptions();
 	void initMatrices();
+	void initShaders();
+	void initTextures();
+	void initMaterials();
+	void initMeshes();
+	void initLights();
+	void initUniforms();
 
+	void updateUniforms();
 	//static functions
 public:
 	static void framebuffer_resize_callback(GLFWwindow* window, int fbW, int fbH);

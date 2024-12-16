@@ -85,7 +85,6 @@ std::string Shader::loadShaderCode(const char* path) {
 		"0";
 
 	shaderCode.replace(shaderCode.find("#version"), 12, ("#version " + versionNr));
-
 	return shaderCode;
 }
 
@@ -135,6 +134,6 @@ void Shader::Use() {
 	glUseProgram(ID);
 }
 
-void Shader::UnUse() {
+void Shader::Unuse() {
 	glUseProgram(0);
 }

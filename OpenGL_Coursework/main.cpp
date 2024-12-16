@@ -33,197 +33,208 @@ int main() {
 	const int GLmajorVersion = 4;
 	const int GLminorVersion = 4;
 
-	Window window("Coursework");
-	window.keyboardInput(key_callback);
-	window.mouseInput(mouse_callback);
-	window.scrolInput(scroll_callback);
-	
-	std::unique_ptr<Shader> lightingShader = std::make_unique<Shader>
-		(GLmajorVersion, GLminorVersion, "objects.vs", "objects.frag");
+	Game game(
+		"Coursework",
+		1920, 1080,
+		GLmajorVersion, GLminorVersion,
+		false
+	);
 
-	std::unique_ptr<Shader> lampShader = std::make_unique<Shader>
-		(GLmajorVersion, GLminorVersion, "lamp.vs", "lamp.frag");
-
-	Cube cube;
-	Quad quad;
-	Mesh testQuadMesh(quad,glm::vec3(-3.0f,-1.0f,0.0f));
-	Mesh testLamp(cube, glm::vec3(2.f, 2.f, -2.f));
-	Mesh testObj(cube);
-	testObj.setScale(glm::vec3(1.5f));
-
-	float vertices[] = {
-		//	  Координаты			Нормали			Текстурные координаты
-		//	// Задняя грань
-		-0.5f, -0.5f, -0.5f,	0.0f,  0.0f, -1.0f,		0.0f, 0.0f,
-		 0.5f, -0.5f, -0.5f,	0.0f,  0.0f, -1.0f,		1.0f, 0.0f,
-		 0.5f,  0.5f, -0.5f,	0.0f,  0.0f, -1.0f,		1.0f, 1.0f,
-		 0.5f,  0.5f, -0.5f,	0.0f,  0.0f, -1.0f,		1.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f,	0.0f,  0.0f, -1.0f,		0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,	0.0f,  0.0f, -1.0f,		0.0f, 0.0f,
-		//	// Передняя грань
-		-0.5f, -0.5f,  0.5f,	0.0f,  0.0f, 1.0f,		0.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,	0.0f,  0.0f, 1.0f,		0.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f,	0.0f,  0.0f, 1.0f,		1.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f,	0.0f,  0.0f, 1.0f,		1.0f, 1.0f,
-		 0.5f, -0.5f,  0.5f,	0.0f,  0.0f, 1.0f,		1.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,	0.0f,  0.0f, 1.0f,		0.0f, 0.0f,
-		//	// Левая грань
-		-0.5f, -0.5f, -0.5f,	-1.0f,  0.0f,  0.0f,	0.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,	-1.0f,  0.0f,  0.0f,	0.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,	-1.0f,  0.0f,  0.0f,	1.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,	-1.0f,  0.0f,  0.0f,	1.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,	-1.0f,  0.0f,  0.0f,	1.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,	-1.0f,  0.0f,  0.0f,	0.0f, 0.0f,
-		//	// Правая грань
-		 0.5f,  0.5f,  0.5f,	1.0f,  0.0f,  0.0f,		1.0f, 1.0f,
-		 0.5f,  0.5f, -0.5f,	1.0f,  0.0f,  0.0f,		0.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f,	1.0f,  0.0f,  0.0f,		0.0f, 0.0f,
-		 0.5f, -0.5f, -0.5f,	1.0f,  0.0f,  0.0f,		0.0f, 0.0f,
-		 0.5f, -0.5f,  0.5f,	1.0f,  0.0f,  0.0f,		1.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f,	1.0f,  0.0f,  0.0f,		1.0f, 1.0f,
-		 //	 // Нижняя грань
-		-0.5f, -0.5f, -0.5f,	0.0f, -1.0f,  0.0f,		0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,	0.0f, -1.0f,  0.0f,		0.0f, 0.0f,
-		 0.5f, -0.5f,  0.5f,	0.0f, -1.0f,  0.0f,		1.0f, 0.0f,
-		 0.5f, -0.5f,  0.5f,	0.0f, -1.0f,  0.0f,		1.0f, 0.0f,
-		 0.5f, -0.5f, -0.5f,	0.0f, -1.0f,  0.0f,		1.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,	0.0f, -1.0f,  0.0f,		0.0f, 1.0f,
-		//	 // Верхняя грань
-		-0.5f,  0.5f, -0.5f,	0.0f,  1.0f,  0.0f,		0.0f, 1.0f,
-		 0.5f,  0.5f, -0.5f,	0.0f,  1.0f,  0.0f,		1.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f,	0.0f,  1.0f,  0.0f,		1.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f,	0.0f,  1.0f,  0.0f,		1.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,	0.0f,  1.0f,  0.0f,		0.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,	0.0f,  1.0f,  0.0f,		0.0f, 1.0f,
-	};
-
-	glm::vec3 pointLightColors[] = {
-		glm::vec3(0.3f, 0.1f, 0.1f),
-	};
-
-	Texture diffuseMap("Images/container2.png", GL_TEXTURE_2D, 0);
-	Texture specularMap("Images/container2_specular.png", GL_TEXTURE_2D, 1);
-	Material material(diffuseMap.getUnit(), specularMap.getUnit(), 32.f);
-
-	while (!glfwWindowShouldClose(window.getWindowPtr())) {
-		GLfloat currentFrame = glfwGetTime();
-		deltaTime = currentFrame - lastFrame;
-		lastFrame = currentFrame;
-		window.processEvents();
-		do_movement();
-
-		glClearColor(0.f, 0.f, 0.f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-		/*for (int i = 0; i < 4; ++i)
-		{
-			pointLightPositions[i].x = sin(glfwGetTime()) * 2.0f;
-			pointLightPositions[i].y = cos(glfwGetTime() / 2.0f) * 1.0f;
-			pointLightPositions[i].z = sin(glfwGetTime() / 2.0f) * 1.0f;
-		}*/
-		
-		//LightningShader
-		lightingShader.get()->Use();
-
-		material.sendToShader(lightingShader.get());
-
-		lightingShader.get()->setVec3("viewPos", camera.GetPoistion());
-
-
-		//default
-		lightingShader.get()->setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
-		lightingShader.get()->setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
-		lightingShader.get()->setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
-		lightingShader.get()->setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
-		for (int i = 0; i < 1; ++i) {
-			std::string index = std::to_string(i);
-			lightingShader.get()->setVec3("pointLights[" + index + "].position", testLamp.getPosition());
-			lightingShader.get()->setVec3("pointLights[" + index + "].ambient", 0.05f, 0.05f, 0.05f);
-			lightingShader.get()->setVec3("pointLights[" + index + "].diffuse", 0.8f, 0.8f, 0.8f);
-			lightingShader.get()->setVec3("pointLights[" + index + "].specular", 1.0f, 1.0f, 1.0f);
-			lightingShader.get()->setFloat("pointLights[" + index + "].constant", 1.0f);
-			lightingShader.get()->setFloat("pointLights[" + index + "].linear", 0.09f);
-			lightingShader.get()->setFloat("pointLights[" + index + "].quadratic", 0.032f);
-		}
-		lightingShader.get()->setVec3("spotLight.position", camera.GetPoistion());
-		lightingShader.get()->setVec3("spotLight.direction", camera.GetFront());
-		lightingShader.get()->setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
-		lightingShader.get()->setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
-		lightingShader.get()->setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
-		lightingShader.get()->setFloat("spotLight.constant", 1.0f);
-		lightingShader.get()->setFloat("spotLight.linear", 0.09f);
-		lightingShader.get()->setFloat("spotLight.quadratic", 0.032f);
-
-		////horror0.0
-		//lightingShader.get()->setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
-		//lightingShader.get()->setVec3("dirLight.ambient", 0.0f, 0.0f, 0.0f);
-		//lightingShader.get()->setVec3("dirLight.diffuse", 0.05f, 0.05f, 0.05f);
-		//lightingShader.get()->setVec3("dirLight.specular", 0.2f, 0.2f, 0.2f);
-		//// Point light
-		//lightingShader.get()->setVec3("pointLights[0].position", testLamp.getPosition());
-		//lightingShader.get()->setVec3("pointLights[0].ambient", pointLightColors[0] * 0.1f);
-		//lightingShader.get()->setVec3("pointLights[0].diffuse", pointLightColors[0]);
-		//lightingShader.get()->setVec3("pointLights[0].specular", pointLightColors[0]);
-		//lightingShader.get()->setFloat("pointLights[0].constant", 1.0f);
-		//lightingShader.get()->setFloat("pointLights[0].linear", 0.14f);
-		//lightingShader.get()->setFloat("pointLights[0].quadratic", 0.07f);
-		//// SpotLight
-		//lightingShader.get()->setVec3("spotLight.position",camera.GetPoistion());
-		//lightingShader.get()->setVec3("spotLight.direction", camera.GetFront());
-		//lightingShader.get()->setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
-		//lightingShader.get()->setVec3("spotLight.diffuse", pointLightColors[0]);
-		//lightingShader.get()->setVec3("spotLight.specular", pointLightColors[0]);
-		//lightingShader.get()->setFloat("spotLight.constant", 1.0f);
-		//lightingShader.get()->setFloat("spotLight.linear", 0.09f);
-		//lightingShader.get()->setFloat("spotLight.quadratic", 0.032f);
-
-		lightingShader.get()->setFloat("spotLight.cutOff", glm::cos(glm::radians(radCutOff)));
-		lightingShader.get()->setFloat("spotLight.outerCutOff", glm::cos(glm::radians(radOuterCutOff)));
-
-		glm::mat4 view;
-		glm::mat4 projection;
-
-		view = camera.GetViewMatrix();
-		glfwGetFramebufferSize(window.getWindowPtr(), &framebufferWidth, &framebufferHeight);
-		projection = glm::perspective(glm::radians(camera.GetZoom()), static_cast<GLfloat>(framebufferWidth) / static_cast<GLfloat>(framebufferHeight), 0.1f, 100.0f);
-
-		lightingShader.get()->setMat4("view", view);
-		lightingShader.get()->setMat4("projection", projection);
-
-		diffuseMap.bindTexture();
-		specularMap.bindTexture();
-
-		testObj.move(glm::vec3(0.0001f, 0.f, 0.f));
-		testObj.render(lightingShader.get());
-		
-		testQuadMesh.scaleUp(glm::vec3(0.00001f));
-		testQuadMesh.render(lightingShader.get());
-
-		glBindVertexArray(0);
-
-		//Lamp shader
-		lampShader.get()->Use();
-		lampShader.get()->setMat4("view", view);
-		lampShader.get()->setMat4("projection", projection);
-
-		lampShader.get()->setVec3("lightColor", glm::vec3(1.f));
-
-		testLamp.move(glm::vec3(-0.0001f,0.0f,0.0001f));
-
-		testLamp.rotate(glm::vec3(0.001f));
-
-		testLamp.render(lampShader.get());
-
-		glBindVertexArray(0);
-
-		glfwSwapBuffers(window.getWindowPtr());
-
-		glUseProgram(0);
-		glActiveTexture(0);
-		glBindTexture(GL_TEXTURE_2D, 0);
+	while (!game.getWindowShouldClose()) {
+		game.update();
+		game.render();
 	}
 
-	
+	//Window window("Coursework");
+	//window.keyboardInput(key_callback);
+	//window.mouseInput(mouse_callback);
+	//window.scrolInput(scroll_callback);
+	//
+	//std::unique_ptr<Shader> lightingShader = std::make_unique<Shader>
+	//	(GLmajorVersion, GLminorVersion, "objects.vs", "objects.frag");
+
+	//std::unique_ptr<Shader> lampShader = std::make_unique<Shader>
+	//	(GLmajorVersion, GLminorVersion, "lamp.vs", "lamp.frag");
+
+	//Cube cube;
+	//Quad quad;
+	//Mesh testQuadMesh(quad,glm::vec3(-3.0f,-1.0f,0.0f));
+	//Mesh testLamp(cube, glm::vec3(2.f, 2.f, -2.f));
+	//Mesh testObj(cube);
+	//testObj.setScale(glm::vec3(1.5f));
+
+	//float vertices[] = {
+	//	//	  Координаты			Нормали			Текстурные координаты
+	//	//	// Задняя грань
+	//	-0.5f, -0.5f, -0.5f,	0.0f,  0.0f, -1.0f,		0.0f, 0.0f,
+	//	 0.5f, -0.5f, -0.5f,	0.0f,  0.0f, -1.0f,		1.0f, 0.0f,
+	//	 0.5f,  0.5f, -0.5f,	0.0f,  0.0f, -1.0f,		1.0f, 1.0f,
+	//	 0.5f,  0.5f, -0.5f,	0.0f,  0.0f, -1.0f,		1.0f, 1.0f,
+	//	-0.5f,  0.5f, -0.5f,	0.0f,  0.0f, -1.0f,		0.0f, 1.0f,
+	//	-0.5f, -0.5f, -0.5f,	0.0f,  0.0f, -1.0f,		0.0f, 0.0f,
+	//	//	// Передняя грань
+	//	-0.5f, -0.5f,  0.5f,	0.0f,  0.0f, 1.0f,		0.0f, 0.0f,
+	//	-0.5f,  0.5f,  0.5f,	0.0f,  0.0f, 1.0f,		0.0f, 1.0f,
+	//	 0.5f,  0.5f,  0.5f,	0.0f,  0.0f, 1.0f,		1.0f, 1.0f,
+	//	 0.5f,  0.5f,  0.5f,	0.0f,  0.0f, 1.0f,		1.0f, 1.0f,
+	//	 0.5f, -0.5f,  0.5f,	0.0f,  0.0f, 1.0f,		1.0f, 0.0f,
+	//	-0.5f, -0.5f,  0.5f,	0.0f,  0.0f, 1.0f,		0.0f, 0.0f,
+	//	//	// Левая грань
+	//	-0.5f, -0.5f, -0.5f,	-1.0f,  0.0f,  0.0f,	0.0f, 0.0f,
+	//	-0.5f,  0.5f, -0.5f,	-1.0f,  0.0f,  0.0f,	0.0f, 1.0f,
+	//	-0.5f,  0.5f,  0.5f,	-1.0f,  0.0f,  0.0f,	1.0f, 1.0f,
+	//	-0.5f,  0.5f,  0.5f,	-1.0f,  0.0f,  0.0f,	1.0f, 1.0f,
+	//	-0.5f, -0.5f,  0.5f,	-1.0f,  0.0f,  0.0f,	1.0f, 0.0f,
+	//	-0.5f, -0.5f, -0.5f,	-1.0f,  0.0f,  0.0f,	0.0f, 0.0f,
+	//	//	// Правая грань
+	//	 0.5f,  0.5f,  0.5f,	1.0f,  0.0f,  0.0f,		1.0f, 1.0f,
+	//	 0.5f,  0.5f, -0.5f,	1.0f,  0.0f,  0.0f,		0.0f, 1.0f,
+	//	 0.5f, -0.5f, -0.5f,	1.0f,  0.0f,  0.0f,		0.0f, 0.0f,
+	//	 0.5f, -0.5f, -0.5f,	1.0f,  0.0f,  0.0f,		0.0f, 0.0f,
+	//	 0.5f, -0.5f,  0.5f,	1.0f,  0.0f,  0.0f,		1.0f, 0.0f,
+	//	 0.5f,  0.5f,  0.5f,	1.0f,  0.0f,  0.0f,		1.0f, 1.0f,
+	//	 //	 // Нижняя грань
+	//	-0.5f, -0.5f, -0.5f,	0.0f, -1.0f,  0.0f,		0.0f, 1.0f,
+	//	-0.5f, -0.5f,  0.5f,	0.0f, -1.0f,  0.0f,		0.0f, 0.0f,
+	//	 0.5f, -0.5f,  0.5f,	0.0f, -1.0f,  0.0f,		1.0f, 0.0f,
+	//	 0.5f, -0.5f,  0.5f,	0.0f, -1.0f,  0.0f,		1.0f, 0.0f,
+	//	 0.5f, -0.5f, -0.5f,	0.0f, -1.0f,  0.0f,		1.0f, 1.0f,
+	//	-0.5f, -0.5f, -0.5f,	0.0f, -1.0f,  0.0f,		0.0f, 1.0f,
+	//	//	 // Верхняя грань
+	//	-0.5f,  0.5f, -0.5f,	0.0f,  1.0f,  0.0f,		0.0f, 1.0f,
+	//	 0.5f,  0.5f, -0.5f,	0.0f,  1.0f,  0.0f,		1.0f, 1.0f,
+	//	 0.5f,  0.5f,  0.5f,	0.0f,  1.0f,  0.0f,		1.0f, 0.0f,
+	//	 0.5f,  0.5f,  0.5f,	0.0f,  1.0f,  0.0f,		1.0f, 0.0f,
+	//	-0.5f,  0.5f,  0.5f,	0.0f,  1.0f,  0.0f,		0.0f, 0.0f,
+	//	-0.5f,  0.5f, -0.5f,	0.0f,  1.0f,  0.0f,		0.0f, 1.0f,
+	//};
+
+	//glm::vec3 pointLightColors[] = {
+	//	glm::vec3(0.3f, 0.1f, 0.1f),
+	//};
+
+	//Texture diffuseMap("Images/container2.png", GL_TEXTURE_2D, 0);
+	//Texture specularMap("Images/container2_specular.png", GL_TEXTURE_2D, 1);
+	//Material material(diffuseMap.getUnit(), specularMap.getUnit(), 32.f);
+
+	//while (!glfwWindowShouldClose(window.getWindowPtr())) {
+	//	GLfloat currentFrame = glfwGetTime();
+	//	deltaTime = currentFrame - lastFrame;
+	//	lastFrame = currentFrame;
+	//	window.processEvents();
+	//	do_movement();
+
+	//	glClearColor(0.f, 0.f, 0.f, 1.0f);
+	//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+	//	/*for (int i = 0; i < 4; ++i)
+	//	{
+	//		pointLightPositions[i].x = sin(glfwGetTime()) * 2.0f;
+	//		pointLightPositions[i].y = cos(glfwGetTime() / 2.0f) * 1.0f;
+	//		pointLightPositions[i].z = sin(glfwGetTime() / 2.0f) * 1.0f;
+	//	}*/
+	//	
+	//	//LightningShader
+	//	lightingShader.get()->Use();
+	//	material.sendToShader(lightingShader.get());
+
+	//	lightingShader.get()->setVec3("viewPos", camera.GetPoistion());
+
+
+	//	//default
+	//	lightingShader.get()->setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
+	//	lightingShader.get()->setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+	//	lightingShader.get()->setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+	//	lightingShader.get()->setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
+	//	for (int i = 0; i < 1; ++i) {
+	//		std::string index = std::to_string(i);
+	//		lightingShader.get()->setVec3("pointLights[" + index + "].position", testLamp.getPosition());
+	//		lightingShader.get()->setVec3("pointLights[" + index + "].ambient", 0.05f, 0.05f, 0.05f);
+	//		lightingShader.get()->setVec3("pointLights[" + index + "].diffuse", 0.8f, 0.8f, 0.8f);
+	//		lightingShader.get()->setVec3("pointLights[" + index + "].specular", 1.0f, 1.0f, 1.0f);
+	//		lightingShader.get()->setFloat("pointLights[" + index + "].constant", 1.0f);
+	//		lightingShader.get()->setFloat("pointLights[" + index + "].linear", 0.09f);
+	//		lightingShader.get()->setFloat("pointLights[" + index + "].quadratic", 0.032f);
+	//	}
+	//	lightingShader.get()->setVec3("spotLight.position", camera.GetPoistion());
+	//	lightingShader.get()->setVec3("spotLight.direction", camera.GetFront());
+	//	lightingShader.get()->setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+	//	lightingShader.get()->setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+	//	lightingShader.get()->setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
+	//	lightingShader.get()->setFloat("spotLight.constant", 1.0f);
+	//	lightingShader.get()->setFloat("spotLight.linear", 0.09f);
+	//	lightingShader.get()->setFloat("spotLight.quadratic", 0.032f);
+
+	//	////horror0.0
+	//	//lightingShader.get()->setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
+	//	//lightingShader.get()->setVec3("dirLight.ambient", 0.0f, 0.0f, 0.0f);
+	//	//lightingShader.get()->setVec3("dirLight.diffuse", 0.05f, 0.05f, 0.05f);
+	//	//lightingShader.get()->setVec3("dirLight.specular", 0.2f, 0.2f, 0.2f);
+	//	//// Point light
+	//	//lightingShader.get()->setVec3("pointLights[0].position", testLamp.getPosition());
+	//	//lightingShader.get()->setVec3("pointLights[0].ambient", pointLightColors[0] * 0.1f);
+	//	//lightingShader.get()->setVec3("pointLights[0].diffuse", pointLightColors[0]);
+	//	//lightingShader.get()->setVec3("pointLights[0].specular", pointLightColors[0]);
+	//	//lightingShader.get()->setFloat("pointLights[0].constant", 1.0f);
+	//	//lightingShader.get()->setFloat("pointLights[0].linear", 0.14f);
+	//	//lightingShader.get()->setFloat("pointLights[0].quadratic", 0.07f);
+	//	//// SpotLight
+	//	//lightingShader.get()->setVec3("spotLight.position",camera.GetPoistion());
+	//	//lightingShader.get()->setVec3("spotLight.direction", camera.GetFront());
+	//	//lightingShader.get()->setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+	//	//lightingShader.get()->setVec3("spotLight.diffuse", pointLightColors[0]);
+	//	//lightingShader.get()->setVec3("spotLight.specular", pointLightColors[0]);
+	//	//lightingShader.get()->setFloat("spotLight.constant", 1.0f);
+	//	//lightingShader.get()->setFloat("spotLight.linear", 0.09f);
+	//	//lightingShader.get()->setFloat("spotLight.quadratic", 0.032f);
+
+	//	lightingShader.get()->setFloat("spotLight.cutOff", glm::cos(glm::radians(radCutOff)));
+	//	lightingShader.get()->setFloat("spotLight.outerCutOff", glm::cos(glm::radians(radOuterCutOff)));
+
+	//	glm::mat4 view;
+	//	glm::mat4 projection;
+
+	//	view = camera.GetViewMatrix();
+	//	glfwGetFramebufferSize(window.getWindowPtr(), &framebufferWidth, &framebufferHeight);
+	//	projection = glm::perspective(glm::radians(camera.GetZoom()), static_cast<GLfloat>(framebufferWidth) / static_cast<GLfloat>(framebufferHeight), 0.1f, 100.0f);
+
+	//	lightingShader.get()->setMat4("view", view);
+	//	lightingShader.get()->setMat4("projection", projection);
+
+	//	diffuseMap.bindTexture();
+	//	specularMap.bindTexture();
+
+	//	testObj.move(glm::vec3(0.0001f, 0.f, 0.f));
+	//	testObj.render(lightingShader.get());
+	//	
+	//	testQuadMesh.scaleUp(glm::vec3(0.00001f));
+	//	testQuadMesh.render(lightingShader.get());
+
+	//	glBindVertexArray(0);
+
+	//	//Lamp shader
+	//	lampShader.get()->Use();
+	//	lampShader.get()->setMat4("view", view);
+	//	lampShader.get()->setMat4("projection", projection);
+
+	//	lampShader.get()->setVec3("lightColor", glm::vec3(1.f));
+
+	//	testLamp.move(glm::vec3(-0.0001f,0.0f,0.0001f));
+
+	//	testLamp.rotate(glm::vec3(0.001f));
+
+	//	testLamp.render(lampShader.get());
+
+	//	glBindVertexArray(0);
+
+	//	glfwSwapBuffers(window.getWindowPtr());
+
+	//	glUseProgram(0);
+	//	glActiveTexture(0);
+	//	glBindTexture(GL_TEXTURE_2D, 0);
+	//}
+
+	//
 
 	return 0;
 }

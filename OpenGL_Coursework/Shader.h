@@ -30,7 +30,7 @@ public:
 	void setMat4(const std::string& name, const glm::mat4& mat, GLboolean transpose = GL_FALSE) const;
 	
 	void Use();
-	void UnUse();
+	void Unuse();
 
 
 private:

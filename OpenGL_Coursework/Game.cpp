@@ -20,6 +20,13 @@ Game::Game(const char* title,
 	initWindow(title, resizable);
 	initGLEW();
 	initOpenGLOptions();
+	initMatrices();
+	initShaders();
+	initTextures();
+	initMaterials();
+	initMeshes();
+	initLights();
+	initUniforms();
 }
 
 Game::~Game()
@@ -48,7 +55,18 @@ void Game::render()
 	glClearColor(0.f, 0.f, 0.f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+	updateUniforms();
 
+	shaders[SHADER_OBJ]->Use();
+	for (auto& meshObj : meshesObjects) {
+		meshObj->render(shaders[SHADER_OBJ].get());
+	}
+	
+
+	shaders[SHADER_LAMP]->Use();
+	for (auto& meshLamp : meshesLamps) {
+		meshLamp->render(shaders[SHADER_LAMP].get());
+	}
 
 	glfwSwapBuffers(window);
 	glFlush();
@@ -92,7 +110,7 @@ void Game::initGLEW()
 {
 	glewExperimental = GL_TRUE;
 
-	if (glewInit() == GL_FALSE) {
+	if (glewInit() != GLEW_OK) {
 		std::cerr << "ERROR::GAME::INIT_GLEW" << '\n';
 		glfwTerminate();
 	}
@@ -122,6 +140,142 @@ void Game::initMatrices()
 		static_cast<GLfloat>(framebufferWidth) / static_cast<GLfloat>(framebufferHeight),
 		nearPlane, farPlane
 	);
+}
+
+void Game::initShaders()
+{
+	shaders.push_back(
+		std::make_unique<Shader>
+		(GL_VERSION_MAJOR, GL_VERSION_MINOR, "objects.vs", "objects.frag")
+	);
+
+	shaders.push_back(
+		std::make_unique<Shader>
+		(GL_VERSION_MAJOR, GL_VERSION_MINOR, "lamp.vs", "lamp.frag")
+	);
+}
+
+void Game::initTextures()
+{
+	textures.push_back(
+		std::make_unique<Texture>
+		("Images/container2.png", GL_TEXTURE_2D, TEX_CONTAINER_DIFMAP)
+	);
+
+	textures.push_back(
+		std::make_unique<Texture>
+		("Images/container2_specular.png", GL_TEXTURE_2D, TEX_CONTAINER_SPECMAP)
+	);
+}
+
+void Game::initMaterials()
+{
+	materials.push_back(
+		std::make_unique<Material>(
+			textures[TEX_CONTAINER_DIFMAP].get()->getUnit(),
+			textures[TEX_CONTAINER_SPECMAP].get()->getUnit(),
+			32.f
+		)
+	);
+}
+
+void Game::initMeshes()
+{
+	Quad quad;
+	Cube cube;
+	//Quad
+	meshesObjects.push_back(
+		std::make_unique<Mesh>(
+			quad,
+			glm::vec3(-3.0f, -1.0f, 0.0f)
+		)
+	);
+
+	//Box
+	meshesObjects.push_back(
+		std::make_unique<Mesh>(
+			cube
+		)
+	);
+
+	//Lamp
+	meshesLamps.push_back(
+		std::make_unique<Mesh>(
+			cube,
+			glm::vec3(-3.0f, 2.0f, 0.0f)
+		)
+	);
+
+
+}
+
+void Game::initLights()
+{
+
+}
+
+void Game::initUniforms()
+{
+	shaders[SHADER_OBJ].get()->setMat4("view", viewMatrix);
+	shaders[SHADER_OBJ].get()->setMat4("projection", projectionMatrix);
+
+	shaders[SHADER_LAMP].get()->setMat4("view", viewMatrix);
+	shaders[SHADER_LAMP].get()->setMat4("projection", projectionMatrix);
+	shaders[SHADER_LAMP].get()->setVec3("lightColor", glm::vec3(1.f));
+
+}
+
+void Game::updateUniforms()
+{
+	shaders[SHADER_OBJ]->Use();
+	materials[0]->sendToShader(shaders[SHADER_OBJ].get());
+
+	shaders[SHADER_OBJ]->setVec3("viewPos", camera.GetPoistion());
+
+
+	//default
+	shaders[SHADER_OBJ]->setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
+	shaders[SHADER_OBJ]->setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+	shaders[SHADER_OBJ]->setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+	shaders[SHADER_OBJ]->setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
+	for (int i = 0; i < meshesLamps.size(); ++i) {
+		std::string index = std::to_string(i);
+		shaders[SHADER_OBJ]->setVec3("pointLights[" + index + "].position", meshesLamps[0]->getPosition());
+		shaders[SHADER_OBJ]->setVec3("pointLights[" + index + "].ambient", 0.05f, 0.05f, 0.05f);
+		shaders[SHADER_OBJ]->setVec3("pointLights[" + index + "].diffuse", 0.8f, 0.8f, 0.8f);
+		shaders[SHADER_OBJ]->setVec3("pointLights[" + index + "].specular", 1.0f, 1.0f, 1.0f);
+		shaders[SHADER_OBJ]->setFloat("pointLights[" + index + "].constant", 1.0f);
+		shaders[SHADER_OBJ]->setFloat("pointLights[" + index + "].linear", 0.09f);
+		shaders[SHADER_OBJ]->setFloat("pointLights[" + index + "].quadratic", 0.032f);
+	}
+	shaders[SHADER_OBJ]->setVec3("spotLight.position", camera.GetPoistion());
+	shaders[SHADER_OBJ]->setVec3("spotLight.direction", camera.GetFront());
+	shaders[SHADER_OBJ]->setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+	shaders[SHADER_OBJ]->setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+	shaders[SHADER_OBJ]->setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
+	shaders[SHADER_OBJ]->setFloat("spotLight.constant", 1.0f);
+	shaders[SHADER_OBJ]->setFloat("spotLight.linear", 0.09f);
+	shaders[SHADER_OBJ]->setFloat("spotLight.quadratic", 0.032f);
+
+	shaders[SHADER_OBJ]->setFloat("spotLight.cutOff", glm::cos(glm::radians(radCutOff)));
+	shaders[SHADER_OBJ]->setFloat("spotLight.outerCutOff", glm::cos(glm::radians(radOuterCutOff)));
+
+	viewMatrix = camera.GetViewMatrix();
+	glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
+	projectionMatrix = glm::perspective(glm::radians(camera.GetZoom()), static_cast<GLfloat>(framebufferWidth) / static_cast<GLfloat>(framebufferHeight), 0.1f, 100.0f);
+
+	shaders[SHADER_OBJ]->setMat4("view", viewMatrix);
+	shaders[SHADER_OBJ]->setMat4("projection", projectionMatrix);
+
+	textures[TEX_CONTAINER_DIFMAP]->bindTexture();
+	textures[TEX_CONTAINER_SPECMAP]->bindTexture();
+
+	shaders[SHADER_LAMP]->Use();
+
+	shaders[SHADER_LAMP]->setMat4("view", viewMatrix);
+	shaders[SHADER_LAMP]->setMat4("projection", projectionMatrix);
+
+	shaders[SHADER_LAMP]->setVec3("lightColor", glm::vec3(1.f));
 }
 
 void Game::framebuffer_resize_callback(GLFWwindow* window, int fbW, int fbH)
