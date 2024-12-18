@@ -85,9 +85,9 @@ private:
 	std::vector<std::unique_ptr<Mesh>> meshesLamps;
 
 	//Lights
-	bool isFlashlightOn = false;
-	float radCutOff = 0.0f;
-	float radOuterCutOff = 0.0f;
+	std::unique_ptr<DirectionLight> directionLight;
+	std::vector<std::unique_ptr<PointLight>> pointLights;
+	std::unique_ptr<SpotLight> spotLight;
 
 	//functions
 	void initGLFW();

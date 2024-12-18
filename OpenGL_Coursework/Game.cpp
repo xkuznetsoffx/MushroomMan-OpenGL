@@ -200,23 +200,23 @@ void Game::initMeshes()
 	//Quad
 	meshesObjects.push_back(
 		std::make_unique<Mesh>(
-			quad,
-			glm::vec3(-3.0f, -1.0f, 0.0f)
+			quad,							//primitive
+			glm::vec3(-3.0f, -1.0f, 0.0f)	//position
 		)
 	);
 
 	//Box
 	meshesObjects.push_back(
 		std::make_unique<Mesh>(
-			cube
+			cube							//primitive
 		)
 	);
 
 	//Lamp
 	meshesLamps.push_back(
 		std::make_unique<Mesh>(
-			cube,
-			glm::vec3(-3.0f, 2.0f, 0.0f)
+			cube,							//primitive
+			glm::vec3(-3.0f, 2.0f, 0.0f)	//position
 		)
 	);
 
@@ -225,7 +225,37 @@ void Game::initMeshes()
 
 void Game::initLights()
 {
+	directionLight = std::make_unique<DirectionLight>(
+		glm::vec3(0.05f, 0.05f, 0.05f),		//ambient
+		glm::vec3(0.4f, 0.4f, 0.4f),		//diffuse
+		glm::vec3(0.5f, 0.5f, 0.5f),		//specular
+		glm::vec3(-0.2f, -1.0f, -0.3f)		//direction
+	);
 
+	pointLights.push_back(
+		std::make_unique<PointLight>(
+			glm::vec3(0.05f, 0.05f, 0.05f), //ambient
+			glm::vec3(0.8f, 0.8f, 0.8f),	//diffuse
+			glm::vec3(1.0f, 1.0f, 1.0f),	//specular
+			meshesLamps[0]->getPosition(),	//position
+			1.0f,							//constant
+			0.09f,							//linear
+			0.032f							//quadratic
+		)
+	);
+
+	spotLight = std::make_unique<SpotLight>(
+		glm::vec3(0.0f, 0.0f, 0.0f),		//ambient			
+		glm::vec3(1.0f, 1.0f, 1.0f),		//diffuse
+		glm::vec3(1.0f, 1.0f, 1.0f),		//specular
+		camera.GetPoistion(),				//position
+		camera.GetFront(),					//direction
+		1.0f,								//constant
+		0.09f,								//linear
+		0.032f,								//quadratic
+		10.0f,								//radCutOff
+		15.0f								//radOuterCutOff
+	);
 }
 
 void Game::initUniforms()
@@ -246,33 +276,15 @@ void Game::updateUniforms()
 
 	shaders[SHADER_OBJ]->setVec3("viewPos", camera.GetPoistion());
 
+	directionLight->sendToShader(shaders[SHADER_OBJ].get());
 
-	//default
-	shaders[SHADER_OBJ]->setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
-	shaders[SHADER_OBJ]->setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
-	shaders[SHADER_OBJ]->setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
-	shaders[SHADER_OBJ]->setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
-	for (int i = 0; i < meshesLamps.size(); ++i) {
-		std::string index = std::to_string(i);
-		shaders[SHADER_OBJ]->setVec3("pointLights[" + index + "].position", meshesLamps[0]->getPosition());
-		shaders[SHADER_OBJ]->setVec3("pointLights[" + index + "].ambient", 0.05f, 0.05f, 0.05f);
-		shaders[SHADER_OBJ]->setVec3("pointLights[" + index + "].diffuse", 0.8f, 0.8f, 0.8f);
-		shaders[SHADER_OBJ]->setVec3("pointLights[" + index + "].specular", 1.0f, 1.0f, 1.0f);
-		shaders[SHADER_OBJ]->setFloat("pointLights[" + index + "].constant", 1.0f);
-		shaders[SHADER_OBJ]->setFloat("pointLights[" + index + "].linear", 0.09f);
-		shaders[SHADER_OBJ]->setFloat("pointLights[" + index + "].quadratic", 0.032f);
+	for (int i = 0; i < pointLights.size(); ++i) {
+		pointLights[i]->sendToShader(shaders[SHADER_OBJ].get());
 	}
-	shaders[SHADER_OBJ]->setVec3("spotLight.position", camera.GetPoistion());
-	shaders[SHADER_OBJ]->setVec3("spotLight.direction", camera.GetFront());
-	shaders[SHADER_OBJ]->setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
-	shaders[SHADER_OBJ]->setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
-	shaders[SHADER_OBJ]->setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
-	shaders[SHADER_OBJ]->setFloat("spotLight.constant", 1.0f);
-	shaders[SHADER_OBJ]->setFloat("spotLight.linear", 0.09f);
-	shaders[SHADER_OBJ]->setFloat("spotLight.quadratic", 0.032f);
 
-	shaders[SHADER_OBJ]->setFloat("spotLight.cutOff", glm::cos(glm::radians(radCutOff)));
-	shaders[SHADER_OBJ]->setFloat("spotLight.outerCutOff", glm::cos(glm::radians(radOuterCutOff)));
+	spotLight->updatePosition(camera.GetPoistion());
+	spotLight->updateDirection(camera.GetFront());
+	spotLight->sendToShader(shaders[SHADER_OBJ].get());
 
 	viewMatrix = camera.GetViewMatrix();
 	glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
@@ -297,17 +309,10 @@ void Game::updateInput(int key, int action)
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		setWindowShouldCloes();
 	if (key == GLFW_KEY_F && action == GLFW_PRESS) {
-		if (isFlashlightOn)
-		{
-			radCutOff = 0.0f;
-			radOuterCutOff = 0.0f;
-			isFlashlightOn = false;
-		}
-		else {
-			radCutOff = 10.0f;
-			radOuterCutOff = 15.0f;
-			isFlashlightOn = true;
-		}
+		if (spotLight->isOn())
+			spotLight->turnOff();
+		else
+			spotLight->turnOn();
 	}
 	if (action == GLFW_PRESS)
 		keys[key] = true;

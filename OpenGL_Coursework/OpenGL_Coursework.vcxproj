@@ -131,14 +131,13 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Primitives.cpp" />
-    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="fragment_core.glsl" />
@@ -153,14 +152,13 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="libs.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Primitives.h" />
-    <ClInclude Include="Renderer.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Vertex.h" />
-    <ClInclude Include="Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -25,3 +25,4 @@
 #include "Camera.h"
 #include "Mesh.h"
 #include "Primitives.h"
+#include "Light.h"
