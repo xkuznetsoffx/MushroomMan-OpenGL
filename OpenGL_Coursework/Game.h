@@ -10,14 +10,25 @@ enum ShaderType
 enum TextureType
 {
 	TEX_CONTAINER_DIFMAP = 0,
-	TEX_CONTAINER_SPECMAP
+	TEX_CONTAINER_SPECMAP,
+	TEX_WALL_DIFMAP,
+	TEX_WALL_SPECMAP
 };
 
-enum MeshEnum
+enum MaterialType {
+	MAT_CONTAINER = 0,
+	MAT_WALL
+};
+
+enum MeshObjectsEnum
 {
 	MESH_QUAD = 0,
-	MESH_BOX,
-	MESH_LAMP
+	MESH_BOX
+};
+
+enum MeshLampsEnum
+{
+	MESH_LAMP = 0
 };
 
 class Game

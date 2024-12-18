@@ -71,10 +71,12 @@ void Game::render()
 	updateUniforms();
 
 	shaders[SHADER_OBJ]->Use();
-	for (auto& meshObj : meshesObjects) {
-		meshObj->render(shaders[SHADER_OBJ].get());
-	}
-	
+
+	materials[MAT_WALL]->sendToShader(shaders[SHADER_OBJ].get());
+	meshesObjects[MESH_QUAD]->render(shaders[SHADER_OBJ].get());
+
+	materials[MAT_CONTAINER]->sendToShader(shaders[SHADER_OBJ].get());
+	meshesObjects[MESH_BOX]->render(shaders[SHADER_OBJ].get());
 
 	shaders[SHADER_LAMP]->Use();
 	for (auto& meshLamp : meshesLamps) {
@@ -181,6 +183,16 @@ void Game::initTextures()
 		std::make_unique<Texture>
 		("Images/container2_specular.png", GL_TEXTURE_2D)
 	);
+
+	textures.push_back(
+		std::make_unique<Texture>
+		("Images/brick_wall_diff.png", GL_TEXTURE_2D)
+	);
+
+	textures.push_back(
+		std::make_unique<Texture>
+		("Images/brick_wall_spec.png", GL_TEXTURE_2D)
+	);
 }
 
 void Game::initMaterials()
@@ -190,6 +202,14 @@ void Game::initMaterials()
 			TEX_CONTAINER_DIFMAP,
 			TEX_CONTAINER_SPECMAP,
 			32.f
+		)
+	);
+
+	materials.push_back(
+		std::make_unique<Material>(
+			TEX_WALL_DIFMAP,
+			TEX_WALL_SPECMAP,
+			16.f
 		)
 	);
 }
@@ -202,7 +222,9 @@ void Game::initMeshes()
 	meshesObjects.push_back(
 		std::make_unique<Mesh>(
 			quad,							//primitive
-			glm::vec3(-3.0f, -1.0f, 0.0f)	//position
+			glm::vec3(-3.0f, -1.0f, -3.0f),	//position
+			glm::vec3(0.f),					//rotation
+			glm::vec3(16.0f, 8.0f, 1.0f)	//scale
 		)
 	);
 
@@ -261,19 +283,17 @@ void Game::initLights()
 
 void Game::initUniforms()
 {
-	shaders[SHADER_OBJ].get()->setMat4("view", viewMatrix);
-	shaders[SHADER_OBJ].get()->setMat4("projection", projectionMatrix);
+	shaders[SHADER_OBJ]->setMat4("view", viewMatrix);
+	shaders[SHADER_OBJ]->setMat4("projection", projectionMatrix);
 
-	shaders[SHADER_LAMP].get()->setMat4("view", viewMatrix);
-	shaders[SHADER_LAMP].get()->setMat4("projection", projectionMatrix);
-	shaders[SHADER_LAMP].get()->setVec3("lightColor", glm::vec3(1.f));
-
+	shaders[SHADER_LAMP]->setMat4("view", viewMatrix);
+	shaders[SHADER_LAMP]->setMat4("projection", projectionMatrix);
+	shaders[SHADER_LAMP]->setVec3("lightColor", glm::vec3(1.f));
 }
 
 void Game::updateUniforms()
 {
 	shaders[SHADER_OBJ]->Use();
-	materials[0]->sendToShader(shaders[SHADER_OBJ].get());
 
 	shaders[SHADER_OBJ]->setVec3("viewPos", camera.GetPoistion());
 
@@ -296,6 +316,9 @@ void Game::updateUniforms()
 
 	textures[TEX_CONTAINER_DIFMAP]->bindTexture(TEX_CONTAINER_DIFMAP);
 	textures[TEX_CONTAINER_SPECMAP]->bindTexture(TEX_CONTAINER_SPECMAP);
+
+	textures[TEX_WALL_DIFMAP]->bindTexture(TEX_WALL_DIFMAP);
+	textures[TEX_WALL_SPECMAP]->bindTexture(TEX_WALL_SPECMAP);
 
 	shaders[SHADER_LAMP]->Use();
 
