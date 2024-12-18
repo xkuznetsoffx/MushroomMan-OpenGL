@@ -114,5 +114,6 @@ public:
 	static void framebuffer_resize_callback(GLFWwindow* window, int fbW, int fbH);
 	static void  key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	static void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+	static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 };
 

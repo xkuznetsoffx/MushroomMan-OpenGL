@@ -37,6 +37,7 @@ Game::Game(const char* title,
 	glfwSetWindowUserPointer(window, this);
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetScrollCallback(window, scroll_callback);
 }
 
 Game::~Game()
@@ -381,6 +382,14 @@ void Game::mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	Game* game = static_cast<Game*>(glfwGetWindowUserPointer(window));
 	if (game) {
 		game->updateMouse(xpos, ypos);
+	}
+}
+
+void Game::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	Game* game = static_cast<Game*>(glfwGetWindowUserPointer(window));
+	if (game) {
+		game->camera.ProcessMouseScroll(yoffset);
 	}
 }
 	
