@@ -1,9 +1,12 @@
-#include "Game.h"
+	#include "Game.h"
 
-Game::Game(const char* title,
+Game::Game(
+	const char* title,
 	const int width, const int height,
 	const int GLmajorVersion, const int GLminorVersion,
-	bool resizable) :
+	bool resizable
+)
+	:
 	WINDOW_WIDTH(width), WINDOW_HEIGHT(height),
 	GL_VERSION_MAJOR(GLmajorVersion), GL_VERSION_MINOR(GLminorVersion),
 	camera(glm::vec3(-2.0f, 0.0f, 6.0f))
@@ -29,6 +32,7 @@ Game::Game(const char* title,
 	initTextures();
 	initMaterials();
 	initMeshes();
+	initModels();
 	initLights();
 	initUniforms();
 
@@ -72,11 +76,12 @@ void Game::render()
 
 	shaders[SHADER_OBJ]->Use();
 
-	materials[MAT_WALL]->sendToShader(shaders[SHADER_OBJ].get());
-	meshesObjects[MESH_QUAD]->render(shaders[SHADER_OBJ].get());
+	models[0]->render(shaders[SHADER_OBJ].get());
 
+	/*textures[TEX_CONTAINER_DIFMAP]->bindTexture(0);
+	textures[TEX_CONTAINER_SPECMAP]->bindTexture(1);
 	materials[MAT_CONTAINER]->sendToShader(shaders[SHADER_OBJ].get());
-	meshesObjects[MESH_BOX]->render(shaders[SHADER_OBJ].get());
+	meshesObjects[MESH_BOX]->render(shaders[SHADER_OBJ].get());*/
 
 	shaders[SHADER_LAMP]->Use();
 	for (auto& meshLamp : meshesLamps) {
@@ -239,11 +244,26 @@ void Game::initMeshes()
 	meshesLamps.push_back(
 		std::make_unique<Mesh>(
 			cube,							//primitive
-			glm::vec3(-3.0f, 2.0f, 0.0f)	//position
+			glm::vec3(-3.0f, 2.0f, 0.0f),	//position
+			glm::vec3(0.0f),				//rotation
+			glm::vec3(0.5f)					//scale
 		)
 	);
 
 
+}
+
+void Game::initModels()
+{
+	models.push_back(
+		std::make_unique<Model>(
+			glm::vec3(3.0f),
+			materials[MAT_CONTAINER].get(),
+			textures[TEX_CONTAINER_DIFMAP].get(),
+			textures[TEX_CONTAINER_SPECMAP].get(),
+			meshesObjects
+		)
+	);
 }
 
 void Game::initLights()
@@ -262,8 +282,8 @@ void Game::initLights()
 			glm::vec3(1.0f, 1.0f, 1.0f),	//specular
 			meshesLamps[0]->getPosition(),	//position
 			1.0f,							//constant
-			0.09f,							//linear
-			0.032f							//quadratic
+			0.18f,							//linear
+			0.064f							//quadratic
 		)
 	);
 
@@ -313,12 +333,6 @@ void Game::updateUniforms()
 
 	shaders[SHADER_OBJ]->setMat4("view", viewMatrix);
 	shaders[SHADER_OBJ]->setMat4("projection", projectionMatrix);
-
-	textures[TEX_CONTAINER_DIFMAP]->bindTexture(TEX_CONTAINER_DIFMAP);
-	textures[TEX_CONTAINER_SPECMAP]->bindTexture(TEX_CONTAINER_SPECMAP);
-
-	textures[TEX_WALL_DIFMAP]->bindTexture(TEX_WALL_DIFMAP);
-	textures[TEX_WALL_SPECMAP]->bindTexture(TEX_WALL_SPECMAP);
 
 	shaders[SHADER_LAMP]->Use();
 

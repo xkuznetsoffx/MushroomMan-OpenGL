@@ -83,22 +83,25 @@ private:
 	bool keys[1024];
 
 	//Shaders
-	std::vector<std::unique_ptr<Shader>> shaders;
+	std::vector<UPtrShader> shaders;
 
 	//Textures
-	std::vector<std::unique_ptr<Texture>> textures;
+	std::vector<UPtrTexture> textures;
 
 	//Materials
-	std::vector<std::unique_ptr<Material>> materials;
+	std::vector<UPtrMaterial> materials;
 
 	//Meshes
-	std::vector<std::unique_ptr<Mesh>> meshesObjects;
-	std::vector<std::unique_ptr<Mesh>> meshesLamps;
+	std::vector<SPtrMesh> meshesObjects;
+	std::vector<UPtrMesh> meshesLamps;
+
+	//Models
+	std::vector<UPtrModel> models;
 
 	//Lights
-	std::unique_ptr<DirectionLight> directionLight;
-	std::vector<std::unique_ptr<PointLight>> pointLights;
-	std::unique_ptr<SpotLight> spotLight;
+	UPtrDirLight directionLight;
+	std::vector<UPtrPointLight> pointLights;
+	UPtrSpotLight spotLight;
 
 	//functions
 	void initGLFW();
@@ -110,6 +113,7 @@ private:
 	void initTextures();
 	void initMaterials();
 	void initMeshes();
+	void initModels();
 	void initLights();
 	void initUniforms();
 

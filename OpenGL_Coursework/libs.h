@@ -23,6 +23,19 @@
 #include <SOIL2/stb_image.h>
 
 #include "Camera.h"
-#include "Mesh.h"
 #include "Primitives.h"
 #include "Light.h"
+#include "Model.h"
+
+using UPtrShader = std::unique_ptr<Shader>;
+using UPtrTexture = std::unique_ptr<Texture>;
+using UPtrMaterial = std::unique_ptr<Material>;
+
+using UPtrMesh = std::unique_ptr<Mesh>;
+using SPtrMesh = std::shared_ptr<Mesh>;
+
+using UPtrModel = std::unique_ptr<Model>;
+
+using UPtrDirLight = std::unique_ptr<DirectionLight>;
+using UPtrPointLight = std::unique_ptr<PointLight>;
+using UPtrSpotLight = std::unique_ptr<SpotLight>;

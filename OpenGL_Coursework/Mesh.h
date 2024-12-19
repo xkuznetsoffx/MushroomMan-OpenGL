@@ -4,8 +4,6 @@
 #include <vector>
 
 #include "Shader.h"
-#include "Texture.h"
-#include "Material.h"
 #include "Primitives.h"
 
 class Mesh
@@ -21,6 +19,8 @@ public:
 		glm::vec3 position = glm::vec3(0.f),
 		glm::vec3 rotation = glm::vec3(0.f),
 		glm::vec3 scale = glm::vec3(1.0f));
+
+	Mesh(const Mesh& obj);
 
 	~Mesh();
 
@@ -38,6 +38,9 @@ public:
 	void update();
 	void render(Shader* shader);
 private:
+	std::vector<Vertex> vertices;
+	std::vector<GLuint> indices;
+
 	unsigned nrOfVertices;
 	unsigned nrOfIndices;
 
@@ -51,7 +54,7 @@ private:
 
 	glm::mat4 model;
 
-	void initVAO (Vertex* vertexArray, GLuint* indexArray);
+	void initVAO();
 
 	void updateUniforms(Shader* shader);
 	void updateModelMatrix();

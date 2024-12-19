@@ -6,7 +6,11 @@ Mesh::Mesh(Primitive& primitive, glm::vec3 position, glm::vec3 rotation, glm::ve
 	this->nrOfVertices = primitive.getNrOfVertices();
 	this->nrOfIndices = primitive.getNrOfIndices();
 
-	initVAO(primitive.getVertices(), primitive.getIndices());
+	vertices.assign(primitive.getVertices(), primitive.getVertices() + nrOfVertices);
+	indices.assign(primitive.getIndices(), primitive.getIndices() + nrOfIndices);
+
+	initVAO();
+	updateModelMatrix();
 }
 
 
@@ -18,7 +22,24 @@ Mesh::Mesh(Vertex* vertexArray, const unsigned nrOfVertices,
 	this->nrOfVertices = nrOfVertices;
 	this->nrOfIndices = nrOfIndices;
 	
-	initVAO(vertexArray, indexArray);
+	vertices.assign(vertexArray, vertexArray + nrOfVertices);
+	indices.assign(indexArray, indexArray + nrOfIndices);
+
+	initVAO();
+	updateModelMatrix();
+}
+
+Mesh::Mesh(const Mesh& obj)
+	: position(obj.position), rotation(obj.rotation), scale(obj.scale)
+{
+	this->nrOfVertices = obj.nrOfVertices;
+	this->nrOfIndices = obj.nrOfIndices;
+
+	vertices.assign(obj.vertices.begin(), obj.vertices.end());
+	indices.assign(obj.indices.begin(), obj.indices.end());
+
+	initVAO();
+	updateModelMatrix();
 }
 
 Mesh::~Mesh()
@@ -68,10 +89,10 @@ void Mesh::scaleUp(const glm::vec3 scale)
 
 void Mesh::render(Shader* shader)
 {
+	shader->Use();
+
 	updateModelMatrix();
 	updateUniforms(shader);
-
-	shader->Use();
 
 	glBindVertexArray(VAO);
 
@@ -82,7 +103,7 @@ void Mesh::render(Shader* shader)
 
 }
 
-void Mesh::initVAO(Vertex* vertexArray, GLuint* indexArray)
+void Mesh::initVAO()
 {
 	//Create VAO
 	glGenVertexArrays(1, &VAO);
@@ -90,13 +111,13 @@ void Mesh::initVAO(Vertex* vertexArray, GLuint* indexArray)
 	//Create VBO
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, nrOfVertices * sizeof(Vertex), vertexArray, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, nrOfVertices * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
 	//Create EBO
 	if (nrOfIndices > 0)
 	{
 		glGenBuffers(1, &EBO);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, nrOfIndices * sizeof(GLuint), indexArray, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, nrOfIndices * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
 	}
 	//Position
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, position));
