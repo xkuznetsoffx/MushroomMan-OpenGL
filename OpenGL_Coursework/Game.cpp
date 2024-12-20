@@ -65,6 +65,8 @@ void Game::update()
 	glfwPollEvents();
 	updateDeltaTime();
 	do_movment();
+
+	models[0]->rotate(glm::vec3(0.0f, 100.f * deltaTime, 0.0f));
 }
 
 void Game::render()
@@ -74,19 +76,19 @@ void Game::render()
 
 	updateUniforms();
 
-	shaders[SHADER_OBJ]->Use();
+
 
 	models[0]->render(shaders[SHADER_OBJ].get());
+	models[1]->render(shaders[SHADER_OBJ].get());
+
 
 	/*textures[TEX_CONTAINER_DIFMAP]->bindTexture(0);
 	textures[TEX_CONTAINER_SPECMAP]->bindTexture(1);
 	materials[MAT_CONTAINER]->sendToShader(shaders[SHADER_OBJ].get());
 	meshesObjects[MESH_BOX]->render(shaders[SHADER_OBJ].get());*/
 
-	shaders[SHADER_LAMP]->Use();
-	for (auto& meshLamp : meshesLamps) {
-		meshLamp->render(shaders[SHADER_LAMP].get());
-	}
+	
+	meshesLamps[0]->render(shaders[SHADER_LAMP].get());
 
 	glfwSwapBuffers(window);
 	glFlush();
@@ -221,6 +223,22 @@ void Game::initMaterials()
 
 void Game::initMeshes()
 {
+	Cube cube;
+	//Lamp
+	meshesLamps.push_back(
+		std::make_unique<Mesh>(
+			cube,							//primitive
+			glm::vec3(-3.0f, 2.0f, 0.0f),	//position
+			glm::vec3(0.0f),				//rotation
+			glm::vec3(0.5f)					//scale
+		)
+	);
+}
+
+void Game::initModels()
+{
+	std::vector<SPtrMesh> meshesObjects;
+
 	Quad quad;
 	Cube cube;
 	//Quad
@@ -240,28 +258,35 @@ void Game::initMeshes()
 		)
 	);
 
-	//Lamp
-	meshesLamps.push_back(
-		std::make_unique<Mesh>(
-			cube,							//primitive
-			glm::vec3(-3.0f, 2.0f, 0.0f),	//position
-			glm::vec3(0.0f),				//rotation
-			glm::vec3(0.5f)					//scale
-		)
-	);
+	
 
-
-}
-
-void Game::initModels()
-{
 	models.push_back(
 		std::make_unique<Model>(
 			glm::vec3(3.0f),
 			materials[MAT_CONTAINER].get(),
 			textures[TEX_CONTAINER_DIFMAP].get(),
 			textures[TEX_CONTAINER_SPECMAP].get(),
-			meshesObjects
+			meshesObjects[MESH_BOX]
+		)
+	);
+
+	models.push_back(
+		std::make_unique<Model>(
+			glm::vec3(1.0f),
+			materials[MAT_WALL].get(),
+			textures[TEX_WALL_DIFMAP].get(),
+			textures[TEX_WALL_SPECMAP].get(),
+			meshesObjects[MESH_QUAD]
+		)
+	);
+
+	models.push_back(
+		std::make_unique<Model>(
+			glm::vec3(1.0f),
+			materials[MAT_WALL].get(),
+			textures[TEX_WALL_DIFMAP].get(),
+			textures[TEX_WALL_SPECMAP].get(),
+			meshesObjects[MESH_QUAD]
 		)
 	);
 }

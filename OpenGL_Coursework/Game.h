@@ -92,7 +92,6 @@ private:
 	std::vector<UPtrMaterial> materials;
 
 	//Meshes
-	std::vector<SPtrMesh> meshesObjects;
 	std::vector<UPtrMesh> meshesLamps;
 
 	//Models

@@ -16,10 +16,21 @@ public:
 		Texture* overrideTexSpec,
 		std::vector<SPtrMesh> meshes
 	);
+
+	Model(
+		glm::vec3 pivotPoint,
+		Material* material,
+		Texture* overrideTexDiff,
+		Texture* overrideTexSpec,
+		SPtrMesh mesh
+	);
+
 	~Model();
 	void update();
 
 	void render(Shader* shader);
+
+	void rotate(glm::vec3 rotation);
 
 private:
 	Material* material;

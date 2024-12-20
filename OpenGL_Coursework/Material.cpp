@@ -14,8 +14,8 @@ Material::~Material()
 
 void Material::sendToShader(Shader* program)
 {
-	program->setInt("material.diffuse", diffuse);
-	program->setInt("material.specular", specular);
+	program->setInt("material.diffuse", 0);
+	program->setInt("material.specular", 1);
 	program->setFloat("material.shininess", shininess);
 
 }

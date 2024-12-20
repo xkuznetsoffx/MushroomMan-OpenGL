@@ -1,7 +1,8 @@
 #include "Texture.h"
 
 Texture::Texture(const char* path, GLenum type) : 
-	textureType(type){
+	textureType(type)
+{
 	unsigned char* image = SOIL_load_image(path, &width, &height, NULL, SOIL_LOAD_RGBA);
 
 	glGenTextures(1, &textureId);

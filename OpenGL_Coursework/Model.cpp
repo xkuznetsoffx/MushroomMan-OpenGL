@@ -22,6 +22,21 @@ Model::Model(
 		
 }
 
+Model::Model(
+	glm::vec3 pivotPoint,
+	Material* material,
+	Texture* overrideTexDiff,
+	Texture* overrideTexSpec,
+	SPtrMesh mesh
+)
+	:
+	pivotPoint(pivotPoint), material(material),
+	overrideTexDiff(overrideTexDiff),
+	overrideTexSpec(overrideTexSpec)
+{
+	this->meshes.push_back(mesh);
+}
+
 Model::~Model()
 {
 }
@@ -46,6 +61,13 @@ void Model::render(Shader* shader)
 		mesh->render(shader);
 	}
 
+}
+
+void Model::rotate(glm::vec3 rotation)
+{
+	for (auto& mesh : meshes) {
+		mesh->rotate(rotation);
+	}
 }
 
 void Model::updateUniforms()
