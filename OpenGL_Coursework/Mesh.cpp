@@ -1,8 +1,17 @@
 #include "Mesh.h"
 
-Mesh::Mesh(Primitive&& primitive, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale) :
-	position(position), rotation(rotation), scale(scale)
+Mesh::Mesh(
+	Primitive&& primitive,
+	glm::vec3 position,
+	glm::vec3 rotation,
+	glm::vec3 scale,
+	glm::vec3 origin
+) 
+	:
+	position(position), rotation(rotation), scale(scale), origin(origin)
 {
+	if (origin == glm::vec3(INFINITY))
+		hasOrigin = false;
 	this->nrOfVertices = primitive.getNrOfVertices();
 	this->nrOfIndices = primitive.getNrOfIndices();
 
@@ -14,10 +23,16 @@ Mesh::Mesh(Primitive&& primitive, glm::vec3 position, glm::vec3 rotation, glm::v
 }
 
 
-Mesh::Mesh(Vertex* vertexArray, const unsigned nrOfVertices,
+Mesh::Mesh(
+	Vertex* vertexArray, const unsigned nrOfVertices,
 	GLuint* indexArray, const unsigned nrOfIndices,
-	glm::vec3 position, glm::vec3 rotation, glm::vec3 scale) : 
-	position(position) , rotation(rotation), scale(scale)
+	glm::vec3 position,
+	glm::vec3 rotation,
+	glm::vec3 scale, 
+	glm::vec3 origin
+) 
+:
+	position(position) , rotation(rotation), scale(scale), origin(origin)
 {
 	this->nrOfVertices = nrOfVertices;
 	this->nrOfIndices = nrOfIndices;
@@ -143,9 +158,15 @@ void Mesh::updateUniforms(Shader* shader)
 void Mesh::updateModelMatrix()
 {
 	this->model = glm::mat4(1.f);
-	this->model = glm::translate(this->model, this->position);
+
+	this->model = glm::translate(this->model, this->origin);
+
 	this->model = glm::rotate(this->model, glm::radians(this->rotation.x), glm::vec3(1.f, 0.f, 0.f));
 	this->model = glm::rotate(this->model, glm::radians(this->rotation.y), glm::vec3(0.f, 1.f, 0.f));
 	this->model = glm::rotate(this->model, glm::radians(this->rotation.z), glm::vec3(0.f, 0.f, 1.f));
+	
+	this->model = glm::translate(this->model, -this->origin);
+
+	this->model = glm::translate(this->model, this->position);
 	this->model = glm::scale(this->model, this->scale);
 }

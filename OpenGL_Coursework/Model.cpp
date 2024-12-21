@@ -14,7 +14,9 @@ Model::Model(
 		(
 			std::make_shared<Mesh>(*mesh)
 		);
+		(*(this->meshes.end() - 1))->move(pivotPoint);
 	}
+
 		
 }
 
@@ -27,6 +29,7 @@ Model::Model(
 	pivotPoint(pivotPoint), material(material)
 {
 	this->meshes.push_back(mesh);
+	(*(this->meshes.end() - 1))->move(pivotPoint);
 }
 
 Model::~Model()

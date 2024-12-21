@@ -9,16 +9,23 @@
 class Mesh
 {
 public:
-	Mesh(Primitive&& primitive, 
+	Mesh(
+		Primitive&& primitive,
 		glm::vec3 position = glm::vec3(0.f),
 		glm::vec3 rotation = glm::vec3(0.f),
-		glm::vec3 scale = glm::vec3(1.0f));
+		glm::vec3 scale = glm::vec3(1.0f),
+		glm::vec3 origin = glm::vec3(0.f)
+	);
 
-	Mesh(Vertex* vertexArray, const unsigned nrOfVertices,
+	Mesh(
+		Vertex* vertexArray, const unsigned nrOfVertices,
 		GLuint* indexArray, const unsigned nrOfIndices,
 		glm::vec3 position = glm::vec3(0.f),
 		glm::vec3 rotation = glm::vec3(0.f),
-		glm::vec3 scale = glm::vec3(1.0f));
+		glm::vec3 scale = glm::vec3(1.0f),
+		glm::vec3 origin = glm::vec3(0.0f)
+	);
+
 
 	Mesh(const Mesh& obj);
 
@@ -51,8 +58,11 @@ private:
 	glm::vec3 position;
 	glm::vec3 rotation;
 	glm::vec3 scale;
+	glm::vec3 origin;
 
 	glm::mat4 model;
+
+	bool hasOrigin = true;
 
 	void initVAO();
 

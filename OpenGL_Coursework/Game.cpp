@@ -66,7 +66,9 @@ void Game::update()
 	updateDeltaTime();
 	do_movment();
 
-	models[0]->rotate(glm::vec3(0.0f, 100.f * deltaTime, 0.0f));
+	models[0]->rotate(glm::vec3(0.f, 0.f, 1.f) * deltaTime * 50.0f);
+	//models[1]->rotate(glm::vec3(0.0f, 0.1f, 0.0f));
+
 }
 
 void Game::render()
@@ -214,7 +216,7 @@ void Game::initMaterials()
 		std::make_unique<Material>(
 			textures[TEX_WALL_DIFMAP].get(),
 			textures[TEX_WALL_SPECMAP].get(),
-			16.f
+			8.f
 		)
 	);
 }
@@ -225,15 +227,17 @@ void Game::initMeshes()
 	meshesLamps.push_back(
 		std::make_unique<Mesh>(
 			Cube(),							//primitive
-			glm::vec3(-3.0f, 2.0f, 0.0f),	//position
+			glm::vec3(-3.0f, -1.0f, 0.0f),	//position
 			glm::vec3(0.0f),				//rotation
-			glm::vec3(0.5f)					//scale
+			glm::vec3(0.25f)					//scale
 		)
 	);
 }
 
 void Game::initModels()
 {
+	//Temporary meshes
+
 	std::vector<SPtrMesh> meshesObjects;
 
 	//Quad
@@ -249,15 +253,19 @@ void Game::initModels()
 	//Box
 	meshesObjects.push_back(
 		std::make_unique<Mesh>(
-			Cube()							//primitive
+			Cube(),							//primitive
+			meshesLamps[0]->getPosition(),				//position
+			glm::vec3(0.0f),				//rotation
+			glm::vec3(1.0f),				//scale
+			meshesLamps[0]->getPosition()	//origin
 		)
 	);
 
-	
+	//Models
 
 	models.push_back(
 		std::make_unique<Model>(
-			glm::vec3(3.0f),
+			glm::vec3(0.0f, -2.0f, 0.0f),
 			materials[MAT_CONTAINER].get(),
 			meshesObjects[MESH_BOX]
 		)
@@ -265,19 +273,12 @@ void Game::initModels()
 
 	models.push_back(
 		std::make_unique<Model>(
-			glm::vec3(1.0f),
+			glm::vec3(0.0f),
 			materials[MAT_WALL].get(),
 			meshesObjects[MESH_QUAD]
 		)
 	);
 
-	models.push_back(
-		std::make_unique<Model>(
-			glm::vec3(1.0f),
-			materials[MAT_WALL].get(),
-			meshesObjects[MESH_QUAD]
-		)
-	);
 }
 
 void Game::initLights()
