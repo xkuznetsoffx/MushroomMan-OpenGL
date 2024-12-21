@@ -36,7 +36,7 @@ int main() {
 		"Coursework",
 		1920, 1080,
 		GLmajorVersion, GLminorVersion,
-		false
+		true
 	);
 
 	while (!game.getWindowShouldClose()) {

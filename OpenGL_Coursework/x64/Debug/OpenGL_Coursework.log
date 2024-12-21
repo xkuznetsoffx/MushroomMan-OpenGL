@@ -1,12 +1,4 @@
-﻿  Game.cpp
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(382,11): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(383,11): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(387,18): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(388,18): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(390,10): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(391,10): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(446,35): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
-  main.cpp
+﻿  main.cpp
 D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\main.cpp(268,11): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
 D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\main.cpp(269,11): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
 D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\main.cpp(273,18): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
@@ -14,11 +6,4 @@ D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\main.cpp(274,18): warning C4244:
 D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\main.cpp(276,10): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
 D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\main.cpp(277,10): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
 D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\main.cpp(283,28): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
-  Material.cpp
-  Generating Code...
-glew32sd.lib(glew.obj) : warning LNK4099: PDB '' was not found with 'glew32sd.lib(glew.obj)' or at ''; linking object as if no debug info
-soil2-debug.lib(SOIL2.obj) : warning LNK4099: PDB '' was not found with 'soil2-debug.lib(SOIL2.obj)' or at ''; linking object as if no debug info
-soil2-debug.lib(image_DXT.obj) : warning LNK4099: PDB '' was not found with 'soil2-debug.lib(image_DXT.obj)' or at ''; linking object as if no debug info
-soil2-debug.lib(wfETC.obj) : warning LNK4099: PDB '' was not found with 'soil2-debug.lib(wfETC.obj)' or at ''; linking object as if no debug info
-soil2-debug.lib(image_helper.obj) : warning LNK4099: PDB '' was not found with 'soil2-debug.lib(image_helper.obj)' or at ''; linking object as if no debug info
   OpenGL_Coursework.vcxproj -> D:\CppProjs\OpenGL_Coursework\x64\Debug\OpenGL_Coursework.exe

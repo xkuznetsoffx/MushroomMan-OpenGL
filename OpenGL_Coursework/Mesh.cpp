@@ -1,6 +1,6 @@
 #include "Mesh.h"
 
-Mesh::Mesh(Primitive& primitive, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale) :
+Mesh::Mesh(Primitive&& primitive, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale) :
 	position(position), rotation(rotation), scale(scale)
 {
 	this->nrOfVertices = primitive.getNrOfVertices();

@@ -221,11 +221,10 @@ void Game::initMaterials()
 
 void Game::initMeshes()
 {
-	Cube cube;
 	//Lamp
 	meshesLamps.push_back(
 		std::make_unique<Mesh>(
-			cube,							//primitive
+			Cube(),							//primitive
 			glm::vec3(-3.0f, 2.0f, 0.0f),	//position
 			glm::vec3(0.0f),				//rotation
 			glm::vec3(0.5f)					//scale
@@ -237,12 +236,10 @@ void Game::initModels()
 {
 	std::vector<SPtrMesh> meshesObjects;
 
-	Quad quad;
-	Cube cube;
 	//Quad
 	meshesObjects.push_back(
 		std::make_unique<Mesh>(
-			quad,							//primitive
+			Quad(),							//primitive
 			glm::vec3(-3.0f, -1.0f, -3.0f),	//position
 			glm::vec3(0.f),					//rotation
 			glm::vec3(16.0f, 8.0f, 1.0f)	//scale
@@ -252,7 +249,7 @@ void Game::initModels()
 	//Box
 	meshesObjects.push_back(
 		std::make_unique<Mesh>(
-			cube							//primitive
+			Cube()							//primitive
 		)
 	);
 
