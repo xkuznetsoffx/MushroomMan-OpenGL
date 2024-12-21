@@ -20,8 +20,6 @@ Shader::Shader(const int versionMajor, const int versionMinor,
 	glDeleteShader(geometryShader);
 }
 
-
-
 Shader::~Shader() {
 	glDeleteProgram(ID);
 }
