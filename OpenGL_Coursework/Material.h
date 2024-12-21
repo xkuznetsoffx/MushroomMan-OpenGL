@@ -13,14 +13,14 @@
 class Material
 {
 public:
-	Material(GLint diffuse, GLint specular, float shininess);
+	Material(Texture* diffuse, Texture* specular, float shininess);
 	~Material();
 
 	void sendToShader(Shader* program);	
 
 private:
-	GLint diffuse;
-	GLint specular;
+	Texture* diffuse;
+	Texture* specular;
 	float shininess;
 };
 

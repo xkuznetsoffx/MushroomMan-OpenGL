@@ -3,14 +3,10 @@
 Model::Model(
 	glm::vec3 pivotPoint,
 	Material* material,
-	Texture* overrideTexDiff,
-	Texture* overrideTexSpec,
 	std::vector<SPtrMesh> meshes
 )
 	:
-	pivotPoint(pivotPoint), material(material), 
-	overrideTexDiff(overrideTexDiff),
-	overrideTexSpec(overrideTexSpec)
+	pivotPoint(pivotPoint), material(material)
 {
 	this->meshes.reserve(meshes.size());
 	for (const auto& mesh : meshes) {
@@ -25,14 +21,10 @@ Model::Model(
 Model::Model(
 	glm::vec3 pivotPoint,
 	Material* material,
-	Texture* overrideTexDiff,
-	Texture* overrideTexSpec,
 	SPtrMesh mesh
 )
 	:
-	pivotPoint(pivotPoint), material(material),
-	overrideTexDiff(overrideTexDiff),
-	overrideTexSpec(overrideTexSpec)
+	pivotPoint(pivotPoint), material(material)
 {
 	this->meshes.push_back(mesh);
 }
@@ -53,9 +45,6 @@ void Model::render(Shader* shader)
 	material->sendToShader(shader);
 
 	shader->Use();
-
-	overrideTexDiff->bindTexture(0);
-	overrideTexSpec->bindTexture(1);
 
 	for (auto& mesh : meshes) {
 		mesh->render(shader);

@@ -76,8 +76,6 @@ void Game::render()
 
 	updateUniforms();
 
-
-
 	models[0]->render(shaders[SHADER_OBJ].get());
 	models[1]->render(shaders[SHADER_OBJ].get());
 
@@ -206,16 +204,16 @@ void Game::initMaterials()
 {
 	materials.push_back(
 		std::make_unique<Material>(
-			TEX_CONTAINER_DIFMAP,
-			TEX_CONTAINER_SPECMAP,
+			textures[TEX_CONTAINER_DIFMAP].get(),
+			textures[TEX_CONTAINER_SPECMAP].get(),
 			32.f
 		)
 	);
 
 	materials.push_back(
 		std::make_unique<Material>(
-			TEX_WALL_DIFMAP,
-			TEX_WALL_SPECMAP,
+			textures[TEX_WALL_DIFMAP].get(),
+			textures[TEX_WALL_SPECMAP].get(),
 			16.f
 		)
 	);
@@ -264,8 +262,6 @@ void Game::initModels()
 		std::make_unique<Model>(
 			glm::vec3(3.0f),
 			materials[MAT_CONTAINER].get(),
-			textures[TEX_CONTAINER_DIFMAP].get(),
-			textures[TEX_CONTAINER_SPECMAP].get(),
 			meshesObjects[MESH_BOX]
 		)
 	);
@@ -274,8 +270,6 @@ void Game::initModels()
 		std::make_unique<Model>(
 			glm::vec3(1.0f),
 			materials[MAT_WALL].get(),
-			textures[TEX_WALL_DIFMAP].get(),
-			textures[TEX_WALL_SPECMAP].get(),
 			meshesObjects[MESH_QUAD]
 		)
 	);
@@ -284,8 +278,6 @@ void Game::initModels()
 		std::make_unique<Model>(
 			glm::vec3(1.0f),
 			materials[MAT_WALL].get(),
-			textures[TEX_WALL_DIFMAP].get(),
-			textures[TEX_WALL_SPECMAP].get(),
 			meshesObjects[MESH_QUAD]
 		)
 	);
