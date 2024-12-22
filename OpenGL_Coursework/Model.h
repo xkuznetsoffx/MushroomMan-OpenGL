@@ -25,7 +25,9 @@ public:
 
 	void render(Shader* shader);
 
-	void rotate(glm::vec3 rotation);
+	void rotate(const glm::vec3 rotation);
+	void move(const glm::vec3 position);
+	void scaleUp(const glm::vec3 scale);
 
 private:
 	Material* material;

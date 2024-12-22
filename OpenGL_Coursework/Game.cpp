@@ -66,7 +66,7 @@ void Game::update()
 	updateDeltaTime();
 	do_movment();
 
-	models[0]->rotate(glm::vec3(0.f, 0.f, 1.f) * deltaTime * 50.0f);
+	models[0]->rotate(glm::vec3(1.f, 0.f, 1.f) * deltaTime * 50.0f);
 	//models[1]->rotate(glm::vec3(0.0f, 0.1f, 0.0f));
 
 }
@@ -239,6 +239,8 @@ void Game::initModels()
 	//Temporary meshes
 
 	std::vector<SPtrMesh> meshesObjects;
+	std::vector<SPtrMesh> boxes;
+
 
 	//Quad
 	meshesObjects.push_back(
@@ -261,13 +263,67 @@ void Game::initModels()
 		)
 	);
 
+	boxes.push_back(
+		std::make_unique<Mesh>(
+			Cube(),							//primitive
+			glm::vec3(0.0f, 0.0f, 0.0f),	//position
+			glm::vec3(0.0f),				//rotation
+			glm::vec3(1.0f),				//scale
+			meshesLamps[0]->getPosition()	//origin
+		)
+	);
+	boxes.push_back(
+		std::make_unique<Mesh>(
+			Cube(),							//primitive
+			glm::vec3(0.0f, 2.0f, 0.0f),	//position
+			glm::vec3(0.0f),				//rotation
+			glm::vec3(1.0f),				//scale
+			meshesLamps[0]->getPosition()	//origin
+		)
+	);
+	boxes.push_back(
+		std::make_unique<Mesh>(
+			Cube(),							//primitive
+			glm::vec3(1.0f, 1.0f, 0.0f),	//position
+			glm::vec3(0.0f),				//rotation
+			glm::vec3(1.0f),				//scale
+			meshesLamps[0]->getPosition()	//origin
+		)
+	);
+	boxes.push_back(
+		std::make_unique<Mesh>(
+			Cube(),							//primitive
+			glm::vec3(-1.0f, 1.0f, 0.0f),	//position
+			glm::vec3(0.0f),				//rotation
+			glm::vec3(1.0f),				//scale
+			meshesLamps[0]->getPosition()	//origin
+		)
+	);
+	boxes.push_back(
+		std::make_unique<Mesh>(
+			Cube(),							//primitive
+			glm::vec3(0.0f, 1.0f, 1.0f),	//position
+			glm::vec3(0.0f),				//rotation
+			glm::vec3(1.0f),				//scale
+			meshesLamps[0]->getPosition()	//origin
+		)
+	);
+	boxes.push_back(
+		std::make_unique<Mesh>(
+			Cube(),							//primitive
+			glm::vec3(0.0f, 1.0f, -1.0f),	//position
+			glm::vec3(0.0f),				//rotation
+			glm::vec3(1.0f),				//scale
+			meshesLamps[0]->getPosition()	//origin
+		)
+	);
 	//Models
 
 	models.push_back(
 		std::make_unique<Model>(
 			glm::vec3(0.0f, -2.0f, 0.0f),
 			materials[MAT_CONTAINER].get(),
-			meshesObjects[MESH_BOX]
+			boxes
 		)
 	);
 

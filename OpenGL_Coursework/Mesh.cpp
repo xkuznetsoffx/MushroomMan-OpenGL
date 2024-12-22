@@ -10,8 +10,6 @@ Mesh::Mesh(
 	:
 	position(position), rotation(rotation), scale(scale), origin(origin)
 {
-	if (origin == glm::vec3(INFINITY))
-		hasOrigin = false;
 	this->nrOfVertices = primitive.getNrOfVertices();
 	this->nrOfIndices = primitive.getNrOfIndices();
 
@@ -45,7 +43,7 @@ Mesh::Mesh(
 }
 
 Mesh::Mesh(const Mesh& obj)
-	: position(obj.position), rotation(obj.rotation), scale(obj.scale)
+	: position(obj.position), rotation(obj.rotation), scale(obj.scale), origin(obj.origin)
 {
 	this->nrOfVertices = obj.nrOfVertices;
 	this->nrOfIndices = obj.nrOfIndices;
@@ -169,4 +167,5 @@ void Mesh::updateModelMatrix()
 
 	this->model = glm::translate(this->model, this->position);
 	this->model = glm::scale(this->model, this->scale);
+	
 }

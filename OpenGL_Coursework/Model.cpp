@@ -9,6 +9,7 @@ Model::Model(
 	pivotPoint(pivotPoint), material(material)
 {
 	this->meshes.reserve(meshes.size());
+
 	for (const auto& mesh : meshes) {
 		this->meshes.emplace_back
 		(
@@ -17,7 +18,6 @@ Model::Model(
 		(*(this->meshes.end() - 1))->move(pivotPoint);
 	}
 
-		
 }
 
 Model::Model(
@@ -47,8 +47,6 @@ void Model::render(Shader* shader)
 
 	material->sendToShader(shader);
 
-	shader->Use();
-
 	for (auto& mesh : meshes) {
 		mesh->render(shader);
 	}
@@ -59,6 +57,20 @@ void Model::rotate(glm::vec3 rotation)
 {
 	for (auto& mesh : meshes) {
 		mesh->rotate(rotation);
+	}
+}
+
+void Model::move(const glm::vec3 position)
+{
+	for (auto& mesh : meshes) {
+		mesh->move(position);
+	}
+}
+
+void Model::scaleUp(const glm::vec3 scale)
+{
+	for (auto& mesh : meshes) {
+		mesh->scaleUp(scale);
 	}
 }
 

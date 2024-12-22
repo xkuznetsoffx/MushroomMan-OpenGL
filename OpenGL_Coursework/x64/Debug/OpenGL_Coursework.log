@@ -1,9 +1,9 @@
 ﻿  Game.cpp
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(380,11): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(381,11): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(385,18): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(386,18): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(388,10): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(389,10): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(444,35): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(436,11): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(437,11): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(441,18): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(442,18): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(444,10): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(445,10): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(500,35): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
   OpenGL_Coursework.vcxproj -> D:\CppProjs\OpenGL_Coursework\x64\Debug\OpenGL_Coursework.exe
