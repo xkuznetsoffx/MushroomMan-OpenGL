@@ -9,7 +9,7 @@ Game::Game(
 	:
 	WINDOW_WIDTH(width), WINDOW_HEIGHT(height),
 	GL_VERSION_MAJOR(GLmajorVersion), GL_VERSION_MINOR(GLminorVersion),
-	camera(glm::vec3(-2.0f, 0.0f, 6.0f))
+	camera(glm::vec3(0.0f, 1.0f, 5.0f))
 {
 	window = NULL;
 
@@ -48,7 +48,7 @@ Game::~Game()
 {
 	glfwDestroyWindow(window);
 	glfwTerminate();
-	delete backpack;
+	delete testModelFromFile;
 }
 
 int Game::getWindowShouldClose()
@@ -66,8 +66,8 @@ void Game::update()
 	glfwPollEvents();
 	updateDeltaTime();
 	do_movment();
-
-	models[0]->rotate(glm::vec3(1.f, 0.f, 1.f) * deltaTime * 50.0f);
+	
+	//models[0]->rotate(glm::vec3(1.f, 0.f, 1.f) * deltaTime * 50.0f);
 	//models[1]->rotate(glm::vec3(0.0f, 0.1f, 0.0f));
 
 }
@@ -82,9 +82,10 @@ void Game::render()
 	models[0]->render(shaders[SHADER_OBJ].get());
 	models[1]->render(shaders[SHADER_OBJ].get());
 
-	glFrontFace(GL_CCW); //kostil!!!
-	backpack->render(shaders[SHADER_OBJ].get());
-	glFrontFace(GL_CW);//kostil!!!
+	//glFrontFace(GL_CCW); //kostil!!!
+	materials[MAT_CONTAINER]->sendToShader(shaders[SHADER_OBJ].get());
+	testModelFromFile->render(shaders[SHADER_OBJ].get());
+	//glFrontFace(GL_CW);//kostil!!!
 
 	/*textures[TEX_CONTAINER_DIFMAP]->bindTexture(0);
 	textures[TEX_CONTAINER_SPECMAP]->bindTexture(1);
@@ -187,22 +188,22 @@ void Game::initTextures()
 {
 	textures.push_back(
 		std::make_unique<Texture>
-		("Images/container2.png", GL_TEXTURE_2D)
+		("assets/textures/container2.png", GL_TEXTURE_2D)
 	);
 
 	textures.push_back(
 		std::make_unique<Texture>
-		("Images/container2_specular.png", GL_TEXTURE_2D)
+		("assets/textures/container2_specular.png", GL_TEXTURE_2D)
 	);
 
 	textures.push_back(
 		std::make_unique<Texture>
-		("Images/brick_wall_diff.png", GL_TEXTURE_2D)
+		("assets/textures/brick_wall_diff.png", GL_TEXTURE_2D)
 	);
 
 	textures.push_back(
 		std::make_unique<Texture>
-		("Images/brick_wall_spec.png", GL_TEXTURE_2D)
+		("assets/textures/brick_wall_spec.png", GL_TEXTURE_2D)
 	);
 }
 
@@ -329,6 +330,7 @@ void Game::initModels()
 			boxes
 		)
 	);
+	models[0]->move(glm::vec3(0.0f, -0.5f, 0.0f));
 
 	models.push_back(
 		std::make_unique<Model>(
@@ -338,12 +340,12 @@ void Game::initModels()
 		)
 	);
 
-	backpack =new Model(
-		"D:\\CppProjs\\OpenGL_Coursework\\OpenGL_Coursework\\Images\\backpack\\Survival_BackPack_2.obj",
-		glm::vec3(2.0f, 0.0f, 0.0f)
+	testModelFromFile =new Model(
+		"assets\\models\\backpack\\Survival_BackPack_2.obj",
+		glm::vec3(0.0f, 0.50f, 0.0f)
 	);
 
-	backpack->scaleUp(glm::vec3(-0.999f));
+	testModelFromFile->scaleUp(glm::vec3(-0.999f));
 }
 
 void Game::initLights()
@@ -467,9 +469,13 @@ void Game::do_movment()
 {
 
 	if (keys[GLFW_KEY_W])
+	{
 		camera.ProcessKeyboard(FORWARD, deltaTime);
+	}
 	if (keys[GLFW_KEY_S])
+	{
 		camera.ProcessKeyboard(BACKWARD, deltaTime);
+	}
 	if (keys[GLFW_KEY_A])
 		camera.ProcessKeyboard(LEFT, deltaTime);
 	if (keys[GLFW_KEY_D])
@@ -478,7 +484,10 @@ void Game::do_movment()
 		camera.ProcessKeyboard(UP, deltaTime);
 	if (keys[GLFW_KEY_LEFT_SHIFT])
 		camera.ProcessKeyboard(DOWN, deltaTime);
-	
+	if (keys[GLFW_KEY_Z])
+		testModelFromFile->rotate(glm::vec3(0.f, -1.f, 0.f) * deltaTime * 50.0f);
+	if (keys[GLFW_KEY_X])
+		testModelFromFile->rotate(glm::vec3(0.f, 1.f, 0.f) * deltaTime * 50.0f);
 }
 
 void Game::framebuffer_resize_callback(GLFWwindow* window, int fbW, int fbH)

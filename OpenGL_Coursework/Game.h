@@ -97,7 +97,7 @@ private:
 	//Models
 	std::vector<UPtrModel> models;
 
-	Model* backpack;//kostil!!!
+	Model* testModelFromFile;//kostil!!!
 
 	//Lights
 	UPtrDirLight directionLight;

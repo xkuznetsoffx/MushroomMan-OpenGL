@@ -5,7 +5,7 @@
 
 #include "Shader.h"
 #include "Primitives.h"
-#include "Texture.h"
+#include "Material.h"
 
 class Mesh
 {
@@ -16,8 +16,7 @@ public:
 		glm::vec3 rotation = glm::vec3(0.f),
 		glm::vec3 scale = glm::vec3(1.0f),
 		glm::vec3 origin = glm::vec3(0.f),
-		Texture* textureDiff = nullptr,
-		Texture* textureSpec = nullptr
+		Material* material = nullptr
 	);
 
 	Mesh(
@@ -27,8 +26,7 @@ public:
 		glm::vec3 rotation = glm::vec3(0.f),
 		glm::vec3 scale = glm::vec3(1.0f),
 		glm::vec3 origin = glm::vec3(0.0f),
-		Texture* textureDiff = nullptr,
-		Texture* textureSpec = nullptr
+		Material* material = nullptr
 	);
 
 
@@ -56,8 +54,7 @@ private:
 	unsigned nrOfVertices;
 	unsigned nrOfIndices;
 
-	Texture* textureDiff;
-	Texture* textureSpec;
+	Material* material;
 
 	GLuint VAO;
 	GLuint VBO;
