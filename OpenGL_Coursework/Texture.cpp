@@ -36,6 +36,11 @@ GLuint Texture::getID() const {
 	return textureId;
 }
 
+//aiString Texture::getPath()
+//{
+//	return path;
+//}
+
 
 void Texture::bindTexture(const GLuint textureUnit) {
 	glActiveTexture(GL_TEXTURE0 + textureUnit);

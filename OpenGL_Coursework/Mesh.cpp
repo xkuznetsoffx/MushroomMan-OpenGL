@@ -5,10 +5,13 @@ Mesh::Mesh(
 	glm::vec3 position,
 	glm::vec3 rotation,
 	glm::vec3 scale,
-	glm::vec3 origin
+	glm::vec3 origin,
+	Texture* textureDiff,
+	Texture* textureSpec
 ) 
 	:
-	position(position), rotation(rotation), scale(scale), origin(origin)
+	position(position), rotation(rotation), scale(scale), origin(origin),
+	textureDiff(textureDiff), textureSpec(textureSpec)
 {
 	this->nrOfVertices = primitive.getNrOfVertices();
 	this->nrOfIndices = primitive.getNrOfIndices();
@@ -27,10 +30,13 @@ Mesh::Mesh(
 	glm::vec3 position,
 	glm::vec3 rotation,
 	glm::vec3 scale, 
-	glm::vec3 origin
+	glm::vec3 origin,
+	Texture* textureDiff,
+	Texture* textureSpec
 ) 
 :
-	position(position) , rotation(rotation), scale(scale), origin(origin)
+	position(position) , rotation(rotation), scale(scale), origin(origin),
+	textureDiff(textureDiff), textureSpec(textureSpec)
 {
 	this->nrOfVertices = nrOfVertices;
 	this->nrOfIndices = nrOfIndices;
@@ -43,7 +49,8 @@ Mesh::Mesh(
 }
 
 Mesh::Mesh(const Mesh& obj)
-	: position(obj.position), rotation(obj.rotation), scale(obj.scale), origin(obj.origin)
+	: position(obj.position), rotation(obj.rotation), scale(obj.scale), origin(obj.origin),
+	textureDiff(obj.textureDiff), textureSpec(obj.textureSpec)
 {
 	this->nrOfVertices = obj.nrOfVertices;
 	this->nrOfIndices = obj.nrOfIndices;
@@ -106,6 +113,15 @@ void Mesh::render(Shader* shader)
 
 	updateModelMatrix();
 	updateUniforms(shader);
+
+	if (textureDiff) {
+		textureDiff->bindTexture(0);
+		if (textureSpec)
+			textureSpec->bindTexture(1);
+		else
+			textureDiff->bindTexture(1);
+	}
+		
 
 	glBindVertexArray(VAO);
 

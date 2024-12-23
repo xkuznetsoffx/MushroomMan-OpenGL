@@ -48,6 +48,7 @@ Game::~Game()
 {
 	glfwDestroyWindow(window);
 	glfwTerminate();
+	delete backpack;
 }
 
 int Game::getWindowShouldClose()
@@ -81,6 +82,9 @@ void Game::render()
 	models[0]->render(shaders[SHADER_OBJ].get());
 	models[1]->render(shaders[SHADER_OBJ].get());
 
+	glFrontFace(GL_CCW); //kostil!!!
+	backpack->render(shaders[SHADER_OBJ].get());
+	glFrontFace(GL_CW);//kostil!!!
 
 	/*textures[TEX_CONTAINER_DIFMAP]->bindTexture(0);
 	textures[TEX_CONTAINER_SPECMAP]->bindTexture(1);
@@ -144,7 +148,7 @@ void Game::initOpenGLOptions()
 
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-	glFrontFace(GL_CW);
+	glFrontFace(GL_CCW);
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -241,7 +245,6 @@ void Game::initModels()
 	std::vector<SPtrMesh> meshesObjects;
 	std::vector<SPtrMesh> boxes;
 
-
 	//Quad
 	meshesObjects.push_back(
 		std::make_unique<Mesh>(
@@ -335,6 +338,12 @@ void Game::initModels()
 		)
 	);
 
+	backpack =new Model(
+		"D:\\CppProjs\\OpenGL_Coursework\\OpenGL_Coursework\\Images\\backpack\\Survival_BackPack_2.obj",
+		glm::vec3(2.0f, 0.0f, 0.0f)
+	);
+
+	backpack->scaleUp(glm::vec3(-0.999f));
 }
 
 void Game::initLights()

@@ -10,6 +10,8 @@
 
 #include <SOIL2/SOIL2.h>
 
+#include "assimp/types.h"
+
 class Texture
 {
 public:
@@ -17,6 +19,7 @@ public:
 	~Texture();
 
 	GLuint getID() const;
+	//aiString getPath();
 
 	void bindTexture(const GLuint textureUnit);
 	void unbindTexture();
@@ -27,6 +30,8 @@ private:
 	GLenum textureType;
 	int width;
 	int height;
+
+	//aiString path;
 };
 
 

@@ -15,7 +15,7 @@ Material::~Material()
 void Material::sendToShader(Shader* program)
 {
 	diffuse->bindTexture(0);
-	diffuse->bindTexture(1);
+	specular->bindTexture(1);
 
 	program->setInt("material.diffuse", 0);
 	program->setInt("material.specular", 1);

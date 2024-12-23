@@ -7,7 +7,7 @@
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
-
+	
 using SPtrMesh = std::shared_ptr<Mesh>;
 
 class Model
@@ -24,6 +24,8 @@ public:
 		Material* material,
 		SPtrMesh mesh
 	);
+	
+	Model(std::string path, glm::vec3 pivotPoint);
 
 	~Model();
 	void update();
@@ -38,6 +40,11 @@ private:
 	Material* material;
 	std::vector<SPtrMesh> meshes;
 	glm::vec3 pivotPoint;
+
+	std::string directory = "";
+
+	void processNode(aiNode* node, const aiScene* scene);
+	Mesh processMesh(aiMesh* mesh, const aiScene* scene);
 
 	void updateUniforms();
 };
