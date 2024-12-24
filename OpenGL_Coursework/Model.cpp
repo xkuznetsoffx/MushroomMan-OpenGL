@@ -47,10 +47,6 @@ Model::Model(std::string path, glm::vec3 pivotPoint)
 	directory = path.substr(0, path.find_last_of('/'));
 
 	processNode(scene->mRootNode, scene);
-
-	for (const auto& mesh : meshes) {
-		mesh->move(pivotPoint);
-	}
 }
 
 Model::~Model()
@@ -100,11 +96,9 @@ void Model::processNode(aiNode* node, const aiScene* scene)
 {
 	for (size_t i = 0; i < node->mNumMeshes; ++i) {
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-		meshes.push_back(
-			std::make_shared<Mesh>(
-				processMesh(mesh, scene)
-			)
-		);
+		Mesh newMesh = processMesh(mesh, scene);
+		meshes.emplace_back(std::make_shared<Mesh>(std::move(newMesh)));
+		(*(this->meshes.end() - 1))->move(pivotPoint);
 	}
 
 	for (size_t i = 0; i < node->mNumChildren; ++i)
@@ -117,36 +111,32 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	std::vector<GLuint> indices;
 	std::vector<Texture> textures;
 
+	vertices.reserve(mesh->mNumVertices);
+	indices.reserve(mesh->mNumFaces * 3);
+
 	for (size_t i = 0; i < mesh->mNumVertices; ++i) {
 		Vertex vertex;
 
-		glm::vec3 vector;
-		vector.x = mesh->mVertices[i].x;
-		vector.y = mesh->mVertices[i].y;
-		vector.z = mesh->mVertices[i].z;
-		vertex.position = vector;
+		const aiVector3D& vertexData = mesh->mVertices[i];
+		const aiVector3D& normalData = mesh->mNormals[i];
 
-		vector.x = mesh->mNormals[i].x;
-		vector.y = mesh->mNormals[i].y;
-		vector.z = mesh->mNormals[i].z;
-		vertex.normal = vector;
+		vertex.position = glm::vec3(vertexData.x, vertexData.y, vertexData.z);
+		vertex.normal = glm::vec3(normalData.x, normalData.y, normalData.z);
 
 		if (mesh->mTextureCoords[0]) {
-			glm::vec2 vec;
-			vec.x = mesh->mTextureCoords[0][i].x;
-			vec.y = mesh->mTextureCoords[0][i].y;
-			vertex.texcoord = vec;
+			const auto& texCoordData = mesh->mTextureCoords[0][i];
+			vertex.texcoord = glm::vec2(texCoordData.x, texCoordData.y);
 		}
-		else
+		else {
 			vertex.texcoord = glm::vec2(0.0f, 0.0f);
+		}
 
 		vertices.push_back(vertex);
 	}
 
 	for (size_t i = 0; i < mesh->mNumFaces; ++i) {
 		aiFace face = mesh->mFaces[i];
-		for (unsigned int j = 0; j < face.mNumIndices; j++)
-			indices.push_back(face.mIndices[j]);
+		indices.insert(indices.end(), face.mIndices, face.mIndices + face.mNumIndices);
 	}
 	
 	//if (mesh->mMaterialIndex >= 0)

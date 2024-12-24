@@ -6,4 +6,9 @@ D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(458,18): warning C4244:
 D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(460,10): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
 D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(461,10): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
 D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(523,35): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+glew32sd.lib(glew.obj) : warning LNK4099: PDB '' was not found with 'glew32sd.lib(glew.obj)' or at ''; linking object as if no debug info
+soil2-debug.lib(SOIL2.obj) : warning LNK4099: PDB '' was not found with 'soil2-debug.lib(SOIL2.obj)' or at ''; linking object as if no debug info
+soil2-debug.lib(image_DXT.obj) : warning LNK4099: PDB '' was not found with 'soil2-debug.lib(image_DXT.obj)' or at ''; linking object as if no debug info
+soil2-debug.lib(wfETC.obj) : warning LNK4099: PDB '' was not found with 'soil2-debug.lib(wfETC.obj)' or at ''; linking object as if no debug info
+soil2-debug.lib(image_helper.obj) : warning LNK4099: PDB '' was not found with 'soil2-debug.lib(image_helper.obj)' or at ''; linking object as if no debug info
   OpenGL_Coursework.vcxproj -> D:\CppProjs\OpenGL_Coursework\x64\Debug\OpenGL_Coursework.exe
