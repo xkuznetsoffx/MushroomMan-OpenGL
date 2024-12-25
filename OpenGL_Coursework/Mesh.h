@@ -51,6 +51,7 @@ private:
 	std::vector<Vertex> vertices;
 	std::vector<GLuint> indices;
 
+
 	unsigned nrOfVertices;
 	unsigned nrOfIndices;
 

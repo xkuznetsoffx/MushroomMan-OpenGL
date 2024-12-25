@@ -340,17 +340,17 @@ void Game::initModels()
 		)
 	);
 
-	/*testModelFromFile =new Model(
-		"assets\\models\\nissan_skyline\\FINAL_MODEL_R3.obj",
+	testModelFromFile =new Model(
+		"assets\\models\\nissan_skyline\\FINAL_MODEL_R3.fbx",
 		glm::vec3(0.0f, 0.50f, 0.0f)
 	);
-	testModelFromFile->scaleUp(glm::vec3(-0.5f));*/
+	testModelFromFile->scaleUp(glm::vec3(-0.5f));
 
-	testModelFromFile = new Model(
-		"assets\\models\\backpack\\Survival_BackPack_2.obj",
-		glm::vec3(0.0f, 0.50f, 0.0f)
+	/*testModelFromFile = new Model(
+		"assets\\models\\backpack\\Survival_BackPack_2.fbx",
+		glm::vec3(0.0f, 1.5f, 0.0f)
 	);
-	testModelFromFile->scaleUp(glm::vec3(-0.999f));
+	testModelFromFile->scaleUp(glm::vec3(-0.999f));*/
 }
 
 void Game::initLights()

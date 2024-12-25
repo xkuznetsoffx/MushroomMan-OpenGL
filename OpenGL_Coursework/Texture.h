@@ -28,6 +28,7 @@ public:
 private:
 	GLuint textureId;
 	GLenum textureType;
+	std::string textureTypeName;
 	int width;
 	int height;
 
