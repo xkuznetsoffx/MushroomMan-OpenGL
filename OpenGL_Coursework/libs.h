@@ -22,6 +22,9 @@
 #include <SOIL2/SOIL2.h>
 #include <SOIL2/stb_image.h>
 
+#include "assimp/types.h"
+#include "assimp/material.h"
+
 #include "Camera.h"
 #include "Primitives.h"
 #include "Light.h"

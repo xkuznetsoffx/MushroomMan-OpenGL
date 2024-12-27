@@ -117,6 +117,8 @@ private:
 	void initModels();
 	void initLights();
 	void initUniforms();
+	void initCallbacks();
+	void initTerrain();
 
 	void updateUniforms();
 

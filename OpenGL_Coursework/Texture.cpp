@@ -1,7 +1,7 @@
 #include "Texture.h"
 
-Texture::Texture(const char* path, GLenum type) : 
-	textureType(type)
+Texture::Texture(const char* path, GLenum type, aiTextureType aiTexTypeName) :
+	path(path), textureType(type), aiTexTypeName(aiTexTypeName)
 {
 	unsigned char* image = SOIL_load_image(path, &width, &height, NULL, SOIL_LOAD_RGBA);
 
@@ -34,6 +34,16 @@ Texture::~Texture()
 
 GLuint Texture::getID() const {
 	return textureId;
+}
+
+aiTextureType Texture::getTypeName() const
+{
+	return aiTexTypeName;
+}
+
+std::string Texture::getPath() const
+{
+	return path;
 }
 
 //aiString Texture::getPath()

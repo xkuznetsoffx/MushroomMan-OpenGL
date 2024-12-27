@@ -11,15 +11,17 @@
 #include <SOIL2/SOIL2.h>
 
 #include "assimp/types.h"
+#include "assimp/material.h"
 
 class Texture
 {
 public:
-	Texture(const char* path, GLenum type);
+	Texture(const char* path, GLenum type, aiTextureType aiTexTypeName);
 	~Texture();
 
 	GLuint getID() const;
-	//aiString getPath();
+	aiTextureType getTypeName() const;
+	std::string getPath() const;
 
 	void bindTexture(const GLuint textureUnit);
 	void unbindTexture();
@@ -27,12 +29,11 @@ public:
 
 private:
 	GLuint textureId;
+	std::string path;
 	GLenum textureType;
-	std::string textureTypeName;
+	aiTextureType aiTexTypeName;
 	int width;
 	int height;
-
-	//aiString path;
 };
 
 

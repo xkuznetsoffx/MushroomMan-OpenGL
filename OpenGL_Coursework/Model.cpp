@@ -32,9 +32,9 @@ Model::Model(
 	(*(this->meshes.end() - 1))->move(pivotPoint);
 }
 
-Model::Model(std::string path, glm::vec3 pivotPoint) 
+Model::Model(std::string path, glm::vec3 pivotPoint, glm::vec3 origin) 
 	:
-	pivotPoint(pivotPoint)
+	pivotPoint(pivotPoint), origin(origin)
 {
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(path, aiProcess_PreTransformVertices | aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices  );
@@ -45,6 +45,8 @@ Model::Model(std::string path, glm::vec3 pivotPoint)
 	}
 
 	directory = path.substr(0, path.find_last_of('/'));
+	if (directory == path)
+		directory = path.substr(0, path.find_last_of('\\'));
 
 	processNode(scene->mRootNode, scene);
 }
@@ -61,6 +63,9 @@ void Model::update()
 void Model::render(Shader* shader)
 {
 	updateUniforms();
+
+	glActiveTexture(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	if(material)
 		material->sendToShader(shader);
@@ -97,8 +102,9 @@ void Model::processNode(aiNode* node, const aiScene* scene)
 	for (size_t i = 0; i < node->mNumMeshes; ++i) {
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 		Mesh newMesh = processMesh(mesh, scene);
-		meshes.emplace_back(std::make_shared<Mesh>(std::move(newMesh)));
-		(*(this->meshes.end() - 1))->move(pivotPoint);
+		newMesh.move(pivotPoint);
+		newMesh.setOrigin(origin);
+		meshes.emplace_back(std::make_shared<Mesh>(newMesh));
 	}
 
 	for (size_t i = 0; i < node->mNumChildren; ++i)
@@ -109,7 +115,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 {
 	std::vector<Vertex> vertices;
 	std::vector<GLuint> indices;
-	std::vector<Texture> textures;
+	std::vector<std::shared_ptr<Texture>> textures;
 
 	vertices.reserve(mesh->mNumVertices);
 	indices.reserve(mesh->mNumFaces * 3);
@@ -141,14 +147,44 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 	
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
+	std::vector<std::shared_ptr<Texture>> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE);
+	textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+	// 2. specular maps
+	std::vector<std::shared_ptr<Texture>> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR);
+	textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+
 	return Mesh(vertices.data(),mesh->mNumVertices,
-		indices.data(), indices.size());
+		indices.data(), indices.size(), textures);
 }
 
-//std::vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
-//{
-//	
-//}
+std::vector<std::shared_ptr<Texture>> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type)
+{
+	std::vector<std::shared_ptr<Texture>> textures;
+	for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
+	{
+		aiString str;
+		mat->GetTexture(type, i, &str);
+		bool skip = false;
+		std::string path = directory + '\\' + str.C_Str();
+		for (unsigned int j = 0; j < textures_loaded.size(); j++)
+		{
+			if (textures_loaded[j]->getPath() == path)
+			{
+				textures.push_back(textures_loaded[j]);
+				skip = true;
+				break;
+			}
+		}
+		if (!skip)
+		{
+			auto texture = std::make_shared<Texture>(path.c_str(), GL_TEXTURE_2D, type);
+			textures.push_back(texture);
+			textures_loaded.push_back(texture);
+		}	
+	}
+	return textures;
+}
+
 
 void Model::updateUniforms()
 {

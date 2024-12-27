@@ -9,7 +9,7 @@ Game::Game(
 	:
 	WINDOW_WIDTH(width), WINDOW_HEIGHT(height),
 	GL_VERSION_MAJOR(GLmajorVersion), GL_VERSION_MINOR(GLminorVersion),
-	camera(glm::vec3(0.0f, 1.0f, 5.0f))
+	camera(glm::vec3(-3.25f, -0.65f, 6.5f))
 {
 	window = NULL;
 
@@ -35,13 +35,8 @@ Game::Game(
 	initModels();
 	initLights();
 	initUniforms();
-
-
-	//callback functions
-	glfwSetWindowUserPointer(window, this);
-	glfwSetKeyCallback(window, key_callback);
-	glfwSetCursorPosCallback(window, mouse_callback);
-	glfwSetScrollCallback(window, scroll_callback);
+	initCallbacks();
+	
 }
 
 Game::~Game()
@@ -69,7 +64,7 @@ void Game::update()
 	
 	//models[0]->rotate(glm::vec3(1.f, 0.f, 1.f) * deltaTime * 50.0f);
 	//models[1]->rotate(glm::vec3(0.0f, 0.1f, 0.0f));
-
+	//testModelFromFile->rotate(glm::vec3(0.0f, 0.1f, 0.0f));
 }
 
 void Game::render()
@@ -83,7 +78,7 @@ void Game::render()
 	models[1]->render(shaders[SHADER_OBJ].get());
 
 	//glFrontFace(GL_CCW); //kostil!!!
-	materials[MAT_CONTAINER]->sendToShader(shaders[SHADER_OBJ].get());
+	//materials[MAT_CONTAINER]->sendToShader(shaders[SHADER_OBJ].get());
 	testModelFromFile->render(shaders[SHADER_OBJ].get());
 	//glFrontFace(GL_CW);//kostil!!!
 
@@ -188,22 +183,22 @@ void Game::initTextures()
 {
 	textures.push_back(
 		std::make_unique<Texture>
-		("assets/textures/container2.png", GL_TEXTURE_2D)
+		("assets/textures/container2.png", GL_TEXTURE_2D, aiTextureType_DIFFUSE)
 	);
 
 	textures.push_back(
 		std::make_unique<Texture>
-		("assets/textures/container2_specular.png", GL_TEXTURE_2D)
+		("assets/textures/container2_specular.png", GL_TEXTURE_2D, aiTextureType_SPECULAR)
 	);
 
 	textures.push_back(
 		std::make_unique<Texture>
-		("assets/textures/brick_wall_diff.png", GL_TEXTURE_2D)
+		("assets/textures/brick_wall_diff.png", GL_TEXTURE_2D, aiTextureType_DIFFUSE)
 	);
 
 	textures.push_back(
 		std::make_unique<Texture>
-		("assets/textures/brick_wall_spec.png", GL_TEXTURE_2D)
+		("assets/textures/brick_wall_spec.png", GL_TEXTURE_2D, aiTextureType_SPECULAR)
 	);
 }
 
@@ -330,7 +325,7 @@ void Game::initModels()
 			boxes
 		)
 	);
-	models[0]->move(glm::vec3(0.0f, -0.5f, 0.0f));
+	models[0]->move(glm::vec3(-6.0f, -0.5f, 0.0f));
 
 	models.push_back(
 		std::make_unique<Model>(
@@ -340,17 +335,42 @@ void Game::initModels()
 		)
 	);
 
-	testModelFromFile =new Model(
+	
+	/*testModelFromFile = new Model(
+		"assets\\models\\pole_dance\\scene.gltf",
+		glm::vec3(0.0f, -0.25f, 0.0f)
+	);*/
+
+	/*testModelFromFile = new Model(
+			"assets\\models\\sorceress\\scene.gltf",
+			glm::vec3(0.0f, 1.f, 0.0f)
+		);
+	testModelFromFile->scaleUp(glm::vec3(-0.5f));*/
+
+	/*testModelFromFile = new Model(
+		"assets\\models\\alex\\scene.gltf",
+		glm::vec3(0.0f, 0.f, 0.0f)
+	);
+	testModelFromFile->scaleUp(glm::vec3(-0.5f));*/
+
+	/*testModelFromFile = new Model(
+		"assets\\models\\nissan_skyline\\scene.gltf",
+		glm::vec3(0.0f, 0.50f, 0.0f)
+	);
+	testModelFromFile->scaleUp(glm::vec3(50.0f));*/
+
+	/*testModelFromFile =new Model(
 		"assets\\models\\nissan_skyline\\FINAL_MODEL_R3.fbx",
 		glm::vec3(0.0f, 0.50f, 0.0f)
 	);
-	testModelFromFile->scaleUp(glm::vec3(-0.5f));
+	testModelFromFile->scaleUp(glm::vec3(-0.5f));*/
 
-	/*testModelFromFile = new Model(
-		"assets\\models\\backpack\\Survival_BackPack_2.fbx",
-		glm::vec3(0.0f, 1.5f, 0.0f)
+	testModelFromFile = new Model(
+		"assets\\models\\backpack\\scene.gltf",
+		glm::vec3(-2.f, -0.5f, 0.0f),
+		glm::vec3(-2.f, -0.5f, 0.0f)
 	);
-	testModelFromFile->scaleUp(glm::vec3(-0.999f));*/
+	testModelFromFile->scaleUp(glm::vec3(-0.9985f));
 }
 
 void Game::initLights()
@@ -398,6 +418,19 @@ void Game::initUniforms()
 	shaders[SHADER_LAMP]->setVec3("lightColor", glm::vec3(1.f));
 }
 
+void Game::initCallbacks()
+{
+	glfwSetWindowUserPointer(window, this);
+	glfwSetKeyCallback(window, key_callback);
+	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetScrollCallback(window, scroll_callback);
+}
+
+void Game::initTerrain()
+{
+	
+}
+
 void Game::updateUniforms()
 {
 	shaders[SHADER_OBJ]->Use();
@@ -439,6 +472,11 @@ void Game::updateInput(int key, int action)
 		else
 			spotLight->turnOn();
 	}
+	if (key == GLFW_KEY_TAB && action == GLFW_PRESS)
+		std::cout <<
+		camera.GetPoistion().x << ' ' <<
+		camera.GetPoistion().y << ' ' <<
+		camera.GetPoistion().z << '\n';
 	if (action == GLFW_PRESS)
 		keys[key] = true;
 	else if (action == GLFW_RELEASE)

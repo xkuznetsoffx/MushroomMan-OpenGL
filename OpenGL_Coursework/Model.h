@@ -25,7 +25,11 @@ public:
 		SPtrMesh mesh
 	);
 	
-	Model(std::string path, glm::vec3 pivotPoint);
+	Model(
+		std::string path,
+		glm::vec3 pivotPoint,
+		glm::vec3 origin = glm::vec3(0.f)
+	);
 
 	~Model();
 	void update();
@@ -40,12 +44,15 @@ private:
 	Material* material;
 	std::vector<SPtrMesh> meshes;
 	glm::vec3 pivotPoint;
+	glm::vec3 origin;
 
 	std::string directory;
 
+	std::vector<std::shared_ptr<Texture>> textures_loaded;
+
 	void processNode(aiNode* node, const aiScene* scene);
 	Mesh processMesh(aiMesh* mesh, const aiScene* scene);
-	std::vector<Texture> loadMaterialTextures(aiMaterial * mat, aiTextureType type, std::string typeName);
+	std::vector<std::shared_ptr<Texture>> loadMaterialTextures(aiMaterial * mat, aiTextureType type);
 
 	void updateUniforms();
 };
