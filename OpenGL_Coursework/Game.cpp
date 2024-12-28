@@ -1,4 +1,6 @@
-	#include "Game.h"
+#include "Game.h"
+
+#define DEBUG
 
 Game::Game(
 	const char* title,
@@ -33,6 +35,7 @@ Game::Game(
 	initMaterials();
 	initMeshes();
 	initModels();
+	initTerrain();
 	initLights();
 	initUniforms();
 	initCallbacks();
@@ -74,19 +77,14 @@ void Game::render()
 
 	updateUniforms();
 
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	terrain->render();
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
 	models[0]->render(shaders[SHADER_OBJ].get());
 	models[1]->render(shaders[SHADER_OBJ].get());
 
-	//glFrontFace(GL_CCW); //kostil!!!
-	//materials[MAT_CONTAINER]->sendToShader(shaders[SHADER_OBJ].get());
 	testModelFromFile->render(shaders[SHADER_OBJ].get());
-	//glFrontFace(GL_CW);//kostil!!!
-
-	/*textures[TEX_CONTAINER_DIFMAP]->bindTexture(0);
-	textures[TEX_CONTAINER_SPECMAP]->bindTexture(1);
-	materials[MAT_CONTAINER]->sendToShader(shaders[SHADER_OBJ].get());
-	meshesObjects[MESH_BOX]->render(shaders[SHADER_OBJ].get());*/
-
 	
 	meshesLamps[0]->render(shaders[SHADER_LAMP].get());
 
@@ -347,11 +345,11 @@ void Game::initModels()
 		);
 	testModelFromFile->scaleUp(glm::vec3(-0.5f));*/
 
-	/*testModelFromFile = new Model(
+	testModelFromFile = new Model(
 		"assets\\models\\alex\\scene.gltf",
 		glm::vec3(0.0f, 0.f, 0.0f)
 	);
-	testModelFromFile->scaleUp(glm::vec3(-0.5f));*/
+	testModelFromFile->scaleUp(glm::vec3(-0.5f));
 
 	/*testModelFromFile = new Model(
 		"assets\\models\\nissan_skyline\\scene.gltf",
@@ -365,12 +363,12 @@ void Game::initModels()
 	);
 	testModelFromFile->scaleUp(glm::vec3(-0.5f));*/
 
-	testModelFromFile = new Model(
+	/*testModelFromFile = new Model(
 		"assets\\models\\backpack\\scene.gltf",
 		glm::vec3(-2.f, -0.5f, 0.0f),
 		glm::vec3(-2.f, -0.5f, 0.0f)
 	);
-	testModelFromFile->scaleUp(glm::vec3(-0.9985f));
+	testModelFromFile->scaleUp(glm::vec3(-0.9985f));*/
 }
 
 void Game::initLights()
@@ -428,7 +426,7 @@ void Game::initCallbacks()
 
 void Game::initTerrain()
 {
-	
+	terrain = std::make_shared<Terrain>(200, 200, 0.05f);
 }
 
 void Game::updateUniforms()
@@ -472,11 +470,15 @@ void Game::updateInput(int key, int action)
 		else
 			spotLight->turnOn();
 	}
+
+#ifdef DEBUG
 	if (key == GLFW_KEY_TAB && action == GLFW_PRESS)
-		std::cout <<
+		std::cout << "Camera position: " <<
 		camera.GetPoistion().x << ' ' <<
 		camera.GetPoistion().y << ' ' <<
 		camera.GetPoistion().z << '\n';
+#endif // DEBUG
+	
 	if (action == GLFW_PRESS)
 		keys[key] = true;
 	else if (action == GLFW_RELEASE)

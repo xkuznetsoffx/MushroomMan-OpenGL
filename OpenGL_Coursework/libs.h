@@ -29,6 +29,7 @@
 #include "Primitives.h"
 #include "Light.h"
 #include "Model.h"
+#include "Terrain.h"
 
 using UPtrShader = std::unique_ptr<Shader>;
 using UPtrTexture = std::unique_ptr<Texture>;

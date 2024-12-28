@@ -96,6 +96,8 @@ private:
 
 	//Models
 	std::vector<UPtrModel> models;
+	
+	std::shared_ptr<Terrain> terrain;
 
 	Model* testModelFromFile;//kostil!!!
 
