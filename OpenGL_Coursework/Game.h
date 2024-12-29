@@ -4,7 +4,8 @@
 enum ShaderType
 {
 	SHADER_OBJ = 0,
-	SHADER_LAMP = 1
+	SHADER_LAMP,
+	SHADER_TERRAIN
 };
 
 enum TextureType
@@ -12,7 +13,8 @@ enum TextureType
 	TEX_CONTAINER_DIFMAP = 0,
 	TEX_CONTAINER_SPECMAP,
 	TEX_WALL_DIFMAP,
-	TEX_WALL_SPECMAP
+	TEX_WALL_SPECMAP,
+	TEX_GRASS
 };
 
 enum MaterialType {
@@ -86,7 +88,7 @@ private:
 	std::vector<UPtrShader> shaders;
 
 	//Textures
-	std::vector<UPtrTexture> textures;
+	std::vector<std::shared_ptr<Texture>> textures;
 
 	//Materials
 	std::vector<UPtrMaterial> materials;

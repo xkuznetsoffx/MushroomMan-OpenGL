@@ -76,10 +76,8 @@ void Game::render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	updateUniforms();
-
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	terrain->render();
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	
+	terrain->render(shaders[SHADER_OBJ].get());
 
 	models[0]->render(shaders[SHADER_OBJ].get());
 	models[1]->render(shaders[SHADER_OBJ].get());
@@ -175,28 +173,37 @@ void Game::initShaders()
 		std::make_unique<Shader>
 		(GL_VERSION_MAJOR, GL_VERSION_MINOR, "lamp.vs", "lamp.frag")
 	);
+	
+	shaders.push_back(
+		std::make_unique<Shader>
+		(GL_VERSION_MAJOR, GL_VERSION_MINOR, "terrain_shader.vs", "terrain_shader.frag")
+	);
 }
 
 void Game::initTextures()
 {
 	textures.push_back(
-		std::make_unique<Texture>
+		std::make_shared<Texture>
 		("assets/textures/container2.png", GL_TEXTURE_2D, aiTextureType_DIFFUSE)
 	);
 
 	textures.push_back(
-		std::make_unique<Texture>
+		std::make_shared<Texture>
 		("assets/textures/container2_specular.png", GL_TEXTURE_2D, aiTextureType_SPECULAR)
 	);
 
 	textures.push_back(
-		std::make_unique<Texture>
+		std::make_shared<Texture>
 		("assets/textures/brick_wall_diff.png", GL_TEXTURE_2D, aiTextureType_DIFFUSE)
 	);
 
 	textures.push_back(
-		std::make_unique<Texture>
+		std::make_shared<Texture>
 		("assets/textures/brick_wall_spec.png", GL_TEXTURE_2D, aiTextureType_SPECULAR)
+	);
+	textures.push_back(
+		std::make_shared<Texture>
+		("assets/textures/grass-1.jpg", GL_TEXTURE_2D, aiTextureType_DIFFUSE)
 	);
 }
 
@@ -414,6 +421,9 @@ void Game::initUniforms()
 	shaders[SHADER_LAMP]->setMat4("view", viewMatrix);
 	shaders[SHADER_LAMP]->setMat4("projection", projectionMatrix);
 	shaders[SHADER_LAMP]->setVec3("lightColor", glm::vec3(1.f));
+
+	shaders[SHADER_TERRAIN]->setMat4("view", viewMatrix);
+	shaders[SHADER_TERRAIN]->setMat4("projection", projectionMatrix);
 }
 
 void Game::initCallbacks()
@@ -426,7 +436,7 @@ void Game::initCallbacks()
 
 void Game::initTerrain()
 {
-	terrain = std::make_shared<Terrain>(200, 200, 0.05f);
+	terrain = std::make_shared<Terrain>(200, 200, 0.05f, textures[TEX_GRASS]);
 }
 
 void Game::updateUniforms()

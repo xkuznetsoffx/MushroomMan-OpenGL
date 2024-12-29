@@ -2,17 +2,19 @@
 
 #include <vector>  
 #include <iostream>  
+#include <memory>
 #include "../packages/FastNoiseLite.h"
 
+#include "Texture.h"
 #include "Vertex.h"
 #include "Shader.h"
 
 class Terrain
 {
 public:
-	Terrain(int width, int height, float scale);
+	Terrain(int width, int height, float scale, std::shared_ptr<Texture> texture);
 	~Terrain();
-	void render();
+	void render(Shader* shader);
 
 	void generateTerrain();
 
@@ -21,6 +23,8 @@ private:
 	int width;
 	int height;
 	float scale;
+
+	std::shared_ptr<Texture> texture;
 
 	GLuint VAO;
 	GLuint VBO;
