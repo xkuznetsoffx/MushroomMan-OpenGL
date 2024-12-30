@@ -85,8 +85,9 @@ void Model::rotate(glm::vec3 rotation)
 
 void Model::move(const glm::vec3 position)
 {
+	pivotPoint += position;
 	for (auto& mesh : meshes) {
-		mesh->move(position);
+		mesh->setPosition(pivotPoint);
 	}
 }
 
@@ -95,6 +96,20 @@ void Model::scaleUp(const glm::vec3 scale)
 	for (auto& mesh : meshes) {
 		mesh->scaleUp(scale);
 	}
+}
+
+const glm::vec3 Model::getPosition()
+{
+	return pivotPoint;
+}
+
+void Model::setYCoord(float y)
+{
+	pivotPoint = glm::vec3(
+		pivotPoint.x,
+		y,
+		pivotPoint.z
+	);
 }
 
 void Model::processNode(aiNode* node, const aiScene* scene)

@@ -11,7 +11,7 @@ Game::Game(
 	:
 	WINDOW_WIDTH(width), WINDOW_HEIGHT(height),
 	GL_VERSION_MAJOR(GLmajorVersion), GL_VERSION_MINOR(GLminorVersion),
-	camera(glm::vec3(-3.25f, -0.65f, 6.5f))
+	camera(glm::vec3(4.3f, 2.3f, 4.f))
 {
 	window = NULL;
 
@@ -19,7 +19,7 @@ Game::Game(
 	framebufferHeight = height;
 
 	nearPlane = 0.1f;
-	farPlane = 100.0f;
+	farPlane = 1000.0f;
 
 	lastX = static_cast<GLfloat>(WINDOW_WIDTH / 2);
 	lastY = static_cast<GLfloat>(WINDOW_HEIGHT / 2);
@@ -64,7 +64,13 @@ void Game::update()
 	glfwPollEvents();
 	updateDeltaTime();
 	do_movment();
-	
+	float yMoveCoord = terrain->getHeight(
+		testModelFromFile->getPosition().x,
+		testModelFromFile->getPosition().z
+	);
+
+	testModelFromFile->move(glm::vec3(1.0f, 0, 1.0f) * deltaTime * 0.5f);
+	testModelFromFile->setYCoord(yMoveCoord);
 	//models[0]->rotate(glm::vec3(1.f, 0.f, 1.f) * deltaTime * 50.0f);
 	//models[1]->rotate(glm::vec3(0.0f, 0.1f, 0.0f));
 	//testModelFromFile->rotate(glm::vec3(0.0f, 0.1f, 0.0f));
@@ -173,11 +179,7 @@ void Game::initShaders()
 		std::make_unique<Shader>
 		(GL_VERSION_MAJOR, GL_VERSION_MINOR, "lamp.vs", "lamp.frag")
 	);
-	
-	shaders.push_back(
-		std::make_unique<Shader>
-		(GL_VERSION_MAJOR, GL_VERSION_MINOR, "terrain_shader.vs", "terrain_shader.frag")
-	);
+
 }
 
 void Game::initTextures()
@@ -203,7 +205,11 @@ void Game::initTextures()
 	);
 	textures.push_back(
 		std::make_shared<Texture>
-		("assets/textures/grass-1.jpg", GL_TEXTURE_2D, aiTextureType_DIFFUSE)
+		("assets/textures/grass-7_diff.jpg", GL_TEXTURE_2D, aiTextureType_DIFFUSE)
+	);
+	textures.push_back(
+		std::make_shared<Texture>
+		("assets/textures/grass-7_spec.jpg", GL_TEXTURE_2D, aiTextureType_DIFFUSE)
 	);
 }
 
@@ -221,6 +227,13 @@ void Game::initMaterials()
 		std::make_unique<Material>(
 			textures[TEX_WALL_DIFMAP].get(),
 			textures[TEX_WALL_SPECMAP].get(),
+			8.f
+		)
+	);
+	materials.push_back(
+		std::make_unique<Material>(
+			textures[TEX_GRASS_DIFF].get(),
+			textures[TEX_GRASS_SPEC].get(),
 			8.f
 		)
 	);
@@ -383,7 +396,7 @@ void Game::initLights()
 	directionLight = std::make_unique<DirectionLight>(
 		glm::vec3(0.05f, 0.05f, 0.05f),		//ambient
 		glm::vec3(0.4f, 0.4f, 0.4f),		//diffuse
-		glm::vec3(0.5f, 0.5f, 0.5f),		//specular
+		glm::vec3(0.1f, 0.1f, 0.1f),		//specular
 		glm::vec3(-0.2f, -1.0f, -0.3f)		//direction
 	);
 
@@ -421,9 +434,6 @@ void Game::initUniforms()
 	shaders[SHADER_LAMP]->setMat4("view", viewMatrix);
 	shaders[SHADER_LAMP]->setMat4("projection", projectionMatrix);
 	shaders[SHADER_LAMP]->setVec3("lightColor", glm::vec3(1.f));
-
-	shaders[SHADER_TERRAIN]->setMat4("view", viewMatrix);
-	shaders[SHADER_TERRAIN]->setMat4("projection", projectionMatrix);
 }
 
 void Game::initCallbacks()
@@ -436,7 +446,7 @@ void Game::initCallbacks()
 
 void Game::initTerrain()
 {
-	terrain = std::make_shared<Terrain>(200, 200, 0.05f, textures[TEX_GRASS]);
+	terrain = std::make_shared<Terrain>(100, 100, 0.05f, materials[2].get());
 }
 
 void Game::updateUniforms()
@@ -457,7 +467,7 @@ void Game::updateUniforms()
 
 	viewMatrix = camera.GetViewMatrix();
 	glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
-	projectionMatrix = glm::perspective(glm::radians(camera.GetZoom()), static_cast<GLfloat>(framebufferWidth) / static_cast<GLfloat>(framebufferHeight), 0.1f, 100.0f);
+	projectionMatrix = glm::perspective(glm::radians(camera.GetZoom()), static_cast<GLfloat>(framebufferWidth) / static_cast<GLfloat>(framebufferHeight), nearPlane, farPlane);
 
 	shaders[SHADER_OBJ]->setMat4("view", viewMatrix);
 	shaders[SHADER_OBJ]->setMat4("projection", projectionMatrix);

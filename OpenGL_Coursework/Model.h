@@ -40,6 +40,9 @@ public:
 	void move(const glm::vec3 position);
 	void scaleUp(const glm::vec3 scale);
 
+	const glm::vec3 getPosition();
+	void setYCoord(float y);
+
 private:
 	Material* material;
 	std::vector<SPtrMesh> meshes;

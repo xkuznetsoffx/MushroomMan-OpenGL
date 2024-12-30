@@ -1,8 +1,8 @@
 #include "Terrain.h"
 
-Terrain::Terrain(int width, int height, float scale, std::shared_ptr<Texture> texture)
+Terrain::Terrain(int width, int height, float scale, Material* material)
 	:
-	width(width), height(height), scale(scale), texture(texture)
+	width(width), height(height), scale(scale), material(material)
 {
 	heightMap.resize(width * height);
 	generateTerrain();
@@ -22,15 +22,29 @@ void Terrain::render(Shader* shader)
 
 	shader->setMat4("model", glm::mat4(1.f));
 
-	shader->setInt("material.diffuse", 0);
-	shader->setInt("material.specular", 0);
-	shader->setFloat("material.shininess", 16.f);
+	glActiveTexture(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
-	texture->bindTexture(0);
+	material->sendToShader(shader);
 
 	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, (width - 1) * (height - 1) * 6, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, nrOfIndices, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
+}
+
+float Terrain::getHeight(float x, float z)
+{
+    if (!isCoordInMap(x, z)) return 0.f;
+   
+    float height = 0;
+    int intX = static_cast<int>(x);
+    int intZ = static_cast<int>(z);
+
+    float h1 = ((1 - (x - intX)) * heightMap[intZ * width + intX] + (x - intX) * heightMap[intZ * width + (intX + 1)]);
+    float h2 = ((1 - (x - intX)) * heightMap[(intZ+1) * width + intX] + (x - intX) * heightMap[(intZ+1) * width + (intX + 1)]);
+
+
+    return (1-(z-intZ))*h1 + (z-intZ)*h2;
 }
 
 void Terrain::generateTerrain()
@@ -51,70 +65,86 @@ void Terrain::generateTerrain()
 
 void Terrain::initVAO()
 {
-	std::vector<GLuint> indices;
-	std::vector<GLfloat> vertices;
-	std::vector<GLfloat> normals;
+    std::vector<GLuint> indices;
+    std::vector<Vertex> vertices;
 
-	normals.resize(width * height * 3, 0.0f);
+    /*
+     std::vector<GLfloat> normals;
+    normals.resize(width * height * 3, 0.0f);
+    */
+   
+    // Заполняем массив вершин  
+    for (int z = 0; z < height; ++z) {
+        for (int x = 0; x < width; ++x) {
+            Vertex vert = {
+                glm::vec3(
+                    static_cast<GLfloat>(x),
+                    heightMap[z * width + x],
+                    static_cast<GLfloat>(z)
+                ),
+                glm::vec3(
+                    0.f, 1.f, 0.f 
+                ),
+                glm::vec2(
+                    static_cast<GLfloat>(x) / ((sqrtf(width) / 2)), 
+                    static_cast<GLfloat>(z) / ((sqrtf(height) / 2))
+                ),
+                glm::vec3(0.f)  
+            };
+            vertices.push_back(vert);
+        }
+    }
 
-	for (int z = 0; z < height; ++z) {
-		for (int x = 0; x < width; ++x) {
-			//position
-			vertices.push_back(static_cast<GLfloat>(x));
-			vertices.push_back(heightMap[z * width + x]); 
-			vertices.push_back(static_cast<GLfloat>(z)); 
-			//texcoord
-			vertices.push_back(static_cast<GLfloat>(x) / width);          
-			vertices.push_back(static_cast<GLfloat>(z) / height);
-			//normals
-			vertices.push_back(static_cast<GLfloat>(0));
-			vertices.push_back(static_cast<GLfloat>(1) );
-			vertices.push_back(static_cast<GLfloat>(0) );
-		}
-	}
+    for (int z = 0; z < height - 1; ++z) {
+        for (int x = 0; x < width - 1; ++x) {
+            int topLeft = z * width + x;
+            int bottomLeft = (z + 1) * width + x;
+            int topRight = z * width + (x + 1);
+            int bottomRight = (z + 1) * width + (x + 1);
 
-	for (int z = 0; z < height - 1; ++z) {
-		for (int x = 0; x < width - 1; ++x) {
-			int topLeft = z * width + x;
-			int bottomLeft = (z + 1) * width + x;
-			int topRight = z * width + (x + 1);
-			int bottomRight = (z + 1) * width + (x + 1);
+            indices.push_back(topLeft);
+            indices.push_back(bottomLeft);
+            indices.push_back(topRight);
 
-			indices.push_back(topLeft);
-			indices.push_back(bottomLeft);
-			indices.push_back(topRight);
+            indices.push_back(bottomLeft);
+            indices.push_back(bottomRight);
+            indices.push_back(topRight);
+        }
+    }
 
-			indices.push_back(bottomLeft);
-			indices.push_back(bottomRight);
-			indices.push_back(topRight);
+    nrOfIndices = indices.size(); 
 
-		}
-	}
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
 
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
+    GLuint VBO;
+    glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
 
-	// VBO  
-	GLuint VBO;
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
+    GLuint EBO;
+    glGenBuffers(1, &EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
+  
+    //pozition  
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, position));
+    glEnableVertexAttribArray(0);
+    //normal  
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, normal));
+    glEnableVertexAttribArray(1);
+    //texcoord 
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, texcoord));
+    glEnableVertexAttribArray(2);
+    //color 
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, color));
+    glEnableVertexAttribArray(3);
 
-	// EBO  
-	glGenBuffers(1, &EBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+}
 
-	// Позиции  
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)0);
-	glEnableVertexAttribArray(0);
-	// Текстурные координаты  
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(1);
-	// Нормали  
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)(5 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(2);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
+bool Terrain::isCoordInMap(float x, float z)
+{
+    return ( (x >= 0) && (x < width) && (z >= 0) && (z < height) );
 }

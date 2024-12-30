@@ -34,6 +34,16 @@ GLfloat Camera::GetZoom(){
 	return Zoom;
 }
 
+void Camera::SetPosition(glm::vec3 position)
+{
+	this->Position = position;
+}
+
+void Camera::move(glm::vec3 position)
+{
+	this->Position += position;
+}
+
 void Camera::ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime) {
 	GLfloat velocity = MovementSpeed * deltaTime;
 	if (direction == FORWARD)

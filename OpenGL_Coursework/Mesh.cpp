@@ -187,15 +187,19 @@ void Mesh::updateModelMatrix()
 {
 	this->model = glm::mat4(1.f);
 
-	this->model = glm::translate(this->model, this->origin);
+	//this->model = glm::translate(this->model, this->origin);
+	this->model = glm::translate(this->model, this->position);
 
 	this->model = glm::rotate(this->model, glm::radians(this->rotation.x), glm::vec3(1.f, 0.f, 0.f));
 	this->model = glm::rotate(this->model, glm::radians(this->rotation.y), glm::vec3(0.f, 1.f, 0.f));
 	this->model = glm::rotate(this->model, glm::radians(this->rotation.z), glm::vec3(0.f, 0.f, 1.f));
 	
-	this->model = glm::translate(this->model, -this->origin);
+//	this->model = glm::translate(this->model, -this->origin);
+
+	this->model = glm::translate(this->model, -this->position);
 
 	this->model = glm::translate(this->model, this->position);
+
 	this->model = glm::scale(this->model, this->scale);
 	
 }

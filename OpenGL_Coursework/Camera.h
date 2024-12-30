@@ -36,6 +36,10 @@ public:
     glm::vec3 GetPoistion();
     GLfloat GetZoom();
 
+    void SetPosition(glm::vec3 position);
+
+    void move(glm::vec3 position);
+
     void ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime);
     void ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean constrainPitch = true);
     void ProcessMouseScroll(GLfloat yoffset);
