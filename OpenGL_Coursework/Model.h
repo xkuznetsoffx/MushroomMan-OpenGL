@@ -1,8 +1,11 @@
 #pragma once
 
 #include <memory>
+#include <thread>
+#include <chrono>
 #include "Mesh.h"
 #include "Material.h"
+#include "Collision.h"
 
 #include "assimp/Importer.hpp"
 #include "assimp/scene.h"
@@ -10,9 +13,12 @@
 	
 using SPtrMesh = std::shared_ptr<Mesh>;
 
+
+
 class Model
 {
 public:
+
 	Model(
 		glm::vec3 pivotPoint,
 		Material* material,
@@ -43,6 +49,7 @@ public:
 	const glm::vec3 getPosition();
 	void setYCoord(float y);
 
+	const AABB& getHitbox();
 private:
 	Material* material;
 	std::vector<SPtrMesh> meshes;
@@ -50,6 +57,8 @@ private:
 	glm::vec3 origin;
 
 	std::string directory;
+
+	AABB hitbox;
 
 	std::vector<std::shared_ptr<Texture>> textures_loaded;
 

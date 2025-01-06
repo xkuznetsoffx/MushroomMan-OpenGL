@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Collision.h"
+
 #include <GL/glew.h>
 
 #include "glm/glm.hpp"
@@ -35,6 +37,7 @@ public:
     glm::vec3 GetFront();
     glm::vec3 GetPoistion();
     GLfloat GetZoom();
+    const AABB& getHitbox();
 
     void SetPosition(glm::vec3 position);
 
@@ -62,6 +65,7 @@ private:
     GLfloat MouseSensitivity;
     GLfloat Zoom;
 
+    AABB hitbox;
 
 };
 

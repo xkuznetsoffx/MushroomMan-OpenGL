@@ -3,6 +3,8 @@
 Camera::Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), 
 MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM), Position(position), WorldUp(up), 
 Yaw(yaw), Pitch(pitch) {
+	hitbox.min = Position - glm::vec3(0.1f);
+	hitbox.max = Position + glm::vec3(0.1f);
 	updateCameraVectors();
 }
 
@@ -10,8 +12,11 @@ Camera::Camera(GLfloat posX, GLfloat posY, GLfloat posZ,
 	GLfloat upX, GLfloat upY, GLfloat upZ,
 	GLfloat yaw, GLfloat pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), 
 	MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM),
-	Yaw(yaw), Pitch(pitch) {
+	Yaw(yaw), Pitch(pitch) 
+{
 	Position = glm::vec3(posX, posY, posZ);
+	hitbox.min = Position - glm::vec3(0.1f);
+	hitbox.max = Position + glm::vec3(0.1f);
 	WorldUp = glm::vec3(upX, upY, upZ);
 	updateCameraVectors();
 }
@@ -34,14 +39,23 @@ GLfloat Camera::GetZoom(){
 	return Zoom;
 }
 
+const AABB& Camera::getHitbox()
+{
+	return hitbox;
+}
+
 void Camera::SetPosition(glm::vec3 position)
 {
 	this->Position = position;
+	hitbox.min = Position - glm::vec3(0.1f);
+	hitbox.max = Position + glm::vec3(0.1f);
 }
 
 void Camera::move(glm::vec3 position)
 {
 	this->Position += position;
+	hitbox.min = Position - glm::vec3(0.1f);
+	hitbox.max = Position + glm::vec3(0.1f);
 }
 
 void Camera::ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime) {
@@ -58,6 +72,8 @@ void Camera::ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime) {
 		Position += glm::vec3(0.0f, 1.0f, 0.0f) * velocity;
 	if (direction == DOWN)
 		Position -= glm::vec3(0.0f, 1.0f, 0.0f) * velocity;
+	hitbox.min = Position - glm::vec3(0.1f);
+	hitbox.max = Position + glm::vec3(0.1f);
 }
 
 void Camera::ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean constrainPitch) {

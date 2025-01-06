@@ -69,8 +69,20 @@ void Game::update()
 		testModelFromFile->getPosition().z
 	);
 
-	testModelFromFile->move(glm::vec3(1.0f, 0, 1.0f) * deltaTime * 0.5f);
 	testModelFromFile->setYCoord(yMoveCoord);
+	testModelFromFile->move(glm::vec3(1.0f, 0, 1.0f) * deltaTime * 0.5f);
+
+#ifdef DEBUG
+	if (checkCollision(testModelFromFile->getHitbox(), camera.getHitbox())) {
+		std::cout << "Collision!!" << std::endl;
+		std::cout << "Model hitbox:\n" << testModelFromFile->getHitbox().min.x << ' ' << testModelFromFile->getHitbox().min.y << ' ' << testModelFromFile->getHitbox().min.z << ' ' << '\n' <<
+			testModelFromFile->getHitbox().max.x << ' ' << testModelFromFile->getHitbox().max.y << ' ' << testModelFromFile->getHitbox().max.z << ' ' << '\n';
+		std::cout << "Camera hitbox:\n" << camera.getHitbox().min.x << ' ' << camera.getHitbox().min.y << ' ' << camera.getHitbox().min.z << ' ' << '\n' <<
+			camera.getHitbox().max.x << ' ' << camera.getHitbox().max.y << ' ' << camera.getHitbox().max.z << ' ' << '\n';
+	}
+#endif // DEBUG
+
+	
 	//models[0]->rotate(glm::vec3(1.f, 0.f, 1.f) * deltaTime * 50.0f);
 	//models[1]->rotate(glm::vec3(0.0f, 0.1f, 0.0f));
 	//testModelFromFile->rotate(glm::vec3(0.0f, 0.1f, 0.0f));

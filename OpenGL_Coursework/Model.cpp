@@ -49,6 +49,9 @@ Model::Model(std::string path, glm::vec3 pivotPoint, glm::vec3 origin)
 		directory = path.substr(0, path.find_last_of('\\'));
 
 	processNode(scene->mRootNode, scene);
+	
+	/*std::cout << hitbox.min.x << ' ' << hitbox.min.y << ' ' << hitbox.min.z << ' ' << '\n' <<
+		 hitbox.max.x << ' ' << hitbox.max.y << ' ' << hitbox.max.z << ' ' << '\n';*/
 }
 
 Model::~Model()
@@ -86,6 +89,10 @@ void Model::rotate(glm::vec3 rotation)
 void Model::move(const glm::vec3 position)
 {
 	pivotPoint += position;
+
+	hitbox.min += position;
+	hitbox.max += position;
+	
 	for (auto& mesh : meshes) {
 		mesh->setPosition(pivotPoint);
 	}
@@ -105,11 +112,15 @@ const glm::vec3 Model::getPosition()
 
 void Model::setYCoord(float y)
 {
-	pivotPoint = glm::vec3(
-		pivotPoint.x,
-		y,
-		pivotPoint.z
-	);
+	pivotPoint.y = y;
+
+	hitbox.min.y = y - (hitbox.max.y - hitbox.min.y) / 2;
+	hitbox.max.y = y + (hitbox.max.y - hitbox.min.y) / 2;  
+}
+
+const AABB& Model::getHitbox()
+{
+	return hitbox;
 }
 
 void Model::processNode(aiNode* node, const aiScene* scene)
@@ -143,6 +154,9 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 
 		vertex.position = glm::vec3(vertexData.x, vertexData.y, vertexData.z);
 		vertex.normal = glm::vec3(normalData.x, normalData.y, normalData.z);
+
+		hitbox.min = glm::min(hitbox.min, vertex.position);
+		hitbox.max = glm::max(hitbox.max, vertex.position);
 
 		if (mesh->mTextureCoords[0]) {
 			const auto& texCoordData = mesh->mTextureCoords[0][i];
