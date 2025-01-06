@@ -103,7 +103,7 @@ private:
 	std::shared_ptr<Terrain> terrain;
 
 	Model* testModelFromFile;//kostil!!!
-
+	Model* copyModel;
 	//Lights
 	UPtrDirLight directionLight;
 	std::vector<UPtrPointLight> pointLights;

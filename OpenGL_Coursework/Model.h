@@ -37,6 +37,10 @@ public:
 		glm::vec3 origin = glm::vec3(0.f)
 	);
 
+	Model(
+		const Model& oth
+	);
+
 	~Model();
 	void update();
 

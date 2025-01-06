@@ -54,6 +54,18 @@ Model::Model(std::string path, glm::vec3 pivotPoint, glm::vec3 origin)
 		 hitbox.max.x << ' ' << hitbox.max.y << ' ' << hitbox.max.z << ' ' << '\n';*/
 }
 
+Model::Model(const Model& oth)
+	:
+	pivotPoint(oth.pivotPoint), origin(oth.origin), material(oth.material), directory(oth.directory)
+{
+	this->meshes.reserve(oth.meshes.size());
+	for (const auto& mesh : oth.meshes) {
+		this->meshes.emplace_back(std::make_shared<Mesh>(*mesh));
+	}
+	hitbox.max = oth.hitbox.max;
+	hitbox.min = oth.hitbox.min;
+}
+
 Model::~Model()
 {
 }

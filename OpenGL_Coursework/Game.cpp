@@ -47,6 +47,7 @@ Game::~Game()
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	delete testModelFromFile;
+	delete copyModel;
 }
 
 int Game::getWindowShouldClose()
@@ -101,7 +102,7 @@ void Game::render()
 	models[1]->render(shaders[SHADER_OBJ].get());
 
 	testModelFromFile->render(shaders[SHADER_OBJ].get());
-	
+	copyModel->render(shaders[SHADER_OBJ].get());
 	meshesLamps[0]->render(shaders[SHADER_LAMP].get());
 
 	glfwSwapBuffers(window);
@@ -382,7 +383,7 @@ void Game::initModels()
 		glm::vec3(0.0f, 0.f, 0.0f)
 	);
 	testModelFromFile->scaleUp(glm::vec3(-0.5f));
-
+	copyModel = new Model(*testModelFromFile);
 	/*testModelFromFile = new Model(
 		"assets\\models\\nissan_skyline\\scene.gltf",
 		glm::vec3(0.0f, 0.50f, 0.0f)
