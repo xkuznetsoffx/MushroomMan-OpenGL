@@ -51,6 +51,7 @@ public:
 	void scaleUp(const glm::vec3 scale);
 
 	const glm::vec3 getPosition();
+	void setPosition(const glm::vec3 position);
 	void setYCoord(float y);
 
 	const AABB& getHitbox();

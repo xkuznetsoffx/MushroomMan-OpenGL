@@ -34,12 +34,13 @@ Game::Game(
 	initTextures();
 	initMaterials();
 	initMeshes();
-	initModels();
 	initTerrain();
+	initModels();
 	initLights();
 	initUniforms();
 	initCallbacks();
 	
+
 }
 
 Game::~Game()
@@ -65,28 +66,29 @@ void Game::update()
 	glfwPollEvents();
 	updateDeltaTime();
 	do_movment();
-	float yMoveCoord = terrain->getHeight(
-		testModelFromFile->getPosition().x,
-		testModelFromFile->getPosition().z
-	);
 
-	testModelFromFile->setYCoord(yMoveCoord);
-	testModelFromFile->move(glm::vec3(1.0f, 0, 1.0f) * deltaTime * 0.5f);
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> disX(0, terrain->getHeight() - 1);
+	std::uniform_int_distribution<> disZ(0, terrain->getWidth() - 1);
 
+	for (const auto& obj : collectableObjects) {
+		obj->move(glm::vec3(0.0f, sin(glfwGetTime()) * deltaTime * 0.1f , 0.0f));
+		obj->rotate(glm::vec3(0.0f, 45.f * deltaTime, 0.0f)); ;
+		if (checkCollision(obj->getHitbox(), camera.getHitbox())) {
 #ifdef DEBUG
-	if (checkCollision(testModelFromFile->getHitbox(), camera.getHitbox())) {
-		std::cout << "Collision!!" << std::endl;
-		std::cout << "Model hitbox:\n" << testModelFromFile->getHitbox().min.x << ' ' << testModelFromFile->getHitbox().min.y << ' ' << testModelFromFile->getHitbox().min.z << ' ' << '\n' <<
-			testModelFromFile->getHitbox().max.x << ' ' << testModelFromFile->getHitbox().max.y << ' ' << testModelFromFile->getHitbox().max.z << ' ' << '\n';
-		std::cout << "Camera hitbox:\n" << camera.getHitbox().min.x << ' ' << camera.getHitbox().min.y << ' ' << camera.getHitbox().min.z << ' ' << '\n' <<
-			camera.getHitbox().max.x << ' ' << camera.getHitbox().max.y << ' ' << camera.getHitbox().max.z << ' ' << '\n';
-	}
+			std::cout << "Collision!!" << std::endl;
+			std::cout << "Model hitbox:\n" << obj->getHitbox().min.x << ' ' << obj->getHitbox().min.y << ' ' << obj->getHitbox().min.z << ' ' << '\n' <<
+				obj->getHitbox().max.x << ' ' << obj->getHitbox().max.y << ' ' << obj->getHitbox().max.z << ' ' << '\n';
+			std::cout << "Camera hitbox:\n" << camera.getHitbox().min.x << ' ' << camera.getHitbox().min.y << ' ' << camera.getHitbox().min.z << ' ' << '\n' <<
+				camera.getHitbox().max.x << ' ' << camera.getHitbox().max.y << ' ' << camera.getHitbox().max.z << ' ' << '\n';
 #endif // DEBUG
-
+			int x = disX(gen);
+			int z = disZ(gen);
+			obj->setPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x,z)+0.5f, z));
+		}
+	}
 	
-	//models[0]->rotate(glm::vec3(1.f, 0.f, 1.f) * deltaTime * 50.0f);
-	//models[1]->rotate(glm::vec3(0.0f, 0.1f, 0.0f));
-	//testModelFromFile->rotate(glm::vec3(0.0f, 0.1f, 0.0f));
 }
 
 void Game::render()
@@ -98,11 +100,13 @@ void Game::render()
 	
 	terrain->render(shaders[SHADER_OBJ].get());
 
+	for (const auto& obj : collectableObjects) {
+		obj->render(shaders[SHADER_OBJ].get());
+	}
+
 	models[0]->render(shaders[SHADER_OBJ].get());
 	models[1]->render(shaders[SHADER_OBJ].get());
 
-	testModelFromFile->render(shaders[SHADER_OBJ].get());
-	copyModel->render(shaders[SHADER_OBJ].get());
 	meshesLamps[0]->render(shaders[SHADER_LAMP].get());
 
 	glfwSwapBuffers(window);
@@ -379,11 +383,25 @@ void Game::initModels()
 	testModelFromFile->scaleUp(glm::vec3(-0.5f));*/
 
 	testModelFromFile = new Model(
-		"assets\\models\\alex\\scene.gltf",
+		"assets\\models\\burger\\scene.gltf",
 		glm::vec3(0.0f, 0.f, 0.0f)
 	);
 	testModelFromFile->scaleUp(glm::vec3(-0.5f));
-	copyModel = new Model(*testModelFromFile);
+
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> disX(0, terrain->getHeight() - 1);
+	std::uniform_int_distribution<> disZ(0, terrain->getWidth() - 1);
+
+	for (size_t i = 0; i < 10; ++i) {
+		collectableObjects.emplace_back(
+			new Model(*testModelFromFile)
+		);
+		int x = disX(gen);
+		int z = disZ(gen);
+		collectableObjects[i]->setPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x, z) + 0.5f, z));
+	}
+
 	/*testModelFromFile = new Model(
 		"assets\\models\\nissan_skyline\\scene.gltf",
 		glm::vec3(0.0f, 0.50f, 0.0f)
@@ -459,7 +477,7 @@ void Game::initCallbacks()
 
 void Game::initTerrain()
 {
-	terrain = std::make_shared<Terrain>(100, 100, 0.05f, materials[2].get());
+	terrain = std::make_shared<Terrain>(50, 50, 0.05f, materials[2].get());
 }
 
 void Game::updateUniforms()
@@ -545,23 +563,26 @@ void Game::updateDeltaTime()
 
 void Game::do_movment()
 {
-
 	if (keys[GLFW_KEY_W])
 	{
-		camera.ProcessKeyboard(FORWARD, deltaTime);
+		camera.ProcessKeyboard(FORWARD, deltaTime, 
+			terrain->getCurrentHeightFromMap(camera.GetPoistion().x, camera.GetPoistion().z));
 	}
 	if (keys[GLFW_KEY_S])
 	{
-		camera.ProcessKeyboard(BACKWARD, deltaTime);
+		camera.ProcessKeyboard(BACKWARD, deltaTime, 
+			terrain->getCurrentHeightFromMap(camera.GetPoistion().x, camera.GetPoistion().z));
 	}
 	if (keys[GLFW_KEY_A])
-		camera.ProcessKeyboard(LEFT, deltaTime);
+		camera.ProcessKeyboard(LEFT, deltaTime, 
+			terrain->getCurrentHeightFromMap(camera.GetPoistion().x, camera.GetPoistion().z));
 	if (keys[GLFW_KEY_D])
-		camera.ProcessKeyboard(RIGHT, deltaTime);
-	if (keys[GLFW_KEY_SPACE])
+		camera.ProcessKeyboard(RIGHT, deltaTime, 
+			terrain->getCurrentHeightFromMap(camera.GetPoistion().x, camera.GetPoistion().z));
+	/*if (keys[GLFW_KEY_SPACE])
 		camera.ProcessKeyboard(UP, deltaTime);
 	if (keys[GLFW_KEY_LEFT_SHIFT])
-		camera.ProcessKeyboard(DOWN, deltaTime);
+		camera.ProcessKeyboard(DOWN, deltaTime);*/
 	if (keys[GLFW_KEY_Z])
 		testModelFromFile->rotate(glm::vec3(0.f, -1.f, 0.f) * deltaTime * 50.0f);
 	if (keys[GLFW_KEY_X])

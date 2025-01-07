@@ -6,7 +6,7 @@ int main() {
 
 	Game game(
 		"Coursework",
-		1920, 1080,
+		800, 600,
 		GLmajorVersion, GLminorVersion,
 		true
 	);

@@ -7,6 +7,7 @@
 #include <chrono>
 #include <thread>
 #include <cmath>
+#include <random>  
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -39,7 +40,9 @@ using UPtrMesh = std::unique_ptr<Mesh>;
 using SPtrMesh = std::shared_ptr<Mesh>;
 
 using UPtrModel = std::unique_ptr<Model>;
+using SPtrModel = std::shared_ptr<Model>;
 
 using UPtrDirLight = std::unique_ptr<DirectionLight>;
 using UPtrPointLight = std::unique_ptr<PointLight>;
 using UPtrSpotLight = std::unique_ptr<SpotLight>;
+

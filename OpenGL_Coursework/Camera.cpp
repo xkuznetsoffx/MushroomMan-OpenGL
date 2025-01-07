@@ -15,8 +15,8 @@ Camera::Camera(GLfloat posX, GLfloat posY, GLfloat posZ,
 	Yaw(yaw), Pitch(pitch) 
 {
 	Position = glm::vec3(posX, posY, posZ);
-	hitbox.min = Position - glm::vec3(0.1f);
-	hitbox.max = Position + glm::vec3(0.1f);
+	hitbox.min = Position - glm::vec3(0.1f, 0.5f, 0.1f);
+	hitbox.max = Position + glm::vec3(0.1f, 0.5f, 0.1f);
 	WorldUp = glm::vec3(upX, upY, upZ);
 	updateCameraVectors();
 }
@@ -47,18 +47,18 @@ const AABB& Camera::getHitbox()
 void Camera::SetPosition(glm::vec3 position)
 {
 	this->Position = position;
-	hitbox.min = Position - glm::vec3(0.1f);
-	hitbox.max = Position + glm::vec3(0.1f);
+	hitbox.min = Position - glm::vec3(0.1f, 0.5f, 0.1f);
+	hitbox.max = Position + glm::vec3(0.1f, 0.5f, 0.1f);
 }
 
 void Camera::move(glm::vec3 position)
 {
 	this->Position += position;
-	hitbox.min = Position - glm::vec3(0.1f);
-	hitbox.max = Position + glm::vec3(0.1f);
+	hitbox.min = Position - glm::vec3(0.1f, 0.5f, 0.1f);
+	hitbox.max = Position + glm::vec3(0.1f, 0.5f, 0.1f);
 }
 
-void Camera::ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime) {
+void Camera::ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime, float height) {
 	GLfloat velocity = MovementSpeed * deltaTime;
 	if (direction == FORWARD)
 		Position += Front * velocity;
@@ -68,12 +68,9 @@ void Camera::ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime) {
 		Position -= Right * velocity;
 	if (direction == RIGHT)
 		Position += Right * velocity;
-	if (direction == UP)
-		Position += glm::vec3(0.0f, 1.0f, 0.0f) * velocity;
-	if (direction == DOWN)
-		Position -= glm::vec3(0.0f, 1.0f, 0.0f) * velocity;
-	hitbox.min = Position - glm::vec3(0.1f);
-	hitbox.max = Position + glm::vec3(0.1f);
+	Position.y = height + 1.f;
+	hitbox.min = Position - glm::vec3(0.1f, 0.5f, 0.1f);
+	hitbox.max = Position + glm::vec3(0.1f, 0.5f, 0.1f);
 }
 
 void Camera::ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean constrainPitch) {

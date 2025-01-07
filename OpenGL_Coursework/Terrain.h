@@ -15,8 +15,12 @@ public:
 	Terrain(int width, int height, float scale, Material* material);
 	~Terrain();
 	void render(Shader* shader);
-	float getHeight(float x, float z);
 	void generateTerrain();
+
+	int getHeight();
+	int getWidth();
+
+	float getCurrentHeightFromMap(float x, float z);
 
 private:
 	std::vector<float> heightMap;

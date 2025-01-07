@@ -1,9 +1,5 @@
-﻿  Game.cpp
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(525,11): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(526,11): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(530,18): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(531,18): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(533,10): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(534,10): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(596,35): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+﻿  Terrain.cpp
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Terrain.cpp(99,55): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Terrain.cpp(100,55): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Terrain.cpp(125,31): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
   OpenGL_Coursework.vcxproj -> D:\CppProjs\OpenGL_Coursework\x64\Debug\OpenGL_Coursework.exe

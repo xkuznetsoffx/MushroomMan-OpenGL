@@ -1,0 +1,11 @@
+Model Information:
+* title:	Burger
+* source:	https://sketchfab.com/3d-models/burger-d82e36fbe35d441fa23b0b45231d1707
+* author:	Mehdi Mirzaie (https://sketchfab.com/MehdiMM)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Burger" (https://sketchfab.com/3d-models/burger-d82e36fbe35d441fa23b0b45231d1707) by Mehdi Mirzaie (https://sketchfab.com/MehdiMM) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

@@ -99,6 +99,7 @@ private:
 
 	//Models
 	std::vector<UPtrModel> models;
+	std::vector<SPtrModel> collectableObjects;
 	
 	std::shared_ptr<Terrain> terrain;
 
@@ -118,12 +119,14 @@ private:
 	void initShaders();
 	void initTextures();
 	void initMaterials();
+	void initTerrain();
 	void initMeshes();
 	void initModels();
 	void initLights();
 	void initUniforms();
 	void initCallbacks();
-	void initTerrain();
+	
+
 
 	void updateUniforms();
 

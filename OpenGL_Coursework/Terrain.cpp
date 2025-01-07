@@ -32,7 +32,7 @@ void Terrain::render(Shader* shader)
 	glBindVertexArray(0);
 }
 
-float Terrain::getHeight(float x, float z)
+float Terrain::getCurrentHeightFromMap(float x, float z)
 {
     if (!isCoordInMap(x, z)) return 0.f;
    
@@ -61,6 +61,16 @@ void Terrain::generateTerrain()
 			heightMap[z * width + x] = value * 5.f;
 		}
 	}
+}
+
+int Terrain::getHeight()
+{
+    return height;
+}
+
+int Terrain::getWidth()
+{
+    return width;
 }
 
 void Terrain::initVAO()
@@ -146,5 +156,5 @@ void Terrain::initVAO()
 
 bool Terrain::isCoordInMap(float x, float z)
 {
-    return ( (x >= 0) && (x < width) && (z >= 0) && (z < height) );
+    return ( (x >= 0) && (x < width-1) && (z >= 0) && (z < height-1) );
 }

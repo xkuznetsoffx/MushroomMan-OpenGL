@@ -43,7 +43,7 @@ public:
 
     void move(glm::vec3 position);
 
-    void ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime);
+    void ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime, float height);
     void ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean constrainPitch = true);
     void ProcessMouseScroll(GLfloat yoffset);
 

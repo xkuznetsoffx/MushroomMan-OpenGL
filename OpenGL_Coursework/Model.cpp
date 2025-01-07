@@ -122,6 +122,21 @@ const glm::vec3 Model::getPosition()
 	return pivotPoint;
 }
 
+void Model::setPosition(const glm::vec3 position)
+{
+	glm::vec3 deltaHitboxMin = glm::abs(pivotPoint - hitbox.min);
+	glm::vec3 deltaHitboxMax = glm::abs(pivotPoint - hitbox.max);
+
+	this->pivotPoint = position;
+
+	hitbox.min = position - deltaHitboxMin;
+	hitbox.max = position + deltaHitboxMax;
+
+	for (auto& mesh : meshes) {
+		mesh->setPosition(pivotPoint);
+	}
+}
+
 void Model::setYCoord(float y)
 {
 	pivotPoint.y = y;
@@ -190,7 +205,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
 
 	std::vector<std::shared_ptr<Texture>> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE);
 	textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-	// 2. specular maps
+	
 	std::vector<std::shared_ptr<Texture>> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR);
 	textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 
