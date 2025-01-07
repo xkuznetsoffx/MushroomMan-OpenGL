@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Collision.h"
+#include "Terrain.h"
 
 #include <GL/glew.h>
 
@@ -16,7 +17,7 @@ enum Camera_Movement {
     DOWN
 };
 
-constexpr GLfloat YAW = -90.0f;
+constexpr GLfloat YAW = 70.0f;
 constexpr GLfloat PITCH = 0.0f;
 constexpr GLfloat SPEED = 3.0f;
 constexpr GLfloat SENSITIVTY = 0.05f;
@@ -43,7 +44,7 @@ public:
 
     void move(glm::vec3 position);
 
-    void ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime, float height);
+    void ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime, Terrain& terrain);
     void ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean constrainPitch = true);
     void ProcessMouseScroll(GLfloat yoffset);
 

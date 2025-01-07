@@ -19,8 +19,10 @@ public:
 
 	int getHeight();
 	int getWidth();
-
+	
 	float getCurrentHeightFromMap(float x, float z);
+
+	bool isCoordInMap(float x, float z);
 
 private:
 	std::vector<float> heightMap;
@@ -38,7 +40,7 @@ private:
 
 	void initVAO();
 
-	bool isCoordInMap(float x, float z);
+	
 
 };
 

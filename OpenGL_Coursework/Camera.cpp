@@ -58,17 +58,28 @@ void Camera::move(glm::vec3 position)
 	hitbox.max = Position + glm::vec3(0.1f, 0.5f, 0.1f);
 }
 
-void Camera::ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime, float height) {
+void Camera::ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime, Terrain& terrain) {
 	GLfloat velocity = MovementSpeed * deltaTime;
-	if (direction == FORWARD)
+	if (direction == FORWARD &&
+		terrain.isCoordInMap((Position+Front*velocity).x,
+			(Position+Front * velocity).z)
+		)
 		Position += Front * velocity;
-	if (direction == BACKWARD)
+	if (direction == BACKWARD &&
+		terrain.isCoordInMap((Position - Front * velocity).x,
+			(Position - Front * velocity).z)
+		)
 		Position -= Front * velocity;
-	if (direction == LEFT)
+	if (direction == LEFT &&
+		terrain.isCoordInMap((Position - Right * velocity).x,
+			(Position - Right * velocity).z)
+		)
 		Position -= Right * velocity;
-	if (direction == RIGHT)
+	if (direction == RIGHT &&
+		terrain.isCoordInMap((Position + Right * velocity).x,
+			(Position + Right * velocity).z))
 		Position += Right * velocity;
-	Position.y = height + 1.f;
+	Position.y = terrain.getCurrentHeightFromMap(Position.x,Position.z) + 0.8f;
 	hitbox.min = Position - glm::vec3(0.1f, 0.5f, 0.1f);
 	hitbox.max = Position + glm::vec3(0.1f, 0.5f, 0.1f);
 }

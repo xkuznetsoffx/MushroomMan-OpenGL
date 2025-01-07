@@ -77,13 +77,7 @@ void Terrain::initVAO()
 {
     std::vector<GLuint> indices;
     std::vector<Vertex> vertices;
-
-    /*
-     std::vector<GLfloat> normals;
-    normals.resize(width * height * 3, 0.0f);
-    */
-   
-    // Заполняем массив вершин  
+ 
     for (int z = 0; z < height; ++z) {
         for (int x = 0; x < width; ++x) {
             Vertex vert = {
@@ -93,7 +87,7 @@ void Terrain::initVAO()
                     static_cast<GLfloat>(z)
                 ),
                 glm::vec3(
-                    0.f, 1.f, 0.f 
+                    0.f, 1.f, 0.f //Необходим корректный расчет нормалей
                 ),
                 glm::vec2(
                     static_cast<GLfloat>(x) / ((sqrtf(width) / 2)), 
@@ -103,6 +97,7 @@ void Terrain::initVAO()
             };
             vertices.push_back(vert);
         }
+
     }
 
     for (int z = 0; z < height - 1; ++z) {

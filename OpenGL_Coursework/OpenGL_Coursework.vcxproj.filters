@@ -72,12 +72,6 @@
     <None Include="lamp.frag">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="terrain_shader.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="terrain_shader.vs">
-      <Filter>Resource Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="libs.h">

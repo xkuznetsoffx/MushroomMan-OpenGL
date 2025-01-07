@@ -39,8 +39,6 @@ Game::Game(
 	initLights();
 	initUniforms();
 	initCallbacks();
-	
-
 }
 
 Game::~Game()
@@ -69,8 +67,8 @@ void Game::update()
 
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_int_distribution<> disX(0, terrain->getHeight() - 1);
-	std::uniform_int_distribution<> disZ(0, terrain->getWidth() - 1);
+	std::uniform_int_distribution<> disX(0, terrain->getHeight() - 2);
+	std::uniform_int_distribution<> disZ(0, terrain->getWidth() - 2);
 
 	for (const auto& obj : collectableObjects) {
 		obj->move(glm::vec3(0.0f, sin(glfwGetTime()) * deltaTime * 0.1f , 0.0f));
@@ -93,19 +91,16 @@ void Game::update()
 
 void Game::render()
 {
-	glClearColor(0.f, 0.f, 0.f, 1.0f);
+	glClearColor(0.53f, 0.81f, 0.92f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	updateUniforms();
-	
+
 	terrain->render(shaders[SHADER_OBJ].get());
 
 	for (const auto& obj : collectableObjects) {
 		obj->render(shaders[SHADER_OBJ].get());
 	}
-
-	models[0]->render(shaders[SHADER_OBJ].get());
-	models[1]->render(shaders[SHADER_OBJ].get());
 
 	meshesLamps[0]->render(shaders[SHADER_LAMP].get());
 
@@ -134,6 +129,8 @@ void Game::initWindow(const char* title, bool resizable)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GL_VERSION_MINOR);
 	glfwWindowHint(GLFW_RESIZABLE, resizable);
 
+	glfwWindowHint(GLFW_SAMPLES, 4);
+
 	window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, title, NULL, NULL);
 
 	if (window == NULL) {
@@ -159,6 +156,8 @@ void Game::initGLEW()
 
 void Game::initOpenGLOptions()
 {
+	glEnable(GL_MULTISAMPLE);
+
 	glEnable(GL_DEPTH_TEST);
 
 	glEnable(GL_CULL_FACE);
@@ -262,7 +261,7 @@ void Game::initMeshes()
 	meshesLamps.push_back(
 		std::make_unique<Mesh>(
 			Cube(),							//primitive
-			glm::vec3(-3.0f, -1.0f, 0.0f),	//position
+			glm::vec3(3.0f, 4.0f, 3.0f),	//position
 			glm::vec3(0.0f),				//rotation
 			glm::vec3(0.25f)					//scale
 		)
@@ -271,106 +270,7 @@ void Game::initMeshes()
 
 void Game::initModels()
 {
-	//Temporary meshes
 
-	std::vector<SPtrMesh> meshesObjects;
-	std::vector<SPtrMesh> boxes;
-
-	//Quad
-	meshesObjects.push_back(
-		std::make_unique<Mesh>(
-			Quad(),							//primitive
-			glm::vec3(-3.0f, -1.0f, -3.0f),	//position
-			glm::vec3(0.f),					//rotation
-			glm::vec3(16.0f, 8.0f, 1.0f)	//scale
-		)
-	);
-
-	//Box
-	meshesObjects.push_back(
-		std::make_unique<Mesh>(
-			Cube(),							//primitive
-			meshesLamps[0]->getPosition(),				//position
-			glm::vec3(0.0f),				//rotation
-			glm::vec3(1.0f),				//scale
-			meshesLamps[0]->getPosition()	//origin
-		)
-	);
-
-	boxes.push_back(
-		std::make_unique<Mesh>(
-			Cube(),							//primitive
-			glm::vec3(0.0f, 0.0f, 0.0f),	//position
-			glm::vec3(0.0f),				//rotation
-			glm::vec3(1.0f),				//scale
-			meshesLamps[0]->getPosition()	//origin
-		)
-	);
-	boxes.push_back(
-		std::make_unique<Mesh>(
-			Cube(),							//primitive
-			glm::vec3(0.0f, 2.0f, 0.0f),	//position
-			glm::vec3(0.0f),				//rotation
-			glm::vec3(1.0f),				//scale
-			meshesLamps[0]->getPosition()	//origin
-		)
-	);
-	boxes.push_back(
-		std::make_unique<Mesh>(
-			Cube(),							//primitive
-			glm::vec3(1.0f, 1.0f, 0.0f),	//position
-			glm::vec3(0.0f),				//rotation
-			glm::vec3(1.0f),				//scale
-			meshesLamps[0]->getPosition()	//origin
-		)
-	);
-	boxes.push_back(
-		std::make_unique<Mesh>(
-			Cube(),							//primitive
-			glm::vec3(-1.0f, 1.0f, 0.0f),	//position
-			glm::vec3(0.0f),				//rotation
-			glm::vec3(1.0f),				//scale
-			meshesLamps[0]->getPosition()	//origin
-		)
-	);
-	boxes.push_back(
-		std::make_unique<Mesh>(
-			Cube(),							//primitive
-			glm::vec3(0.0f, 1.0f, 1.0f),	//position
-			glm::vec3(0.0f),				//rotation
-			glm::vec3(1.0f),				//scale
-			meshesLamps[0]->getPosition()	//origin
-		)
-	);
-	boxes.push_back(
-		std::make_unique<Mesh>(
-			Cube(),							//primitive
-			glm::vec3(0.0f, 1.0f, -1.0f),	//position
-			glm::vec3(0.0f),				//rotation
-			glm::vec3(1.0f),				//scale
-			meshesLamps[0]->getPosition()	//origin
-		)
-	);
-	//Models
-
-	models.push_back(
-		std::make_unique<Model>(
-			glm::vec3(0.0f, -2.0f, 0.0f),
-			materials[MAT_CONTAINER].get(),
-			boxes
-		)
-	);
-	models[0]->move(glm::vec3(-6.0f, -0.5f, 0.0f));
-
-	models.push_back(
-		std::make_unique<Model>(
-			glm::vec3(0.0f),
-			materials[MAT_WALL].get(),
-			meshesObjects[MESH_QUAD]
-		)
-	);
-
-	
 	/*testModelFromFile = new Model(
 		"assets\\models\\pole_dance\\scene.gltf",
 		glm::vec3(0.0f, -0.25f, 0.0f)
@@ -390,8 +290,8 @@ void Game::initModels()
 
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_int_distribution<> disX(0, terrain->getHeight() - 1);
-	std::uniform_int_distribution<> disZ(0, terrain->getWidth() - 1);
+	std::uniform_int_distribution<> disX(0, terrain->getHeight() - 2);
+	std::uniform_int_distribution<> disZ(0, terrain->getWidth() - 2);
 
 	for (size_t i = 0; i < 10; ++i) {
 		collectableObjects.emplace_back(
@@ -425,9 +325,9 @@ void Game::initModels()
 void Game::initLights()
 {
 	directionLight = std::make_unique<DirectionLight>(
-		glm::vec3(0.05f, 0.05f, 0.05f),		//ambient
-		glm::vec3(0.4f, 0.4f, 0.4f),		//diffuse
-		glm::vec3(0.1f, 0.1f, 0.1f),		//specular
+		glm::vec3(0.1f, 0.1f, 0.1f),		//ambient
+		glm::vec3(0.5f, 0.5f, 0.5f),		//diffuse
+		glm::vec3(0.3f, 0.3f, 0.3f),		//specular
 		glm::vec3(-0.2f, -1.0f, -0.3f)		//direction
 	);
 
@@ -565,20 +465,16 @@ void Game::do_movment()
 {
 	if (keys[GLFW_KEY_W])
 	{
-		camera.ProcessKeyboard(FORWARD, deltaTime, 
-			terrain->getCurrentHeightFromMap(camera.GetPoistion().x, camera.GetPoistion().z));
+		camera.ProcessKeyboard(FORWARD, deltaTime, *terrain.get());
 	}
 	if (keys[GLFW_KEY_S])
 	{
-		camera.ProcessKeyboard(BACKWARD, deltaTime, 
-			terrain->getCurrentHeightFromMap(camera.GetPoistion().x, camera.GetPoistion().z));
+		camera.ProcessKeyboard(BACKWARD, deltaTime, *terrain.get());
 	}
 	if (keys[GLFW_KEY_A])
-		camera.ProcessKeyboard(LEFT, deltaTime, 
-			terrain->getCurrentHeightFromMap(camera.GetPoistion().x, camera.GetPoistion().z));
+		camera.ProcessKeyboard(LEFT, deltaTime, *terrain.get());
 	if (keys[GLFW_KEY_D])
-		camera.ProcessKeyboard(RIGHT, deltaTime, 
-			terrain->getCurrentHeightFromMap(camera.GetPoistion().x, camera.GetPoistion().z));
+		camera.ProcessKeyboard(RIGHT, deltaTime, *terrain.get());
 	/*if (keys[GLFW_KEY_SPACE])
 		camera.ProcessKeyboard(UP, deltaTime);
 	if (keys[GLFW_KEY_LEFT_SHIFT])

@@ -3,12 +3,13 @@
 int main() {
 	const int GLmajorVersion = 4;
 	const int GLminorVersion = 4;
+	bool Resizable = true;
 
 	Game game(
 		"Coursework",
 		800, 600,
 		GLmajorVersion, GLminorVersion,
-		true
+		Resizable
 	);
 
 	while (!game.getWindowShouldClose()) {

@@ -152,8 +152,6 @@
     <None Include="objects.frag" />
     <None Include="objects.vs" />
     <None Include="packages.config" />
-    <None Include="terrain_shader.frag" />
-    <None Include="terrain_shader.vs" />
     <None Include="vertex_core.glsl" />
   </ItemGroup>
   <ItemGroup>
