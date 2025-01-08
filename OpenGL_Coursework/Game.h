@@ -1,5 +1,6 @@
 #pragma once
 #include "libs.h"
+#include "HealthBar.h"
 
 enum ShaderType
 {
@@ -104,11 +105,13 @@ private:
 	std::shared_ptr<Terrain> terrain;
 
 	Model* testModelFromFile;//kostil!!!
-	Model* copyModel;
+
 	//Lights
 	UPtrDirLight directionLight;
 	std::vector<UPtrPointLight> pointLights;
 	UPtrSpotLight spotLight;
+
+	std::unique_ptr<HealthBar> healthbar;
 
 	//functions
 	void initGLFW();
@@ -126,8 +129,6 @@ private:
 	void initUniforms();
 	void initCallbacks();
 	
-
-
 	void updateUniforms();
 
 	void updateInput(int key, int action);
@@ -135,6 +136,11 @@ private:
 	void updateDeltaTime();
 
 	void do_movment();
+
+	void switchTo2D();
+	void switchTo3D();
+
+
 	//static functions
 public:
 	static void framebuffer_resize_callback(GLFWwindow* window, int fbW, int fbH);

@@ -11,7 +11,7 @@ Game::Game(
 	:
 	WINDOW_WIDTH(width), WINDOW_HEIGHT(height),
 	GL_VERSION_MAJOR(GLmajorVersion), GL_VERSION_MINOR(GLminorVersion),
-	camera(glm::vec3(4.3f, 2.3f, 4.f))
+	camera(glm::vec3(4.33703f, 2.09519f, 4.10173f))
 {
 	window = NULL;
 
@@ -39,6 +39,12 @@ Game::Game(
 	initLights();
 	initUniforms();
 	initCallbacks();
+
+	healthbar = std::make_unique<HealthBar>(
+		100.f,
+		glm::vec2(20.f, 20.f),
+		glm::vec2(200.f, 20.f)
+	);
 }
 
 Game::~Game()
@@ -46,7 +52,6 @@ Game::~Game()
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	delete testModelFromFile;
-	delete copyModel;
 }
 
 int Game::getWindowShouldClose()
@@ -64,6 +69,8 @@ void Game::update()
 	glfwPollEvents();
 	updateDeltaTime();
 	do_movment();
+
+	healthbar->update(deltaTime);
 
 	std::random_device rd;
 	std::mt19937 gen(rd());
@@ -84,6 +91,7 @@ void Game::update()
 			int x = disX(gen);
 			int z = disZ(gen);
 			obj->setPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x,z)+0.5f, z));
+			healthbar->increaseHealth(10.0f);
 		}
 	}
 	
@@ -95,6 +103,14 @@ void Game::render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	updateUniforms();
+
+	// Установить ортографическую проекцию для 2D-отрисовки
+	glm::mat4 orthoProjection = glm::ortho(0.0f, static_cast<float>(WINDOW_WIDTH), 0.0f, static_cast<float>(WINDOW_HEIGHT));
+	GLint projectionLoc = glGetUniformLocation(healthbar->shaderProgram, "projection");
+	glUseProgram(healthbar->shaderProgram);
+	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(orthoProjection));
+
+	healthbar->render();
 
 	terrain->render(shaders[SHADER_OBJ].get());
 
