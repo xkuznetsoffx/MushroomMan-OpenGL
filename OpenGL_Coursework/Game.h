@@ -6,7 +6,7 @@ enum ShaderType
 {
 	SHADER_OBJ = 0,
 	SHADER_LAMP,
-	SHADER_TERRAIN
+	SHADER_2D
 };
 
 enum TextureType
@@ -43,13 +43,14 @@ public:
 		const int width, const int height,
 		const int GLmajorVersion,
 		const int GLminorVersion,
-		bool resizable
+		bool resizable,
+		bool fullscreen = false
 	);
 	~Game();
 
 	int getWindowShouldClose();
 
-	void setWindowShouldCloes();
+	void setWindowShouldClose();
 
 	void update();
 	void render();
@@ -115,7 +116,7 @@ private:
 
 	//functions
 	void initGLFW();
-	void initWindow(const char* title, bool resizable);
+	void initWindow(const char* title, bool resizable, bool fullscreen);
 	void initGLEW();
 	void initOpenGLOptions();
 	void initMatrices();
@@ -130,6 +131,7 @@ private:
 	void initCallbacks();
 	
 	void updateUniforms();
+	void updateCollisions();
 
 	void updateInput(int key, int action);
 	void updateMouse(double xpos, double ypos);

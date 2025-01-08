@@ -6,7 +6,8 @@ Game::Game(
 	const char* title,
 	const int width, const int height,
 	const int GLmajorVersion, const int GLminorVersion,
-	bool resizable
+	bool resizable, 
+	bool fullscreen
 )
 	:
 	WINDOW_WIDTH(width), WINDOW_HEIGHT(height),
@@ -26,7 +27,7 @@ Game::Game(
 
 	//init functions
 	initGLFW();
-	initWindow(title, resizable);
+	initWindow(title, resizable, fullscreen);
 	initGLEW();
 	initOpenGLOptions();
 	initMatrices();
@@ -59,7 +60,7 @@ int Game::getWindowShouldClose()
 	return glfwWindowShouldClose(window);
 }
 
-void Game::setWindowShouldCloes()
+void Game::setWindowShouldClose()
 {
 	glfwSetWindowShouldClose(window, GLFW_TRUE);
 }
@@ -70,7 +71,12 @@ void Game::update()
 	updateDeltaTime();
 	do_movment();
 
+	updateCollisions();
+
 	healthbar->update(deltaTime);
+
+	if (!healthbar->isAlive())
+		setWindowShouldClose();
 
 	std::random_device rd;
 	std::mt19937 gen(rd());
@@ -138,16 +144,21 @@ void Game::initGLFW()
 	}
 }
 
-void Game::initWindow(const char* title, bool resizable)
+void Game::initWindow(const char* title, bool resizable, bool fullscreen)
 {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GL_VERSION_MAJOR);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GL_VERSION_MINOR);
 	glfwWindowHint(GLFW_RESIZABLE, resizable);
-
 	glfwWindowHint(GLFW_SAMPLES, 4);
 
-	window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, title, NULL, NULL);
+	if (fullscreen) {
+		const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+		window = glfwCreateWindow(mode->width, mode->height, title, glfwGetPrimaryMonitor(), NULL);
+	}
+	else {
+		window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, title, NULL, NULL);
+	}
 
 	if (window == NULL) {
 		std::cerr << "ERROR::GAME::INIT_WINDOW" << '\n';
@@ -427,10 +438,15 @@ void Game::updateUniforms()
 	shaders[SHADER_LAMP]->setVec3("lightColor", glm::vec3(1.f));
 }
 
+void Game::updateCollisions()
+{
+
+}
+
 void Game::updateInput(int key, int action)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		setWindowShouldCloes();
+		setWindowShouldClose();
 	if (key == GLFW_KEY_F && action == GLFW_PRESS) {
 		if (spotLight->isOn())
 			spotLight->turnOff();

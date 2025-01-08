@@ -93,6 +93,7 @@ void HealthBar::update(float deltaTime) {
     currentHealth -= 3.5f * deltaTime;
     if (currentHealth < 0.0f) {
         currentHealth = 0.0f;
+        alive = false;
     }
 }
 
@@ -109,6 +110,11 @@ void HealthBar::increaseHealth(float increaseRate)
         currentHealth = maxHealth;
 }
 
+bool HealthBar::isAlive() const
+{
+    return alive;
+}
+
 void HealthBar::render() {
     glUseProgram(shaderProgram);
 
@@ -122,7 +128,13 @@ void HealthBar::render() {
     glUniform2f(scaleLoc, scale.x, scale.y);
 
     GLint colorLoc = glGetUniformLocation(shaderProgram, "color");
-    glUniform3f(colorLoc, 0.0f, 1.0f, 0.0f); 
+    if(currentHealth >= 50.0f)
+        glUniform3f(colorLoc, 0.0f, 1.0f, 0.0f); 
+    else if (currentHealth >= 30.0f)
+        glUniform3f(colorLoc, 0.0f, 0.6f, 0.0f);
+    else
+        glUniform3f(colorLoc, 0.5f, 0.0f, 0.0f);
+
 
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);

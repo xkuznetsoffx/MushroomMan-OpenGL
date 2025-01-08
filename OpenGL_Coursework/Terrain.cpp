@@ -43,7 +43,6 @@ float Terrain::getCurrentHeightFromMap(float x, float z)
     float h1 = ((1 - (x - intX)) * heightMap[intZ * width + intX] + (x - intX) * heightMap[intZ * width + (intX + 1)]);
     float h2 = ((1 - (x - intX)) * heightMap[(intZ+1) * width + intX] + (x - intX) * heightMap[(intZ+1) * width + (intX + 1)]);
 
-
     return (1-(z-intZ))*h1 + (z-intZ)*h2;
 }
 

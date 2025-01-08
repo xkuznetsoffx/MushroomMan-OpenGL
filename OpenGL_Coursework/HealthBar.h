@@ -9,6 +9,9 @@ class HealthBar {
 private:
     float maxHealth;
     float currentHealth;
+
+    bool alive = true;
+
     glm::vec2 position;
     glm::vec2 size;
 
@@ -26,6 +29,7 @@ public:
     void render();
     void setHealth(float health);
     void increaseHealth(float increaseRate);
+    bool isAlive() const;
 };
 
 #endif
