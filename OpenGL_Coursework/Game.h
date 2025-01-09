@@ -100,12 +100,14 @@ private:
 	std::vector<UPtrMesh> meshesLamps;
 
 	//Models
+	Model* burger;//kostil!!!
+
 	std::vector<UPtrModel> models;
 	std::vector<SPtrModel> collectableObjects;
 	
 	std::shared_ptr<Terrain> terrain;
 
-	Model* testModelFromFile;//kostil!!!
+	
 
 	//Lights
 	UPtrDirLight directionLight;

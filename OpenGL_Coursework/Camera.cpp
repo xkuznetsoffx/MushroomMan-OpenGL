@@ -51,41 +51,48 @@ void Camera::SetPosition(glm::vec3 position)
 	hitbox.max = Position + glm::vec3(0.1f, 0.5f, 0.1f);
 }
 
-void Camera::move(glm::vec3 position)
+void Camera::move(const glm::vec3 position)
 {
 	this->Position += position;
 	hitbox.min = Position - glm::vec3(0.1f, 0.5f, 0.1f);
 	hitbox.max = Position + glm::vec3(0.1f, 0.5f, 0.1f);
 }
 
-void Camera::ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime, Terrain& terrain) {
+void Camera::ProcessKeyboard(const std::vector<Camera_Movement>& directions, GLfloat deltaTime, Terrain& terrain) {
+	glm::vec3 movement(0.0f);
 	GLfloat velocity = MovementSpeed * deltaTime;
-	if (direction == FORWARD &&
-		terrain.isCoordInMap((Position+Front*velocity).x,
-			(Position+Front * velocity).z)
-		)
-		Position += Front * velocity;
-	if (direction == BACKWARD &&
-		terrain.isCoordInMap((Position - Front * velocity).x,
-			(Position - Front * velocity).z)
-		)
-		Position -= Front * velocity;
-	if (direction == LEFT &&
-		terrain.isCoordInMap((Position - Right * velocity).x,
-			(Position - Right * velocity).z)
-		)
-		Position -= Right * velocity;
-	if (direction == RIGHT &&
-		terrain.isCoordInMap((Position + Right * velocity).x,
-			(Position + Right * velocity).z))
-		Position += Right * velocity;
 
-	shakeTime += deltaTime * shakeFrequency;
-	GLfloat shakeOffset = sin(shakeTime) * shakeAmplitude;
-	Position.y = terrain.getCurrentHeightFromMap(Position.x, Position.z) + 0.8f + shakeOffset;
+	for (const auto& direction : directions)
+	{
+		switch (direction) {
+		case FORWARD:
+			movement += Front;
+			break;
+		case BACKWARD:
+			movement -= Front;
+			break;
+		case LEFT:
+			movement -= Right;
+			break;
+		case RIGHT:
+			movement += Right;
+			break;
+		}
+	}
 
-	hitbox.min = Position - glm::vec3(0.1f, 0.5f, 0.1f);
-	hitbox.max = Position + glm::vec3(0.1f, 0.5f, 0.1f);
+	if (glm::length(movement) > 0.0f &&
+		terrain.isCoordInMap((Position + movement * velocity).x, (Position + movement * velocity).z)
+		)
+	{
+		movement = glm::normalize(movement);
+		Position += movement * velocity;
+		shakeTime += deltaTime * shakeFrequency;
+		GLfloat shakeOffset = sin(shakeTime) * shakeAmplitude;
+		Position.y = terrain.getCurrentHeightFromMap(Position.x, Position.z) + 0.8f + shakeOffset;
+
+		hitbox.min = Position - glm::vec3(0.1f, 0.5f, 0.1f);
+		hitbox.max = Position + glm::vec3(0.1f, 0.5f, 0.1f);
+	}	
 }
 
 void Camera::ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean constrainPitch) {

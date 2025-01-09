@@ -42,9 +42,9 @@ public:
 
     void SetPosition(glm::vec3 position);
 
-    void move(glm::vec3 position);
+    void move(const glm::vec3 position);
 
-    void ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime, Terrain& terrain);
+    void ProcessKeyboard(const std::vector<Camera_Movement>& directions, GLfloat deltaTime, Terrain& terrain);
     void ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean constrainPitch = true);
     void ProcessMouseScroll(GLfloat yoffset);
 

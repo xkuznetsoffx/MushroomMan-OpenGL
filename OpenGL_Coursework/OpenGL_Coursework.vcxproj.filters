@@ -57,12 +57,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="vertex_core.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="fragment_core.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="objects.vs">
       <Filter>Resource Files</Filter>
     </None>

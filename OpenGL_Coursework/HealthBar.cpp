@@ -2,7 +2,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
-// Шейдеры
 const char* vertexShaderCode = R"(
     #version 440 core
     layout (location = 0) in vec2 aPos;

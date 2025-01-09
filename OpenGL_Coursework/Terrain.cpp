@@ -50,6 +50,7 @@ void Terrain::generateTerrain()
 {
 	FastNoiseLite noise;
 	noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+    //noise.SetSeed(1);
 	noise.SetFrequency(scale);
 
 	float value;

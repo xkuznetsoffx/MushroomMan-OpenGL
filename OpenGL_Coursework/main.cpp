@@ -6,7 +6,8 @@ int main() {
 	bool Resizable = true;
 	bool Fullscreen = true;
 
-	Game game(
+	Game game 
+	(
 		"Coursework",
 		800, 600,
 		GLmajorVersion, GLminorVersion,

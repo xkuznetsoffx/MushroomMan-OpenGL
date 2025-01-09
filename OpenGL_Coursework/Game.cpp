@@ -52,7 +52,7 @@ Game::~Game()
 {
 	glfwDestroyWindow(window);
 	glfwTerminate();
-	delete testModelFromFile;
+	delete burger;
 }
 
 int Game::getWindowShouldClose()
@@ -309,11 +309,11 @@ void Game::initModels()
 		);
 	testModelFromFile->scaleUp(glm::vec3(-0.5f));*/
 
-	testModelFromFile = new Model(
+	burger = new Model(
 		"assets\\models\\burger\\scene.gltf",
 		glm::vec3(0.0f, 0.f, 0.0f)
 	);
-	testModelFromFile->scaleUp(glm::vec3(-0.5f));
+	burger->scaleUp(glm::vec3(-0.5f));
 
 	std::random_device rd;
 	std::mt19937 gen(rd());
@@ -322,7 +322,7 @@ void Game::initModels()
 
 	for (size_t i = 0; i < 10; ++i) {
 		collectableObjects.emplace_back(
-			new Model(*testModelFromFile)
+			new Model(*burger)
 		);
 		int x = disX(gen);
 		int z = disZ(gen);
@@ -425,7 +425,9 @@ void Game::updateUniforms()
 
 	viewMatrix = camera.GetViewMatrix();
 	glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
-	projectionMatrix = glm::perspective(glm::radians(camera.GetZoom()), static_cast<GLfloat>(framebufferWidth) / static_cast<GLfloat>(framebufferHeight), nearPlane, farPlane);
+
+	if(framebufferHeight)
+		projectionMatrix = glm::perspective(glm::radians(camera.GetZoom()), static_cast<GLfloat>(framebufferWidth) / static_cast<GLfloat>(framebufferHeight), nearPlane, farPlane);
 
 	shaders[SHADER_OBJ]->setMat4("view", viewMatrix);
 	shaders[SHADER_OBJ]->setMat4("projection", projectionMatrix);
@@ -488,33 +490,29 @@ void Game::updateMouse(double xpos, double ypos)
 
 void Game::updateDeltaTime()
 {
-		currentFrame = static_cast<GLfloat>(glfwGetTime());
-		deltaTime = currentFrame - lastFrame;
-		lastFrame = currentFrame;
+	currentFrame = static_cast<GLfloat>(glfwGetTime());
+	deltaTime = currentFrame - lastFrame;
+	lastFrame = currentFrame;
 }
 
 void Game::do_movment()
 {
-	if (keys[GLFW_KEY_W])
-	{
-		camera.ProcessKeyboard(FORWARD, deltaTime, *terrain.get());
+	std::vector<Camera_Movement> directions;
+
+	if (keys[GLFW_KEY_W]){
+		directions.push_back(FORWARD);
 	}
-	if (keys[GLFW_KEY_S])
-	{
-		camera.ProcessKeyboard(BACKWARD, deltaTime, *terrain.get());
+	if (keys[GLFW_KEY_S]) {
+		directions.push_back(BACKWARD);
 	}
-	if (keys[GLFW_KEY_A])
-		camera.ProcessKeyboard(LEFT, deltaTime, *terrain.get());
-	if (keys[GLFW_KEY_D])
-		camera.ProcessKeyboard(RIGHT, deltaTime, *terrain.get());
-	/*if (keys[GLFW_KEY_SPACE])
-		camera.ProcessKeyboard(UP, deltaTime);
-	if (keys[GLFW_KEY_LEFT_SHIFT])
-		camera.ProcessKeyboard(DOWN, deltaTime);*/
-	if (keys[GLFW_KEY_Z])
-		testModelFromFile->rotate(glm::vec3(0.f, -1.f, 0.f) * deltaTime * 50.0f);
-	if (keys[GLFW_KEY_X])
-		testModelFromFile->rotate(glm::vec3(0.f, 1.f, 0.f) * deltaTime * 50.0f);
+	if (keys[GLFW_KEY_A]) {
+		directions.push_back(LEFT);
+	}
+	if (keys[GLFW_KEY_D]) {
+		directions.push_back(RIGHT);
+	}
+
+	camera.ProcessKeyboard(directions, deltaTime, *terrain.get());
 }
 
 void Game::framebuffer_resize_callback(GLFWwindow* window, int fbW, int fbH)

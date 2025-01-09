@@ -147,13 +147,11 @@
     <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="fragment_core.glsl" />
     <None Include="lamp.frag" />
     <None Include="lamp.vs" />
     <None Include="objects.frag" />
     <None Include="objects.vs" />
     <None Include="packages.config" />
-    <None Include="vertex_core.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
