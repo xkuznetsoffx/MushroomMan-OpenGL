@@ -68,5 +68,9 @@ private:
 
     AABB hitbox;
 
+    GLfloat shakeAmplitude = 0.025f;
+    GLfloat shakeFrequency = 15.0f; 
+    GLfloat shakeTime = 0.0f;
+
 };
 

@@ -79,7 +79,11 @@ void Camera::ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime, Terra
 		terrain.isCoordInMap((Position + Right * velocity).x,
 			(Position + Right * velocity).z))
 		Position += Right * velocity;
-	Position.y = terrain.getCurrentHeightFromMap(Position.x,Position.z) + 0.8f;
+
+	shakeTime += deltaTime * shakeFrequency;
+	GLfloat shakeOffset = sin(shakeTime) * shakeAmplitude;
+	Position.y = terrain.getCurrentHeightFromMap(Position.x, Position.z) + 0.8f + shakeOffset;
+
 	hitbox.min = Position - glm::vec3(0.1f, 0.5f, 0.1f);
 	hitbox.max = Position + glm::vec3(0.1f, 0.5f, 0.1f);
 }

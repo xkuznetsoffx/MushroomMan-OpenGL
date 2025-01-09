@@ -131,7 +131,7 @@ void HealthBar::render() {
     if(currentHealth >= 50.0f)
         glUniform3f(colorLoc, 0.0f, 1.0f, 0.0f); 
     else if (currentHealth >= 30.0f)
-        glUniform3f(colorLoc, 0.0f, 0.6f, 0.0f);
+        glUniform3f(colorLoc, 0.6f, 0.6f, 0.0f);
     else
         glUniform3f(colorLoc, 0.5f, 0.0f, 0.0f);
 
