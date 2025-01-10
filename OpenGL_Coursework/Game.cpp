@@ -324,10 +324,10 @@ void Game::initModels()
 void Game::initLights()
 {
 	directionLight = std::make_unique<DirectionLight>(
-		glm::vec3(0.25f, 0.25f, 0.25f),		//ambient
-		glm::vec3(0.3f, 0.3f, 0.3f),		//diffuse
-		glm::vec3(0.3f, 0.3f, 0.3f),		//specular
-		glm::vec3(-0.2f, -1.0f, -0.3f)		//direction
+		glm::vec3(0.2f, 0.2f, 0.2f),   // Ambient 
+		glm::vec3(0.8f, 0.7f, 0.6f),   // Diffuse 
+		glm::vec3(0.8f, 0.7f, 0.6f),   // Specular 
+		glm::vec3(-0.4f, -1.0f, -0.5f) // Direction 
 	);
 
 	pointLights.push_back(
@@ -399,7 +399,11 @@ void Game::updateUniforms()
 	glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
 
 	if(framebufferHeight)
-		projectionMatrix = glm::perspective(glm::radians(camera.GetZoom()), static_cast<GLfloat>(framebufferWidth) / static_cast<GLfloat>(framebufferHeight), nearPlane, farPlane);
+		projectionMatrix = glm::perspective(
+			glm::radians(camera.GetZoom()),
+			static_cast<GLfloat>(framebufferWidth) / static_cast<GLfloat>(framebufferHeight),
+			nearPlane, farPlane
+		);
 
 	shaders[SHADER_OBJ]->setMat4("view", viewMatrix);
 	shaders[SHADER_OBJ]->setMat4("projection", projectionMatrix);

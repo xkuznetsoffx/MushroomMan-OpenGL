@@ -50,7 +50,6 @@ void Terrain::generateTerrain()
 {
 	FastNoiseLite noise;
 	noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-    //noise.SetSeed(1);
 	noise.SetFrequency(scale);
 
 	float value;
@@ -86,9 +85,7 @@ void Terrain::initVAO()
                     heightMap[z * width + x],
                     static_cast<GLfloat>(z)
                 ),
-                glm::vec3(
-                    0.f, 1.f, 0.f //Необходим корректный расчет нормалей
-                ),
+               glm::vec3(0.f,0.f,0.f),
                 glm::vec2(
                     static_cast<GLfloat>(x) / ((sqrtf(width) / 2)), 
                     static_cast<GLfloat>(z) / ((sqrtf(height) / 2))
@@ -116,6 +113,8 @@ void Terrain::initVAO()
             indices.push_back(topRight);
         }
     }
+
+    calculateNormals(vertices, indices);
 
     nrOfIndices = indices.size(); 
 
@@ -148,6 +147,37 @@ void Terrain::initVAO()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 }
+
+
+void Terrain::calculateNormals(std::vector<Vertex>&vertices, const std::vector<GLuint>&indices) {
+    for (size_t i = 0; i < indices.size(); i += 3) {
+        GLuint index0 = indices[i];
+        GLuint index1 = indices[i + 1];
+        GLuint index2 = indices[i + 2];
+
+        glm::vec3 v0 = vertices[index0].position;
+        glm::vec3 v1 = vertices[index1].position;
+        glm::vec3 v2 = vertices[index2].position;
+
+        
+        glm::vec3 edge1 = v1 - v0;
+        glm::vec3 edge2 = v2 - v0;
+
+       
+        glm::vec3 normal = glm::normalize(glm::cross(edge1, edge2));
+
+        
+        vertices[index0].normal += normal;
+        vertices[index1].normal += normal;
+        vertices[index2].normal += normal;
+    }
+
+ 
+    for (auto& vertex : vertices) {
+        vertex.normal = glm::normalize(vertex.normal);
+    }
+}
+
 
 bool Terrain::isCoordInMap(float x, float z)
 {

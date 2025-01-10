@@ -112,6 +112,8 @@ void Model::move(const glm::vec3 position)
 
 void Model::scaleUp(const glm::vec3 scale)
 {
+	hitbox.min -= scale;
+	hitbox.max += scale;
 	for (auto& mesh : meshes) {
 		mesh->scaleUp(scale);
 	}

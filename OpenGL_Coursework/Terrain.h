@@ -39,8 +39,6 @@ private:
 	unsigned int nrOfIndices;
 
 	void initVAO();
-
-	
-
+	void calculateNormals(std::vector<Vertex>& vertices, const std::vector<GLuint>& indices);
 };
 

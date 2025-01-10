@@ -15,8 +15,8 @@ Camera::Camera(GLfloat posX, GLfloat posY, GLfloat posZ,
 	Yaw(yaw), Pitch(pitch) 
 {
 	Position = glm::vec3(posX, posY, posZ);
-	hitbox.min = Position - glm::vec3(0.1f, 0.5f, 0.1f);
-	hitbox.max = Position + glm::vec3(0.1f, 0.5f, 0.1f);
+	hitbox.min = Position - glm::vec3(0.2f, 0.5f, 0.2f);
+	hitbox.max = Position + glm::vec3(0.2f, 0.5f, 0.2f);
 	WorldUp = glm::vec3(upX, upY, upZ);
 	updateCameraVectors();
 }
@@ -47,31 +47,31 @@ const AABB& Camera::getHitbox()
 void Camera::SetPosition(glm::vec3 position)
 {
 	this->Position = position;
-	hitbox.min = Position - glm::vec3(0.1f, 0.5f, 0.1f);
-	hitbox.max = Position + glm::vec3(0.1f, 0.5f, 0.1f);
+	hitbox.min = Position - glm::vec3(0.2f, 0.5f, 0.2f);
+	hitbox.max = Position + glm::vec3(0.2f, 0.5f, 0.2f);
 }
 
 void Camera::move(const glm::vec3 position)
 {
 	this->Position += position;
-	hitbox.min = Position - glm::vec3(0.1f, 0.5f, 0.1f);
-	hitbox.max = Position + glm::vec3(0.1f, 0.5f, 0.1f);
+	hitbox.min = Position - glm::vec3(0.2f, 0.5f, 0.2f);
+	hitbox.max = Position + glm::vec3(0.2f, 0.5f, 0.2f);
 }
 
 void Camera::updateCameraSpeed(float speed, float duration)
 {
-	if(!speedBoostActivate)
+	if(!speedBoostActivated)
 		MovementSpeed += speed;
 
 	speedBoostTime = std::chrono::steady_clock::now() + std::chrono::milliseconds(static_cast<int>(duration * 1000));
-	speedBoostActivate = true;
+	speedBoostActivated = true;
 }
 
 void Camera::update()
 {
-	if (speedBoostActivate && std::chrono::steady_clock::now() >= speedBoostTime) {
+	if (speedBoostActivated && std::chrono::steady_clock::now() >= speedBoostTime) {
 		MovementSpeed = SPEED;
-		speedBoostActivate = false;
+		speedBoostActivated = false;
 	}
 }
 
@@ -79,20 +79,23 @@ void Camera::ProcessKeyboard(const std::vector<Camera_Movement>& directions, GLf
 	glm::vec3 movement(0.0f);
 	GLfloat velocity = MovementSpeed * deltaTime;
 
+	glm::vec3 FlatFront = glm::normalize(glm::vec3(Front.x, 0.0f, Front.z));
+	glm::vec3 FlatRight = glm::normalize(glm::vec3(Right.x, 0.0f, Right.z));
+
 	for (const auto& direction : directions)
 	{
 		switch (direction) {
 		case FORWARD:
-			movement += Front;
+			movement += FlatFront;
 			break;
 		case BACKWARD:
-			movement -= Front;
+			movement -= FlatFront;
 			break;
 		case LEFT:
-			movement -= Right;
+			movement -= FlatRight;
 			break;
 		case RIGHT:
-			movement += Right;
+			movement += FlatRight;
 			break;
 		}
 	}

@@ -76,6 +76,6 @@ private:
     AABB hitbox;
 
     std::chrono::steady_clock::time_point speedBoostTime;
-    bool speedBoostActivate = false;
+    bool speedBoostActivated = false;
 };
 
