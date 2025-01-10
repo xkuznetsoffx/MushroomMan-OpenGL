@@ -5,6 +5,8 @@ MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM), Position(positio
 Yaw(yaw), Pitch(pitch) {
 	hitbox.min = Position - glm::vec3(0.1f);
 	hitbox.max = Position + glm::vec3(0.1f);
+	steps = new Sound("assets\\sounds\\steps.wav");
+	steps->setVolume(0.1f);
 	updateCameraVectors();
 }
 
@@ -18,7 +20,14 @@ Camera::Camera(GLfloat posX, GLfloat posY, GLfloat posZ,
 	hitbox.min = Position - glm::vec3(0.2f, 0.5f, 0.2f);
 	hitbox.max = Position + glm::vec3(0.2f, 0.5f, 0.2f);
 	WorldUp = glm::vec3(upX, upY, upZ);
+	steps = new Sound("assets\\sounds\\steps.wav");
+	steps->setVolume(0.1f);
 	updateCameraVectors();
+}
+
+Camera::~Camera()
+{
+	delete steps;
 }
 
 glm::mat4 Camera::GetViewMatrix() {
@@ -79,6 +88,9 @@ void Camera::ProcessKeyboard(const std::vector<Camera_Movement>& directions, GLf
 	glm::vec3 movement(0.0f);
 	GLfloat velocity = MovementSpeed * deltaTime;
 
+	static float stepSoundTimer = 0.0f;
+	stepSoundTimer += deltaTime;
+
 	glm::vec3 FlatFront = glm::normalize(glm::vec3(Front.x, 0.0f, Front.z));
 	glm::vec3 FlatRight = glm::normalize(glm::vec3(Right.x, 0.0f, Right.z));
 
@@ -99,11 +111,14 @@ void Camera::ProcessKeyboard(const std::vector<Camera_Movement>& directions, GLf
 			break;
 		}
 	}
-
 	if (glm::length(movement) > 0.0f &&
 		terrain.isCoordInMap((Position + movement * velocity).x, (Position + movement * velocity).z)
 		)
 	{
+		if (stepSoundTimer >= 1.5 / MovementSpeed) {
+			steps->play();
+			stepSoundTimer = 0.0f;  // —брос таймера  
+		}
 		movement = glm::normalize(movement);
 		Position += movement * velocity;
 		shakeTime += deltaTime * shakeFrequency;

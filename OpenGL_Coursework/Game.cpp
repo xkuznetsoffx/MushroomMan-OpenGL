@@ -43,7 +43,7 @@ Game::Game(
 
 	eatSound = new Sound("assets\\sounds\\eat1.wav");
 	drinkSound = new Sound("assets\\sounds\\drink.wav");
-
+	
 	healthbar = std::make_unique<HealthBar>(
 		100.f,
 		glm::vec2(20.f, 20.f),

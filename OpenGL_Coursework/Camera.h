@@ -4,6 +4,7 @@
 
 #include "Collision.h"
 #include "Terrain.h"
+#include "Sound.h"
 
 #include <GL/glew.h>
 
@@ -35,6 +36,7 @@ public:
         GLfloat upX, GLfloat upY, GLfloat upZ, 
         GLfloat yaw, GLfloat pitch);
 
+    ~Camera();
 
     glm::mat4 GetViewMatrix();
     glm::vec3 GetFront();
@@ -74,6 +76,8 @@ private:
     GLfloat shakeTime = 0.0f;
 
     AABB hitbox;
+
+    Sound* steps;
 
     std::chrono::steady_clock::time_point speedBoostTime;
     bool speedBoostActivated = false;

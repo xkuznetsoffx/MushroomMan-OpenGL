@@ -89,6 +89,7 @@ private:
 	//Sounds
 	Sound* eatSound;
 	Sound* drinkSound;
+	
 
 
 	//Shaders

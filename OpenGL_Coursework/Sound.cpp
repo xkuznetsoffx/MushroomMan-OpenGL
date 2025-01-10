@@ -79,6 +79,29 @@ void Sound::play()
     alcMakeContextCurrent(currentContext);
 }
 
+void Sound::setVolume(float volume)
+{
+    // Ограничьте громкость диапазоном 0.0 - 1.0  
+    volume = std::max(0.0f, std::min(volume, 1.0f));
+
+    // Сохраняем текущий активный контекст  
+    ALCcontext* currentContext = alcGetCurrentContext();
+
+    // Делаем наш контекст текущим  
+    alcMakeContextCurrent(context);
+
+    // Используйте AL_GAIN для установки громкости  
+    alSourcef(source, AL_GAIN, volume);
+
+    // Проверьте ошибки OpenAL  
+    ALenum error = alGetError();
+    if (error != AL_NO_ERROR) {
+        std::cerr << "Error setting volume: " << alGetString(error) << std::endl;
+    }
+
+    // Восстановим предыдущий контекст  
+    alcMakeContextCurrent(currentContext);
+}
 bool Sound::loadWAVFile(const std::string& filename)
 {
     std::ifstream file(filename, std::ios::binary);

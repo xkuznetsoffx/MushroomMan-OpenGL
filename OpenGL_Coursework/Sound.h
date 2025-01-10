@@ -15,6 +15,7 @@ public:
 	Sound(const std::string& filename);
 	~Sound();
 	void play();
+	void setVolume(float volume);
 
 private:
 	ALuint buffer;
