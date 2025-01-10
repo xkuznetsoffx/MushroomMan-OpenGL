@@ -1,4 +1,5 @@
 #pragma once
+
 #include "libs.h"
 #include "HealthBar.h"
 
@@ -49,8 +50,6 @@ public:
 	~Game();
 
 	int getWindowShouldClose();
-
-	void setWindowShouldClose();
 
 	void update();
 	void render();
@@ -141,10 +140,12 @@ private:
 	void do_movment();
 
 	//static functions
-public:
 	static void framebuffer_resize_callback(GLFWwindow* window, int fbW, int fbH);
 	static void  key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	static void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 	static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+
+	void setWindowShouldClose();
+
 };
 

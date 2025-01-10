@@ -1,5 +1,4 @@
-﻿  Camera.cpp
-  Game.cpp
+﻿  Game.cpp
 D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(304,76): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
 D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(304,73): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
 D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(319,75): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
@@ -15,11 +14,6 @@ D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(489,18): warning C4244:
 D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(491,10): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
 D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(492,10): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
 D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(549,35): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
-  Texture.cpp
+  main.cpp
   Generating Code...
-glew32sd.lib(glew.obj) : warning LNK4099: PDB '' was not found with 'glew32sd.lib(glew.obj)' or at ''; linking object as if no debug info
-soil2-debug.lib(SOIL2.obj) : warning LNK4099: PDB '' was not found with 'soil2-debug.lib(SOIL2.obj)' or at ''; linking object as if no debug info
-soil2-debug.lib(image_DXT.obj) : warning LNK4099: PDB '' was not found with 'soil2-debug.lib(image_DXT.obj)' or at ''; linking object as if no debug info
-soil2-debug.lib(wfETC.obj) : warning LNK4099: PDB '' was not found with 'soil2-debug.lib(wfETC.obj)' or at ''; linking object as if no debug info
-soil2-debug.lib(image_helper.obj) : warning LNK4099: PDB '' was not found with 'soil2-debug.lib(image_helper.obj)' or at ''; linking object as if no debug info
   OpenGL_Coursework.vcxproj -> D:\CppProjs\OpenGL_Coursework\x64\Debug\OpenGL_Coursework.exe
