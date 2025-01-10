@@ -5,6 +5,8 @@
 #include <GL/glew.h>
 #include <string>
 
+#include "Shader.h"
+
 class HealthBar {
 private:
     float maxHealth;
@@ -18,15 +20,15 @@ private:
     GLuint VAO, VBO;
 
     void initRenderData(); 
-    GLuint compileShader(const std::string& vertexCode, const std::string& fragmentCode);
+
+    void updateUniforms(Shader* shader);
 
 public:
     HealthBar(float maxHealth, glm::vec2 position, glm::vec2 size);
     ~HealthBar();
-    GLuint shaderProgram; 
 
     void update(float deltaTime);
-    void render();
+    void render(Shader* shader);
     void setHealth(float health);
     void increaseHealth(float increaseRate);
     bool isAlive() const;

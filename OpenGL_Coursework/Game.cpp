@@ -110,13 +110,7 @@ void Game::render()
 
 	updateUniforms();
 
-	// Установить ортографическую проекцию для 2D-отрисовки
-	glm::mat4 orthoProjection = glm::ortho(0.0f, static_cast<float>(WINDOW_WIDTH), 0.0f, static_cast<float>(WINDOW_HEIGHT));
-	GLint projectionLoc = glGetUniformLocation(healthbar->shaderProgram, "projection");
-	glUseProgram(healthbar->shaderProgram);
-	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(orthoProjection));
-
-	healthbar->render();
+	healthbar->render(shaders[SHADER_HEALTH].get());
 
 	terrain->render(shaders[SHADER_OBJ].get());
 
@@ -223,6 +217,10 @@ void Game::initShaders()
 		(GL_VERSION_MAJOR, GL_VERSION_MINOR, "lamp.vs", "lamp.frag")
 	);
 
+	shaders.push_back(
+		std::make_unique<Shader>
+		(GL_VERSION_MAJOR, GL_VERSION_MINOR,"HealthBar.vs","HealthBar.frag")
+	);
 }
 
 void Game::initTextures()
@@ -438,6 +436,10 @@ void Game::updateUniforms()
 	shaders[SHADER_LAMP]->setMat4("projection", projectionMatrix);
 
 	shaders[SHADER_LAMP]->setVec3("lightColor", glm::vec3(1.f));
+
+	shaders[SHADER_HEALTH]->Use();
+	glm::mat4 orthoProjection = glm::ortho(0.0f, static_cast<float>(WINDOW_WIDTH), 0.0f, static_cast<float>(WINDOW_HEIGHT));
+	shaders[SHADER_HEALTH]->setMat4("projection", orthoProjection);
 }
 
 void Game::updateCollisions()

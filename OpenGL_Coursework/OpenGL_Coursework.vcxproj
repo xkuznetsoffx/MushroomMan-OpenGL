@@ -147,6 +147,8 @@
     <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="HealthBar.frag" />
+    <None Include="HealthBar.vs" />
     <None Include="lamp.frag" />
     <None Include="lamp.vs" />
     <None Include="objects.frag" />

@@ -6,7 +6,7 @@ enum ShaderType
 {
 	SHADER_OBJ = 0,
 	SHADER_LAMP,
-	SHADER_2D
+	SHADER_HEALTH
 };
 
 enum TextureType

@@ -2,40 +2,14 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
-const char* vertexShaderCode = R"(
-    #version 440 core
-    layout (location = 0) in vec2 aPos;
-
-    uniform mat4 projection;
-    uniform vec2 offset;
-    uniform vec2 scale;
-
-    void main() {
-        vec2 scaledPos = aPos * scale + offset;
-        gl_Position = projection * vec4(scaledPos, 0.0, 1.0);
-    }
-)";
-
-const char* fragmentShaderCode = R"(
-    #version 440 core
-    out vec4 FragColor;
-    uniform vec3 color;
-
-    void main() {
-        FragColor = vec4(color, 1.0);
-    }
-)";
-
 HealthBar::HealthBar(float maxHealth, glm::vec2 position, glm::vec2 size)
     : maxHealth(maxHealth), currentHealth(maxHealth), position(position), size(size) {
     initRenderData();
-    shaderProgram = compileShader(vertexShaderCode, fragmentShaderCode);
 }
 
 HealthBar::~HealthBar() {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
-    glDeleteProgram(shaderProgram);
 }
 
 void HealthBar::initRenderData() {
@@ -66,26 +40,20 @@ void HealthBar::initRenderData() {
     glBindVertexArray(0);
 }
 
-GLuint HealthBar::compileShader(const std::string& vertexCode, const std::string& fragmentCode) {
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    const char* vertexSource = vertexCode.c_str();
-    glShaderSource(vertexShader, 1, &vertexSource, nullptr);
-    glCompileShader(vertexShader);
+void HealthBar::updateUniforms(Shader* shader)
+{
+    glm::vec2 scale(size.x, size.y);
+    scale.x *= (currentHealth / maxHealth);
 
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    const char* fragmentSource = fragmentCode.c_str();
-    glShaderSource(fragmentShader, 1, &fragmentSource, nullptr);
-    glCompileShader(fragmentShader);
-
-    GLuint program = glCreateProgram();
-    glAttachShader(program, vertexShader);
-    glAttachShader(program, fragmentShader);
-    glLinkProgram(program);
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    return program;
+    shader->setVec2("offset", position.x, position.y);
+    shader->setVec2("scale", scale.x, scale.y);
+  
+    if (currentHealth >= 50.0f)
+        shader->setVec3("color", 0.0f, 1.0f, 0.0f);
+    else if (currentHealth >= 30.0f)
+        shader->setVec3("color", 0.6f, 0.6f, 0.0f);
+    else
+        shader->setVec3("color", 0.5f, 0.0f, 0.0f);
 }
 
 void HealthBar::update(float deltaTime) {
@@ -114,26 +82,10 @@ bool HealthBar::isAlive() const
     return alive;
 }
 
-void HealthBar::render() {
-    glUseProgram(shaderProgram);
+void HealthBar::render(Shader* shader) {
+    shader->Use();
 
-    glm::vec2 scale(size.x, size.y);
-    scale.x *= (currentHealth / maxHealth);
-
-    GLint offsetLoc = glGetUniformLocation(shaderProgram, "offset");
-    glUniform2f(offsetLoc, position.x, position.y);
-
-    GLint scaleLoc = glGetUniformLocation(shaderProgram, "scale");
-    glUniform2f(scaleLoc, scale.x, scale.y);
-
-    GLint colorLoc = glGetUniformLocation(shaderProgram, "color");
-    if(currentHealth >= 50.0f)
-        glUniform3f(colorLoc, 0.0f, 1.0f, 0.0f); 
-    else if (currentHealth >= 30.0f)
-        glUniform3f(colorLoc, 0.6f, 0.6f, 0.0f);
-    else
-        glUniform3f(colorLoc, 0.5f, 0.0f, 0.0f);
-
+    updateUniforms(shader);
 
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);

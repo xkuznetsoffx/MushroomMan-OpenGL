@@ -1,15 +1,8 @@
-﻿  Game.cpp
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(99,69): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(99,67): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(329,87): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(329,84): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(477,11): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(478,11): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(482,18): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(483,18): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(485,10): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(486,10): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(543,35): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
-  HealthBar.cpp
-  Generating Code...
+﻿  Mesh.cpp
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Mesh.cpp(14,48): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Mesh.cpp(15,46): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Mesh.cpp(129,29): warning C4267: 'argument': conversion from 'size_t' to 'const GLuint', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Mesh.cpp(130,39): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Mesh.cpp(133,29): warning C4267: 'argument': conversion from 'size_t' to 'const GLuint', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Mesh.cpp(134,40): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
   OpenGL_Coursework.vcxproj -> D:\CppProjs\OpenGL_Coursework\x64\Debug\OpenGL_Coursework.exe
