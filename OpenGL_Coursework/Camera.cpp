@@ -58,6 +58,23 @@ void Camera::move(const glm::vec3 position)
 	hitbox.max = Position + glm::vec3(0.1f, 0.5f, 0.1f);
 }
 
+void Camera::updateCameraSpeed(float speed, float duration)
+{
+	if(!speedBoostActivate)
+		MovementSpeed += speed;
+
+	speedBoostTime = std::chrono::steady_clock::now() + std::chrono::milliseconds(static_cast<int>(duration * 1000));
+	speedBoostActivate = true;
+}
+
+void Camera::update()
+{
+	if (speedBoostActivate && std::chrono::steady_clock::now() >= speedBoostTime) {
+		MovementSpeed = SPEED;
+		speedBoostActivate = false;
+	}
+}
+
 void Camera::ProcessKeyboard(const std::vector<Camera_Movement>& directions, GLfloat deltaTime, Terrain& terrain) {
 	glm::vec3 movement(0.0f);
 	GLfloat velocity = MovementSpeed * deltaTime;

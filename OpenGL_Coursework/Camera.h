@@ -1,5 +1,7 @@
 #pragma once
 
+#include <chrono>
+
 #include "Collision.h"
 #include "Terrain.h"
 
@@ -41,8 +43,10 @@ public:
     const AABB& getHitbox();
 
     void SetPosition(glm::vec3 position);
-
     void move(const glm::vec3 position);
+
+    void updateCameraSpeed(float speed, float duration);
+    void update();
 
     void ProcessKeyboard(const std::vector<Camera_Movement>& directions, GLfloat deltaTime, Terrain& terrain);
     void ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean constrainPitch = true);
@@ -65,12 +69,13 @@ private:
     GLfloat MovementSpeed;
     GLfloat MouseSensitivity;
     GLfloat Zoom;
+    GLfloat shakeAmplitude = 0.025f;
+    GLfloat shakeFrequency = 15.0f;
+    GLfloat shakeTime = 0.0f;
 
     AABB hitbox;
 
-    GLfloat shakeAmplitude = 0.025f;
-    GLfloat shakeFrequency = 15.0f; 
-    GLfloat shakeTime = 0.0f;
-
+    std::chrono::steady_clock::time_point speedBoostTime;
+    bool speedBoostActivate = false;
 };
 

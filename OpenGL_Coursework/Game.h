@@ -101,13 +101,12 @@ private:
 
 	//Models
 	Model* burger;//kostil!!!
+	Model* cola;//kostil!!!
 
-	std::vector<UPtrModel> models;
-	std::vector<SPtrModel> collectableObjects;
-	
+	std::vector<SPtrModel> burgers;
+	std::vector<SPtrModel> drinks;
+
 	std::shared_ptr<Terrain> terrain;
-
-	
 
 	//Lights
 	UPtrDirLight directionLight;
@@ -133,17 +132,13 @@ private:
 	void initCallbacks();
 	
 	void updateUniforms();
-	void updateCollisions();
+	void updateModels();
 
 	void updateInput(int key, int action);
 	void updateMouse(double xpos, double ypos);
 	void updateDeltaTime();
 
 	void do_movment();
-
-	void switchTo2D();
-	void switchTo3D();
-
 
 	//static functions
 public:

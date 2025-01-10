@@ -53,6 +53,7 @@ Game::~Game()
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	delete burger;
+	delete cola;
 }
 
 int Game::getWindowShouldClose()
@@ -71,35 +72,16 @@ void Game::update()
 	updateDeltaTime();
 	do_movment();
 
-	updateCollisions();
+	updateModels();
+
+	camera.update();
 
 	healthbar->update(deltaTime);
 
 	if (!healthbar->isAlive())
 		setWindowShouldClose();
 
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	std::uniform_int_distribution<> disX(0, terrain->getHeight() - 2);
-	std::uniform_int_distribution<> disZ(0, terrain->getWidth() - 2);
-
-	for (const auto& obj : collectableObjects) {
-		obj->move(glm::vec3(0.0f, sin(glfwGetTime()) * deltaTime * 0.1f , 0.0f));
-		obj->rotate(glm::vec3(0.0f, 45.f * deltaTime, 0.0f)); ;
-		if (checkCollision(obj->getHitbox(), camera.getHitbox())) {
-#ifdef DEBUG
-			std::cout << "Collision!!" << std::endl;
-			std::cout << "Model hitbox:\n" << obj->getHitbox().min.x << ' ' << obj->getHitbox().min.y << ' ' << obj->getHitbox().min.z << ' ' << '\n' <<
-				obj->getHitbox().max.x << ' ' << obj->getHitbox().max.y << ' ' << obj->getHitbox().max.z << ' ' << '\n';
-			std::cout << "Camera hitbox:\n" << camera.getHitbox().min.x << ' ' << camera.getHitbox().min.y << ' ' << camera.getHitbox().min.z << ' ' << '\n' <<
-				camera.getHitbox().max.x << ' ' << camera.getHitbox().max.y << ' ' << camera.getHitbox().max.z << ' ' << '\n';
-#endif // DEBUG
-			int x = disX(gen);
-			int z = disZ(gen);
-			obj->setPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x,z)+0.5f, z));
-			healthbar->increaseHealth(10.0f);
-		}
-	}
+	
 	
 }
 
@@ -114,11 +96,17 @@ void Game::render()
 
 	terrain->render(shaders[SHADER_OBJ].get());
 
-	for (const auto& obj : collectableObjects) {
-		obj->render(shaders[SHADER_OBJ].get());
+	for (const auto& burger : burgers) {
+		burger->render(shaders[SHADER_OBJ].get());
 	}
 
-	meshesLamps[0]->render(shaders[SHADER_LAMP].get());
+	for (const auto& cola : drinks) {
+		cola->render(shaders[SHADER_OBJ].get());
+	}
+
+	for (const auto& lamp : meshesLamps){
+		lamp->render(shaders[SHADER_LAMP].get());
+	}
 
 	glfwSwapBuffers(window);
 	glFlush();
@@ -288,24 +276,13 @@ void Game::initMeshes()
 			Cube(),							//primitive
 			glm::vec3(3.0f, 4.0f, 3.0f),	//position
 			glm::vec3(0.0f),				//rotation
-			glm::vec3(0.25f)					//scale
+			glm::vec3(0.25f)				//scale
 		)
 	);
 }
 
 void Game::initModels()
 {
-
-	/*testModelFromFile = new Model(
-		"assets\\models\\pole_dance\\scene.gltf",
-		glm::vec3(0.0f, -0.25f, 0.0f)
-	);*/
-
-	/*testModelFromFile = new Model(
-			"assets\\models\\sorceress\\scene.gltf",
-			glm::vec3(0.0f, 1.f, 0.0f)
-		);
-	testModelFromFile->scaleUp(glm::vec3(-0.5f));*/
 
 	burger = new Model(
 		"assets\\models\\burger\\scene.gltf",
@@ -318,40 +295,37 @@ void Game::initModels()
 	std::uniform_int_distribution<> disX(0, terrain->getHeight() - 2);
 	std::uniform_int_distribution<> disZ(0, terrain->getWidth() - 2);
 
-	for (size_t i = 0; i < 10; ++i) {
-		collectableObjects.emplace_back(
+	for (size_t i = 0; i < 8; ++i) {
+		burgers.emplace_back(
 			new Model(*burger)
 		);
 		int x = disX(gen);
 		int z = disZ(gen);
-		collectableObjects[i]->setPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x, z) + 0.5f, z));
+		burgers[i]->setPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x, z) + 0.7f, z));
 	}
 
-	/*testModelFromFile = new Model(
-		"assets\\models\\nissan_skyline\\scene.gltf",
-		glm::vec3(0.0f, 0.50f, 0.0f)
+	cola = new Model(
+		"assets\\models\\cola\\scene.gltf",
+		glm::vec3(0.0f, 0.f, 0.0f)
 	);
-	testModelFromFile->scaleUp(glm::vec3(50.0f));*/
+	cola->scaleUp(glm::vec3(-0.9f));
 
-	/*testModelFromFile =new Model(
-		"assets\\models\\nissan_skyline\\FINAL_MODEL_R3.fbx",
-		glm::vec3(0.0f, 0.50f, 0.0f)
-	);
-	testModelFromFile->scaleUp(glm::vec3(-0.5f));*/
+	for (size_t i = 0; i < 2; ++i) {
+		drinks.emplace_back(
+			new Model(*cola)
+		);
+		int x = disX(gen);
+		int z = disZ(gen);
+		drinks[i]->setPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x, z) + 0.7f, z));
+	}
 
-	/*testModelFromFile = new Model(
-		"assets\\models\\backpack\\scene.gltf",
-		glm::vec3(-2.f, -0.5f, 0.0f),
-		glm::vec3(-2.f, -0.5f, 0.0f)
-	);
-	testModelFromFile->scaleUp(glm::vec3(-0.9985f));*/
 }
 
 void Game::initLights()
 {
 	directionLight = std::make_unique<DirectionLight>(
-		glm::vec3(0.1f, 0.1f, 0.1f),		//ambient
-		glm::vec3(0.5f, 0.5f, 0.5f),		//diffuse
+		glm::vec3(0.25f, 0.25f, 0.25f),		//ambient
+		glm::vec3(0.3f, 0.3f, 0.3f),		//diffuse
 		glm::vec3(0.3f, 0.3f, 0.3f),		//specular
 		glm::vec3(-0.2f, -1.0f, -0.3f)		//direction
 	);
@@ -442,9 +416,35 @@ void Game::updateUniforms()
 	shaders[SHADER_HEALTH]->setMat4("projection", orthoProjection);
 }
 
-void Game::updateCollisions()
+void Game::updateModels()
 {
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> disX(0, terrain->getHeight() - 2);
+	std::uniform_int_distribution<> disZ(0, terrain->getWidth() - 2);
 
+	for (const auto& obj : burgers) {
+		obj->move(glm::vec3(0.0f, sin(glfwGetTime()) * deltaTime * 0.1f, 0.0f));
+		obj->rotate(glm::vec3(0.0f, 45.f * deltaTime, 0.0f)); ;
+		if (checkCollision(obj->getHitbox(), camera.getHitbox())) {
+			int x = disX(gen);
+			int z = disZ(gen);
+			obj->setPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x, z) + 0.7f, z));
+			healthbar->increaseHealth(10.0f);
+		}
+	}
+
+	for (const auto& obj : drinks) {
+		obj->move(glm::vec3(0.0f, sin(glfwGetTime()) * deltaTime * 0.1f, 0.0f));
+		obj->rotate(glm::vec3(0.0f, 45.f * deltaTime, 0.0f)); ;
+		if (checkCollision(obj->getHitbox(), camera.getHitbox())) {
+			int x = disX(gen);
+			int z = disZ(gen);
+			obj->setPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x, z) + 0.7f, z));
+			healthbar->increaseHealth(5.0f);
+			camera.updateCameraSpeed(2.0f, 3.0f);
+		}
+	}
 }
 
 void Game::updateInput(int key, int action)
