@@ -86,6 +86,11 @@ private:
 
 	bool keys[1024];
 
+	//Sounds
+	Sound* eatSound;
+	Sound* drinkSound;
+
+
 	//Shaders
 	std::vector<UPtrShader> shaders;
 

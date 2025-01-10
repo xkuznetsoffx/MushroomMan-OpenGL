@@ -41,6 +41,9 @@ Game::Game(
 	initUniforms();
 	initCallbacks();
 
+	eatSound = new Sound("assets\\sounds\\eat1.wav");
+	drinkSound = new Sound("assets\\sounds\\drink.wav");
+
 	healthbar = std::make_unique<HealthBar>(
 		100.f,
 		glm::vec2(20.f, 20.f),
@@ -52,8 +55,11 @@ Game::~Game()
 {
 	glfwDestroyWindow(window);
 	glfwTerminate();
+
 	delete burger;
 	delete cola;
+	delete eatSound;
+	delete drinkSound;
 }
 
 int Game::getWindowShouldClose()
@@ -180,6 +186,8 @@ void Game::initOpenGLOptions()
 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
+
+
 
 void Game::initMatrices()
 {
@@ -435,6 +443,7 @@ void Game::updateModels()
 			int z = disZ(gen);
 			obj->setPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x, z) + 0.7f, z));
 			healthbar->increaseHealth(10.0f);
+			eatSound->play();
 		}
 	}
 
@@ -447,6 +456,7 @@ void Game::updateModels()
 			obj->setPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x, z) + 0.7f, z));
 			healthbar->increaseHealth(5.0f);
 			camera.updateCameraSpeed(2.0f, 3.0f);
+			drinkSound->play();
 		}
 	}
 }
