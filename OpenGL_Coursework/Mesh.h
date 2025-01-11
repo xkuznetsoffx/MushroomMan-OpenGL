@@ -15,18 +15,17 @@ public:
 		glm::vec3 position = glm::vec3(0.f),
 		glm::vec3 rotation = glm::vec3(0.f),
 		glm::vec3 scale = glm::vec3(1.0f),
-		glm::vec3 origin = glm::vec3(0.f),
-		Material* material = nullptr
+		glm::vec3 origin = glm::vec3(0.f)
 	);
 
 	Mesh(
 		Vertex* vertexArray, const unsigned nrOfVertices,
 		GLuint* indexArray, const unsigned nrOfIndices,
+		std::vector<std::shared_ptr<Texture>> textures,
 		glm::vec3 position = glm::vec3(0.f),
 		glm::vec3 rotation = glm::vec3(0.f),
 		glm::vec3 scale = glm::vec3(1.0f),
-		glm::vec3 origin = glm::vec3(0.0f),
-		Material* material = nullptr
+		glm::vec3 origin = glm::vec3(0.0f)
 	);
 
 
@@ -39,6 +38,7 @@ public:
 	void setPosition(const glm::vec3& position);
 	void setRotation(const glm::vec3& rotation);
 	void setScale(const glm::vec3& scale);
+	void setOrigin(const glm::vec3& origin);
 
 	void move(const glm::vec3 position);
 	void rotate(const glm::vec3 rotation);
@@ -55,7 +55,7 @@ private:
 	unsigned nrOfVertices;
 	unsigned nrOfIndices;
 
-	Material* material;
+	std::vector<std::shared_ptr<Texture>> textures;
 
 	GLuint VAO;
 	GLuint VBO;
@@ -64,7 +64,7 @@ private:
 	glm::vec3 position;
 	glm::vec3 rotation;
 	glm::vec3 scale;
-	const glm::vec3 origin;
+	glm::vec3 origin;
 
 	glm::mat4 model;
 

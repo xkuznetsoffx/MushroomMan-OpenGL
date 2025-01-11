@@ -1,10 +1,15 @@
 #pragma once
+
 #include "libs.h"
+#include "HealthBar.h"
 
 enum ShaderType
 {
 	SHADER_OBJ = 0,
-	SHADER_LAMP = 1
+	SHADER_LAMP,
+	SHADER_HEALTH,
+	SHADER_TEXT,
+	SHADER_SKYBOX
 };
 
 enum TextureType
@@ -12,7 +17,9 @@ enum TextureType
 	TEX_CONTAINER_DIFMAP = 0,
 	TEX_CONTAINER_SPECMAP,
 	TEX_WALL_DIFMAP,
-	TEX_WALL_SPECMAP
+	TEX_WALL_SPECMAP,
+	TEX_GRASS_DIFF,
+	TEX_GRASS_SPEC
 };
 
 enum MaterialType {
@@ -39,13 +46,12 @@ public:
 		const int width, const int height,
 		const int GLmajorVersion,
 		const int GLminorVersion,
-		bool resizable
+		bool resizable,
+		bool fullscreen = false
 	);
 	~Game();
 
 	int getWindowShouldClose();
-
-	void setWindowShouldCloes();
 
 	void update();
 	void render();
@@ -67,6 +73,7 @@ private:
 	Camera camera;
 	glm::mat4 viewMatrix;
 	glm::mat4 projectionMatrix;
+	glm::mat4 orthoProjection;
 	float nearPlane;
 	float farPlane;
 
@@ -82,11 +89,21 @@ private:
 
 	bool keys[1024];
 
+	//Sounds
+	Sound* eatSound;
+	Sound* drinkSound;
+	
+	//Skybox
+	Skybox* skybox;
+	//Text
+	Text* text;
+
+	size_t scores = 0;
 	//Shaders
 	std::vector<UPtrShader> shaders;
 
 	//Textures
-	std::vector<UPtrTexture> textures;
+	std::vector<std::shared_ptr<Texture>> textures;
 
 	//Materials
 	std::vector<UPtrMaterial> materials;
@@ -95,41 +112,54 @@ private:
 	std::vector<UPtrMesh> meshesLamps;
 
 	//Models
-	std::vector<UPtrModel> models;
+	Model* burger;//kostil!!!
+	Model* cola;//kostil!!!
 
-	Model* testModelFromFile;//kostil!!!
+	std::vector<SPtrModel> burgers;
+	std::vector<SPtrModel> drinks;
+
+	std::shared_ptr<Terrain> terrain;
 
 	//Lights
 	UPtrDirLight directionLight;
 	std::vector<UPtrPointLight> pointLights;
 	UPtrSpotLight spotLight;
 
+	//HP
+	std::unique_ptr<HealthBar> healthbar;
+
 	//functions
 	void initGLFW();
-	void initWindow(const char* title, bool resizable);
+	void initWindow(const char* title, bool resizable, bool fullscreen);
 	void initGLEW();
 	void initOpenGLOptions();
 	void initMatrices();
 	void initShaders();
 	void initTextures();
 	void initMaterials();
+	void initTerrain();
 	void initMeshes();
 	void initModels();
 	void initLights();
 	void initUniforms();
-
+	void initCallbacks();
+	
 	void updateUniforms();
+	void updateModels();
 
 	void updateInput(int key, int action);
 	void updateMouse(double xpos, double ypos);
 	void updateDeltaTime();
 
 	void do_movment();
+
 	//static functions
-public:
 	static void framebuffer_resize_callback(GLFWwindow* window, int fbW, int fbH);
 	static void  key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	static void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 	static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+
+	void setWindowShouldClose();
+
 };
 

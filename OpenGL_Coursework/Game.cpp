@@ -1,15 +1,18 @@
-	#include "Game.h"
+#include "Game.h"
+
+#define DEBUG
 
 Game::Game(
 	const char* title,
 	const int width, const int height,
 	const int GLmajorVersion, const int GLminorVersion,
-	bool resizable
+	bool resizable, 
+	bool fullscreen
 )
 	:
 	WINDOW_WIDTH(width), WINDOW_HEIGHT(height),
 	GL_VERSION_MAJOR(GLmajorVersion), GL_VERSION_MINOR(GLminorVersion),
-	camera(glm::vec3(0.0f, 1.0f, 5.0f))
+	camera(glm::vec3(25.f, -0.16f, 25.f))
 {
 	window = NULL;
 
@@ -17,14 +20,14 @@ Game::Game(
 	framebufferHeight = height;
 
 	nearPlane = 0.1f;
-	farPlane = 100.0f;
+	farPlane = 1000.0f;
 
 	lastX = static_cast<GLfloat>(WINDOW_WIDTH / 2);
 	lastY = static_cast<GLfloat>(WINDOW_HEIGHT / 2);
 
 	//init functions
 	initGLFW();
-	initWindow(title, resizable);
+	initWindow(title, resizable, fullscreen);
 	initGLEW();
 	initOpenGLOptions();
 	initMatrices();
@@ -32,23 +35,47 @@ Game::Game(
 	initTextures();
 	initMaterials();
 	initMeshes();
+	initTerrain();
 	initModels();
 	initLights();
 	initUniforms();
+	initCallbacks();
 
+	eatSound = new Sound("assets\\sounds\\eat1.wav");
+	drinkSound = new Sound("assets\\sounds\\drink.wav");
+	
+	text = new Text("assets\\fonts\\DkHandRegular-orna.ttf", 128);
 
-	//callback functions
-	glfwSetWindowUserPointer(window, this);
-	glfwSetKeyCallback(window, key_callback);
-	glfwSetCursorPosCallback(window, mouse_callback);
-	glfwSetScrollCallback(window, scroll_callback);
+	std::vector<std::string> faces
+	{
+		"assets\\skybox\\right.jpg",
+		"assets\\skybox\\left.jpg",
+		"assets\\skybox\\top.jpg",
+		"assets\\skybox\\bottom.jpg",
+		"assets\\skybox\\front.jpg",
+		"assets\\skybox\\back.jpg"
+	};
+
+	skybox = new Skybox(faces);
+
+	healthbar = std::make_unique<HealthBar>(
+		100.f,
+		glm::vec2(20.f, 20.f),
+		glm::vec2(200.f, 20.f)
+	);
 }
 
 Game::~Game()
 {
 	glfwDestroyWindow(window);
 	glfwTerminate();
-	delete testModelFromFile;
+
+	delete burger;
+	delete cola;
+	delete eatSound;
+	delete drinkSound;
+	delete text;
+	delete skybox;
 }
 
 int Game::getWindowShouldClose()
@@ -56,7 +83,7 @@ int Game::getWindowShouldClose()
 	return glfwWindowShouldClose(window);
 }
 
-void Game::setWindowShouldCloes()
+void Game::setWindowShouldClose()
 {
 	glfwSetWindowShouldClose(window, GLFW_TRUE);
 }
@@ -66,34 +93,46 @@ void Game::update()
 	glfwPollEvents();
 	updateDeltaTime();
 	do_movment();
-	
-	//models[0]->rotate(glm::vec3(1.f, 0.f, 1.f) * deltaTime * 50.0f);
-	//models[1]->rotate(glm::vec3(0.0f, 0.1f, 0.0f));
 
+	updateModels();
+
+	camera.update();
+
+	healthbar->update(deltaTime);
+
+	if (!healthbar->isAlive())
+		setWindowShouldClose();
 }
 
 void Game::render()
 {
-	glClearColor(0.f, 0.f, 0.f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+	glClearColor(0.53f, 0.81f, 0.92f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	updateUniforms();
 
-	models[0]->render(shaders[SHADER_OBJ].get());
-	models[1]->render(shaders[SHADER_OBJ].get());
+	healthbar->render(shaders[SHADER_HEALTH].get());
 
-	//glFrontFace(GL_CCW); //kostil!!!
-	materials[MAT_CONTAINER]->sendToShader(shaders[SHADER_OBJ].get());
-	testModelFromFile->render(shaders[SHADER_OBJ].get());
-	//glFrontFace(GL_CW);//kostil!!!
+	terrain->render(shaders[SHADER_OBJ].get());
 
-	/*textures[TEX_CONTAINER_DIFMAP]->bindTexture(0);
-	textures[TEX_CONTAINER_SPECMAP]->bindTexture(1);
-	materials[MAT_CONTAINER]->sendToShader(shaders[SHADER_OBJ].get());
-	meshesObjects[MESH_BOX]->render(shaders[SHADER_OBJ].get());*/
+	for (const auto& burger : burgers) {
+		burger->render(shaders[SHADER_OBJ].get());
+	}
 
-	
-	meshesLamps[0]->render(shaders[SHADER_LAMP].get());
+	for (const auto& cola : drinks) {
+		cola->render(shaders[SHADER_OBJ].get());
+	}
+
+	for (const auto& lamp : meshesLamps){
+		lamp->render(shaders[SHADER_LAMP].get());
+	}
+
+	skybox->render(shaders[SHADER_SKYBOX].get());
+
+	text->render(shaders[SHADER_TEXT].get(),
+		"Scores: " + std::to_string(scores), 10.0f, 565.f, 0.35f, glm::vec3(1.f)
+	);
 
 	glfwSwapBuffers(window);
 	glFlush();
@@ -113,14 +152,22 @@ void Game::initGLFW()
 	}
 }
 
-void Game::initWindow(const char* title, bool resizable)
+void Game::initWindow(const char* title, bool resizable, bool fullscreen)
 {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GL_VERSION_MAJOR);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GL_VERSION_MINOR);
 	glfwWindowHint(GLFW_RESIZABLE, resizable);
+	glfwWindowHint(GLFW_SAMPLES, 4);
 
-	window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, title, NULL, NULL);
+	if (fullscreen) {
+		const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+		window = glfwCreateWindow(mode->width, mode->height, title, glfwGetPrimaryMonitor(), NULL);
+	}
+	else {
+		window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, title, NULL, NULL);
+	}
 
 	if (window == NULL) {
 		std::cerr << "ERROR::GAME::INIT_WINDOW" << '\n';
@@ -145,6 +192,8 @@ void Game::initGLEW()
 
 void Game::initOpenGLOptions()
 {
+	glEnable(GL_MULTISAMPLE);
+
 	glEnable(GL_DEPTH_TEST);
 
 	glEnable(GL_CULL_FACE);
@@ -159,6 +208,8 @@ void Game::initOpenGLOptions()
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
+
+
 void Game::initMatrices()
 {
 	viewMatrix = camera.GetViewMatrix();
@@ -169,6 +220,7 @@ void Game::initMatrices()
 		static_cast<GLfloat>(framebufferWidth) / static_cast<GLfloat>(framebufferHeight),
 		nearPlane, farPlane
 	);
+	orthoProjection = glm::ortho(0.0f, static_cast<float>(WINDOW_WIDTH), 0.0f, static_cast<float>(WINDOW_HEIGHT));
 }
 
 void Game::initShaders()
@@ -182,28 +234,51 @@ void Game::initShaders()
 		std::make_unique<Shader>
 		(GL_VERSION_MAJOR, GL_VERSION_MINOR, "lamp.vs", "lamp.frag")
 	);
+
+	shaders.push_back(
+		std::make_unique<Shader>
+		(GL_VERSION_MAJOR, GL_VERSION_MINOR,"HealthBar.vs","HealthBar.frag")
+	);
+
+	shaders.push_back(
+		std::make_unique<Shader>
+		(GL_VERSION_MAJOR, GL_VERSION_MINOR, "TextShader.vs", "TextShader.frag")
+	);
+
+	shaders.push_back(
+		std::make_unique<Shader>
+		(GL_VERSION_MAJOR, GL_VERSION_MINOR, "Skybox.vs", "Skybox.frag")
+	);
 }
 
 void Game::initTextures()
 {
 	textures.push_back(
-		std::make_unique<Texture>
-		("assets/textures/container2.png", GL_TEXTURE_2D)
+		std::make_shared<Texture>
+		("assets/textures/container2.png", GL_TEXTURE_2D, aiTextureType_DIFFUSE)
 	);
 
 	textures.push_back(
-		std::make_unique<Texture>
-		("assets/textures/container2_specular.png", GL_TEXTURE_2D)
+		std::make_shared<Texture>
+		("assets/textures/container2_specular.png", GL_TEXTURE_2D, aiTextureType_SPECULAR)
 	);
 
 	textures.push_back(
-		std::make_unique<Texture>
-		("assets/textures/brick_wall_diff.png", GL_TEXTURE_2D)
+		std::make_shared<Texture>
+		("assets/textures/brick_wall_diff.png", GL_TEXTURE_2D, aiTextureType_DIFFUSE)
 	);
 
 	textures.push_back(
-		std::make_unique<Texture>
-		("assets/textures/brick_wall_spec.png", GL_TEXTURE_2D)
+		std::make_shared<Texture>
+		("assets/textures/brick_wall_spec.png", GL_TEXTURE_2D, aiTextureType_SPECULAR)
+	);
+	textures.push_back(
+		std::make_shared<Texture>
+		("assets/textures/grass-7_diff.jpg", GL_TEXTURE_2D, aiTextureType_DIFFUSE)
+	);
+	textures.push_back(
+		std::make_shared<Texture>
+		("assets/textures/grass-7_spec.jpg", GL_TEXTURE_2D, aiTextureType_DIFFUSE)
 	);
 }
 
@@ -224,6 +299,13 @@ void Game::initMaterials()
 			8.f
 		)
 	);
+	materials.push_back(
+		std::make_unique<Material>(
+			textures[TEX_GRASS_DIFF].get(),
+			textures[TEX_GRASS_SPEC].get(),
+			8.f
+		)
+	);
 }
 
 void Game::initMeshes()
@@ -232,134 +314,62 @@ void Game::initMeshes()
 	meshesLamps.push_back(
 		std::make_unique<Mesh>(
 			Cube(),							//primitive
-			glm::vec3(-3.0f, -1.0f, 0.0f),	//position
+			glm::vec3(3.0f, 4.0f, 3.0f),	//position
 			glm::vec3(0.0f),				//rotation
-			glm::vec3(0.25f)					//scale
+			glm::vec3(0.25f)				//scale
 		)
 	);
 }
 
 void Game::initModels()
 {
-	//Temporary meshes
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> disX(0, terrain->getHeight() - 2);
+	std::uniform_int_distribution<> disZ(0, terrain->getWidth() - 2);
 
-	std::vector<SPtrMesh> meshesObjects;
-	std::vector<SPtrMesh> boxes;
+	burger = new Model(
+		"assets\\models\\burger\\scene.gltf",
+		glm::vec3(0.0f, 0.f, 0.0f)
+	);
+	burger->scaleUp(glm::vec3(-0.5f));
 
-	//Quad
-	meshesObjects.push_back(
-		std::make_unique<Mesh>(
-			Quad(),							//primitive
-			glm::vec3(-3.0f, -1.0f, -3.0f),	//position
-			glm::vec3(0.f),					//rotation
-			glm::vec3(16.0f, 8.0f, 1.0f)	//scale
-		)
-	);
+	for (size_t i = 0; i < 8; ++i) {
+		burgers.emplace_back(
+			new Model(*burger)
+		);
+		int x = disX(gen);
+		int z = disZ(gen);
+		burgers[i]->setPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x, z) + 0.7f, z));
+	}
 
-	//Box
-	meshesObjects.push_back(
-		std::make_unique<Mesh>(
-			Cube(),							//primitive
-			meshesLamps[0]->getPosition(),				//position
-			glm::vec3(0.0f),				//rotation
-			glm::vec3(1.0f),				//scale
-			meshesLamps[0]->getPosition()	//origin
-		)
+	cola = new Model(
+		"assets\\models\\cola\\scene.gltf",
+		glm::vec3(0.0f, 0.f, 0.0f)
 	);
+	cola->scaleUp(glm::vec3(-0.9f));
 
-	boxes.push_back(
-		std::make_unique<Mesh>(
-			Cube(),							//primitive
-			glm::vec3(0.0f, 0.0f, 0.0f),	//position
-			glm::vec3(0.0f),				//rotation
-			glm::vec3(1.0f),				//scale
-			meshesLamps[0]->getPosition()	//origin
-		)
-	);
-	boxes.push_back(
-		std::make_unique<Mesh>(
-			Cube(),							//primitive
-			glm::vec3(0.0f, 2.0f, 0.0f),	//position
-			glm::vec3(0.0f),				//rotation
-			glm::vec3(1.0f),				//scale
-			meshesLamps[0]->getPosition()	//origin
-		)
-	);
-	boxes.push_back(
-		std::make_unique<Mesh>(
-			Cube(),							//primitive
-			glm::vec3(1.0f, 1.0f, 0.0f),	//position
-			glm::vec3(0.0f),				//rotation
-			glm::vec3(1.0f),				//scale
-			meshesLamps[0]->getPosition()	//origin
-		)
-	);
-	boxes.push_back(
-		std::make_unique<Mesh>(
-			Cube(),							//primitive
-			glm::vec3(-1.0f, 1.0f, 0.0f),	//position
-			glm::vec3(0.0f),				//rotation
-			glm::vec3(1.0f),				//scale
-			meshesLamps[0]->getPosition()	//origin
-		)
-	);
-	boxes.push_back(
-		std::make_unique<Mesh>(
-			Cube(),							//primitive
-			glm::vec3(0.0f, 1.0f, 1.0f),	//position
-			glm::vec3(0.0f),				//rotation
-			glm::vec3(1.0f),				//scale
-			meshesLamps[0]->getPosition()	//origin
-		)
-	);
-	boxes.push_back(
-		std::make_unique<Mesh>(
-			Cube(),							//primitive
-			glm::vec3(0.0f, 1.0f, -1.0f),	//position
-			glm::vec3(0.0f),				//rotation
-			glm::vec3(1.0f),				//scale
-			meshesLamps[0]->getPosition()	//origin
-		)
-	);
-	//Models
-
-	models.push_back(
-		std::make_unique<Model>(
-			glm::vec3(0.0f, -2.0f, 0.0f),
-			materials[MAT_CONTAINER].get(),
-			boxes
-		)
-	);
-	models[0]->move(glm::vec3(0.0f, -0.5f, 0.0f));
-
-	models.push_back(
-		std::make_unique<Model>(
-			glm::vec3(0.0f),
-			materials[MAT_WALL].get(),
-			meshesObjects[MESH_QUAD]
-		)
-	);
-
-	testModelFromFile =new Model(
-		"assets\\models\\nissan_skyline\\FINAL_MODEL_R3.fbx",
-		glm::vec3(0.0f, 0.50f, 0.0f)
-	);
-	testModelFromFile->scaleUp(glm::vec3(-0.5f));
-
-	/*testModelFromFile = new Model(
-		"assets\\models\\backpack\\Survival_BackPack_2.fbx",
-		glm::vec3(0.0f, 1.5f, 0.0f)
-	);
-	testModelFromFile->scaleUp(glm::vec3(-0.999f));*/
+	for (size_t i = 0; i < 2; ++i) {
+		drinks.emplace_back(
+			new Model(*cola)
+		);
+		int x = disX(gen);
+		int z = disZ(gen);
+		drinks[i]->setPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x, z) + 0.7f, z));
+	}
 }
 
 void Game::initLights()
 {
+	glm::vec3 source = glm::vec3(-10.0f, 15.0f, -10.0f);
+	glm::vec3 target = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 lightDirection = glm::normalize(target - source);
+
 	directionLight = std::make_unique<DirectionLight>(
-		glm::vec3(0.05f, 0.05f, 0.05f),		//ambient
-		glm::vec3(0.4f, 0.4f, 0.4f),		//diffuse
-		glm::vec3(0.5f, 0.5f, 0.5f),		//specular
-		glm::vec3(-0.2f, -1.0f, -0.3f)		//direction
+		glm::vec3(0.2f, 0.2f, 0.2f),   // Ambient 
+		glm::vec3(0.8f, 0.7f, 0.6f),   // Diffuse 
+		glm::vec3(0.4f, 0.35f, 0.3f),   // Specular 
+		lightDirection				   // Direction 
 	);
 
 	pointLights.push_back(
@@ -396,6 +406,27 @@ void Game::initUniforms()
 	shaders[SHADER_LAMP]->setMat4("view", viewMatrix);
 	shaders[SHADER_LAMP]->setMat4("projection", projectionMatrix);
 	shaders[SHADER_LAMP]->setVec3("lightColor", glm::vec3(1.f));
+
+	shaders[SHADER_HEALTH]->setMat4("projection", orthoProjection);
+
+	shaders[SHADER_TEXT]->setMat4("projection", orthoProjection);
+
+	shaders[SHADER_SKYBOX]->setMat4("view", viewMatrix);
+	shaders[SHADER_SKYBOX]->setMat4("projection", projectionMatrix);
+
+}
+
+void Game::initCallbacks()
+{
+	glfwSetWindowUserPointer(window, this);
+	glfwSetKeyCallback(window, key_callback);
+	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetScrollCallback(window, scroll_callback);
+}
+
+void Game::initTerrain()
+{
+	terrain = std::make_shared<Terrain>(50, 50, 0.05f, materials[2].get());
 }
 
 void Game::updateUniforms()
@@ -416,7 +447,13 @@ void Game::updateUniforms()
 
 	viewMatrix = camera.GetViewMatrix();
 	glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
-	projectionMatrix = glm::perspective(glm::radians(camera.GetZoom()), static_cast<GLfloat>(framebufferWidth) / static_cast<GLfloat>(framebufferHeight), 0.1f, 100.0f);
+
+	if(framebufferHeight)
+		projectionMatrix = glm::perspective(
+			glm::radians(camera.GetZoom()),
+			static_cast<GLfloat>(framebufferWidth) / static_cast<GLfloat>(framebufferHeight),
+			nearPlane, farPlane
+		);
 
 	shaders[SHADER_OBJ]->setMat4("view", viewMatrix);
 	shaders[SHADER_OBJ]->setMat4("projection", projectionMatrix);
@@ -427,18 +464,75 @@ void Game::updateUniforms()
 	shaders[SHADER_LAMP]->setMat4("projection", projectionMatrix);
 
 	shaders[SHADER_LAMP]->setVec3("lightColor", glm::vec3(1.f));
+
+	orthoProjection = glm::ortho(0.0f, static_cast<float>(WINDOW_WIDTH), 0.0f, static_cast<float>(WINDOW_HEIGHT));
+	shaders[SHADER_HEALTH]->Use();
+	shaders[SHADER_HEALTH]->setMat4("projection", orthoProjection);
+	shaders[SHADER_TEXT]->Use();
+	shaders[SHADER_TEXT]->setMat4("projection", orthoProjection);
+
+	shaders[SHADER_SKYBOX]->Use();
+
+	shaders[SHADER_SKYBOX]->setMat4("view", viewMatrix);
+	shaders[SHADER_SKYBOX]->setMat4("projection", projectionMatrix);
+
+	shaders[SHADER_SKYBOX]->Unuse();
+
+}
+
+void Game::updateModels()
+{
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> disX(0, terrain->getHeight() - 2);
+	std::uniform_int_distribution<> disZ(0, terrain->getWidth() - 2);
+
+	for (const auto& obj : burgers) {
+		obj->move(glm::vec3(0.0f, sin(glfwGetTime()) * deltaTime * 0.1f, 0.0f));
+		obj->rotate(glm::vec3(0.0f, 45.f * deltaTime, 0.0f)); ;
+		if (checkCollision(obj->getHitbox(), camera.getHitbox())) {
+			int x = disX(gen);
+			int z = disZ(gen);
+			obj->setPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x, z) + 0.7f, z));
+			healthbar->increaseHealth(10.0f);
+			eatSound->play();
+			scores++;
+		}
+	}
+
+	for (const auto& obj : drinks) {
+		obj->move(glm::vec3(0.0f, sin(glfwGetTime()) * deltaTime * 0.1f, 0.0f));
+		obj->rotate(glm::vec3(0.0f, 45.f * deltaTime, 0.0f)); ;
+		if (checkCollision(obj->getHitbox(), camera.getHitbox())) {
+			int x = disX(gen);
+			int z = disZ(gen);
+			obj->setPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x, z) + 0.7f, z));
+			healthbar->increaseHealth(5.0f);
+			camera.updateCameraSpeed(2.0f, 3.0f);
+			drinkSound->play();
+		}
+	}
 }
 
 void Game::updateInput(int key, int action)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		setWindowShouldCloes();
+		setWindowShouldClose();
 	if (key == GLFW_KEY_F && action == GLFW_PRESS) {
 		if (spotLight->isOn())
 			spotLight->turnOff();
 		else
 			spotLight->turnOn();
 	}
+
+#ifdef DEBUG
+	if (key == GLFW_KEY_TAB && action == GLFW_PRESS)
+		std::cout << "Camera position: " <<
+		camera.GetPoistion().x << ' ' <<
+		camera.GetPoistion().y << ' ' <<
+		camera.GetPoistion().z << '\n';
+#endif // DEBUG
+	
 	if (action == GLFW_PRESS)
 		keys[key] = true;
 	else if (action == GLFW_RELEASE)
@@ -465,34 +559,29 @@ void Game::updateMouse(double xpos, double ypos)
 
 void Game::updateDeltaTime()
 {
-		currentFrame = static_cast<GLfloat>(glfwGetTime());
-		deltaTime = currentFrame - lastFrame;
-		lastFrame = currentFrame;
+	currentFrame = static_cast<GLfloat>(glfwGetTime());
+	deltaTime = currentFrame - lastFrame;
+	lastFrame = currentFrame;
 }
 
 void Game::do_movment()
 {
+	std::vector<Camera_Movement> directions;
 
-	if (keys[GLFW_KEY_W])
-	{
-		camera.ProcessKeyboard(FORWARD, deltaTime);
+	if (keys[GLFW_KEY_W]){
+		directions.push_back(FORWARD);
 	}
-	if (keys[GLFW_KEY_S])
-	{
-		camera.ProcessKeyboard(BACKWARD, deltaTime);
+	if (keys[GLFW_KEY_S]) {
+		directions.push_back(BACKWARD);
 	}
-	if (keys[GLFW_KEY_A])
-		camera.ProcessKeyboard(LEFT, deltaTime);
-	if (keys[GLFW_KEY_D])
-		camera.ProcessKeyboard(RIGHT, deltaTime);
-	if (keys[GLFW_KEY_SPACE])
-		camera.ProcessKeyboard(UP, deltaTime);
-	if (keys[GLFW_KEY_LEFT_SHIFT])
-		camera.ProcessKeyboard(DOWN, deltaTime);
-	if (keys[GLFW_KEY_Z])
-		testModelFromFile->rotate(glm::vec3(0.f, -1.f, 0.f) * deltaTime * 50.0f);
-	if (keys[GLFW_KEY_X])
-		testModelFromFile->rotate(glm::vec3(0.f, 1.f, 0.f) * deltaTime * 50.0f);
+	if (keys[GLFW_KEY_A]) {
+		directions.push_back(LEFT);
+	}
+	if (keys[GLFW_KEY_D]) {
+		directions.push_back(RIGHT);
+	}
+
+	camera.ProcessKeyboard(directions, deltaTime, *terrain.get());
 }
 
 void Game::framebuffer_resize_callback(GLFWwindow* window, int fbW, int fbH)

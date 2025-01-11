@@ -5,12 +5,11 @@ Mesh::Mesh(
 	glm::vec3 position,
 	glm::vec3 rotation,
 	glm::vec3 scale,
-	glm::vec3 origin,
-	Material* material
+	glm::vec3 origin
 ) 
 	:
-	position(position), rotation(rotation), scale(scale), origin(origin),
-	material(material)
+	position(position), rotation(rotation), scale(scale), origin(origin)
+	
 {
 	this->nrOfVertices = primitive.getNrOfVertices();
 	this->nrOfIndices = primitive.getNrOfIndices();
@@ -26,15 +25,15 @@ Mesh::Mesh(
 Mesh::Mesh(
 	Vertex* vertexArray, const unsigned nrOfVertices,
 	GLuint* indexArray, const unsigned nrOfIndices,
+	std::vector<std::shared_ptr<Texture>> textures,
 	glm::vec3 position,
 	glm::vec3 rotation,
 	glm::vec3 scale, 
-	glm::vec3 origin,
-	Material* material
+	glm::vec3 origin
 ) 
 :
-	position(position) , rotation(rotation), scale(scale), origin(origin),
-	material(material)
+	position(position) , rotation(rotation), scale(scale), origin(origin), textures(textures)
+	
 {
 	this->nrOfVertices = nrOfVertices;
 	this->nrOfIndices = nrOfIndices;
@@ -42,19 +41,24 @@ Mesh::Mesh(
 	vertices.assign(vertexArray, vertexArray + nrOfVertices);
 	indices.assign(indexArray, indexArray + nrOfIndices);
 
+
 	initVAO();
 	updateModelMatrix();
 }
 
 Mesh::Mesh(const Mesh& obj)
-	: position(obj.position), rotation(obj.rotation), scale(obj.scale), origin(obj.origin),
-	material(obj.material)
+	: position(obj.position), rotation(obj.rotation), scale(obj.scale), origin(obj.origin)
+	
 {
 	this->nrOfVertices = obj.nrOfVertices;
 	this->nrOfIndices = obj.nrOfIndices;
 
 	vertices.assign(obj.vertices.begin(), obj.vertices.end());
 	indices.assign(obj.indices.begin(), obj.indices.end());
+
+	for (auto& tex : obj.textures) {
+		this->textures.push_back(tex);
+	}
 
 	initVAO();
 	updateModelMatrix();
@@ -90,6 +94,11 @@ void Mesh::setScale(const glm::vec3& scale)
 	this->scale = scale;
 }
 
+void Mesh::setOrigin(const glm::vec3& origin)
+{
+	this->origin = origin;
+}
+
 void Mesh::move(const glm::vec3 position)
 {
 	this->position += position;
@@ -112,8 +121,21 @@ void Mesh::render(Shader* shader)
 	updateModelMatrix();
 	updateUniforms(shader);
 
-	if (material)
-		material->sendToShader(shader);
+	for (size_t i = 0; i < textures.size(); ++i)
+		{
+		switch (textures[i]->getTypeName())
+		{
+		case aiTextureType_DIFFUSE:
+			textures[i]->bindTexture(i);
+			shader->setInt("material.diffuse", i);
+			break;
+		case aiTextureType_SPECULAR:
+			textures[i]->bindTexture(i);
+			shader->setInt("material.specular", i);
+			shader->setFloat("material.shininess", 32.f);
+			break;
+		}
+	}
 
 	glBindVertexArray(VAO);
 
@@ -121,6 +143,8 @@ void Mesh::render(Shader* shader)
 		glDrawArrays(GL_TRIANGLES, 0, nrOfVertices);
 	else
 		glDrawElements(GL_TRIANGLES, nrOfIndices, GL_UNSIGNED_INT, 0);
+
+	glBindVertexArray(0);
 
 }
 
@@ -165,15 +189,19 @@ void Mesh::updateModelMatrix()
 {
 	this->model = glm::mat4(1.f);
 
-	this->model = glm::translate(this->model, this->origin);
+	//this->model = glm::translate(this->model, this->origin);
+	this->model = glm::translate(this->model, this->position);
 
 	this->model = glm::rotate(this->model, glm::radians(this->rotation.x), glm::vec3(1.f, 0.f, 0.f));
 	this->model = glm::rotate(this->model, glm::radians(this->rotation.y), glm::vec3(0.f, 1.f, 0.f));
 	this->model = glm::rotate(this->model, glm::radians(this->rotation.z), glm::vec3(0.f, 0.f, 1.f));
 	
-	this->model = glm::translate(this->model, -this->origin);
+//	this->model = glm::translate(this->model, -this->origin);
+
+	this->model = glm::translate(this->model, -this->position);
 
 	this->model = glm::translate(this->model, this->position);
+
 	this->model = glm::scale(this->model, this->scale);
 	
 }

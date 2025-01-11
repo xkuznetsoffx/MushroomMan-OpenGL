@@ -7,6 +7,7 @@
 #include <chrono>
 #include <thread>
 #include <cmath>
+#include <random>  
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -22,10 +23,17 @@
 #include <SOIL2/SOIL2.h>
 #include <SOIL2/stb_image.h>
 
+#include "assimp/types.h"
+#include "assimp/material.h"
+
 #include "Camera.h"
 #include "Primitives.h"
 #include "Light.h"
 #include "Model.h"
+#include "Terrain.h"
+#include "Sound.h"
+#include "Text.h"
+#include "Skybox.h"
 
 using UPtrShader = std::unique_ptr<Shader>;
 using UPtrTexture = std::unique_ptr<Texture>;
@@ -35,7 +43,9 @@ using UPtrMesh = std::unique_ptr<Mesh>;
 using SPtrMesh = std::shared_ptr<Mesh>;
 
 using UPtrModel = std::unique_ptr<Model>;
+using SPtrModel = std::shared_ptr<Model>;
 
 using UPtrDirLight = std::unique_ptr<DirectionLight>;
 using UPtrPointLight = std::unique_ptr<PointLight>;
 using UPtrSpotLight = std::unique_ptr<SpotLight>;
+

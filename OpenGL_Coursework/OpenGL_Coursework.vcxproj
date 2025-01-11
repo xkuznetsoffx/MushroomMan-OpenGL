@@ -72,7 +72,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)\packages\assimp\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <IncludePath>$(SolutionDir)\packages\OpenAL\include;$(SolutionDir)\packages\assimp\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)\packages\freetype\include</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -108,11 +108,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;..\packages\assimp\lib\assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;..\packages\assimp\lib\assimp-vc143-mtd.lib;..\packages\OpenAL\lib\OpenAL32.lib;..\packages\freetype\lib\freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -133,7 +134,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="HealthBar.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Material.cpp" />
@@ -141,20 +144,30 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Primitives.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Skybox.cpp" />
+    <ClCompile Include="Sound.cpp" />
+    <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="Text.cpp" />
     <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="fragment_core.glsl" />
+    <None Include="HealthBar.frag" />
+    <None Include="HealthBar.vs" />
     <None Include="lamp.frag" />
     <None Include="lamp.vs" />
     <None Include="objects.frag" />
     <None Include="objects.vs" />
     <None Include="packages.config" />
-    <None Include="vertex_core.glsl" />
+    <None Include="Skybox.frag" />
+    <None Include="Skybox.vs" />
+    <None Include="TextShader.frag" />
+    <None Include="TextShader.vs" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Collision.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="HealthBar.h" />
     <ClInclude Include="libs.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Material.h" />
@@ -162,6 +175,10 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="Primitives.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Skybox.h" />
+    <ClInclude Include="Sound.h" />
+    <ClInclude Include="Terrain.h" />
+    <ClInclude Include="Text.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
