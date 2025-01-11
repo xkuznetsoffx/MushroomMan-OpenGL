@@ -1,6 +1,8 @@
 #pragma once
 
 #include <chrono>
+#include <string>
+#include <random>
 
 #include "Collision.h"
 #include "Terrain.h"
@@ -35,8 +37,6 @@ public:
     Camera(GLfloat posX, GLfloat posY, GLfloat posZ,
         GLfloat upX, GLfloat upY, GLfloat upZ, 
         GLfloat yaw, GLfloat pitch);
-
-    ~Camera();
 
     glm::mat4 GetViewMatrix();
     glm::vec3 GetFront();
@@ -77,7 +77,8 @@ private:
 
     AABB hitbox;
 
-    Sound* steps;
+    std::vector<std::unique_ptr<Sound>> stepSounds;
+    void initSounds();
 
     std::chrono::steady_clock::time_point speedBoostTime;
     bool speedBoostActivated = false;

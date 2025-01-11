@@ -5,8 +5,7 @@ MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM), Position(positio
 Yaw(yaw), Pitch(pitch) {
 	hitbox.min = Position - glm::vec3(0.1f);
 	hitbox.max = Position + glm::vec3(0.1f);
-	steps = new Sound("assets\\sounds\\steps.wav");
-	steps->setVolume(0.1f);
+	initSounds();
 	updateCameraVectors();
 }
 
@@ -20,14 +19,8 @@ Camera::Camera(GLfloat posX, GLfloat posY, GLfloat posZ,
 	hitbox.min = Position - glm::vec3(0.2f, 0.5f, 0.2f);
 	hitbox.max = Position + glm::vec3(0.2f, 0.5f, 0.2f);
 	WorldUp = glm::vec3(upX, upY, upZ);
-	steps = new Sound("assets\\sounds\\steps.wav");
-	steps->setVolume(0.1f);
+	initSounds();
 	updateCameraVectors();
-}
-
-Camera::~Camera()
-{
-	delete steps;
 }
 
 glm::mat4 Camera::GetViewMatrix() {
@@ -116,8 +109,14 @@ void Camera::ProcessKeyboard(const std::vector<Camera_Movement>& directions, GLf
 		)
 	{
 		if (stepSoundTimer >= 1.5 / MovementSpeed) {
-			steps->play();
-			stepSoundTimer = 0.0f;  // —брос таймера  
+			static std::random_device rd;
+			static std::mt19937 gen(rd());
+			std::uniform_int_distribution<> distrib(0, stepSounds.size() - 1);
+
+			int randomSoundIndex = distrib(gen);
+			stepSounds[randomSoundIndex]->play();
+
+			stepSoundTimer = 0.0f;
 		}
 		movement = glm::normalize(movement);
 		Position += movement * velocity;
@@ -166,4 +165,13 @@ void Camera::updateCameraVectors()
 	Front = glm::normalize(front);
 	Right = glm::normalize(glm::cross(Front, WorldUp));  
 	Up = glm::normalize(glm::cross(Right, Front));
+}
+
+void Camera::initSounds()
+{
+	for (size_t i = 1; i < 6; ++i) {
+		std::string index = std::to_string(i);
+		stepSounds.emplace_back(std::make_unique<Sound>("assets\\sounds\\sand"+ index +".wav"));
+		stepSounds[i-1]->setVolume(0.1f);
+	}
 }
