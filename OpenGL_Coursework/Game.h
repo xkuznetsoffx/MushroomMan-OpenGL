@@ -8,7 +8,8 @@ enum ShaderType
 	SHADER_OBJ = 0,
 	SHADER_LAMP,
 	SHADER_HEALTH,
-	SHADER_TEXT
+	SHADER_TEXT,
+	SHADER_SKYBOX
 };
 
 enum TextureType
@@ -92,6 +93,8 @@ private:
 	Sound* eatSound;
 	Sound* drinkSound;
 	
+	//Skybox
+	Skybox* skybox;
 	//Text
 	Text* text;
 
