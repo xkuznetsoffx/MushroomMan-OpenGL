@@ -1,5 +1,13 @@
 #pragma once
 
+#include <chrono>
+#include <string>
+#include <random>
+
+#include "Collision.h"
+#include "Terrain.h"
+#include "Sound.h"
+
 #include <GL/glew.h>
 
 #include "glm/glm.hpp"
@@ -14,7 +22,7 @@ enum Camera_Movement {
     DOWN
 };
 
-constexpr GLfloat YAW = -90.0f;
+constexpr GLfloat YAW = 70.0f;
 constexpr GLfloat PITCH = 0.0f;
 constexpr GLfloat SPEED = 3.0f;
 constexpr GLfloat SENSITIVTY = 0.05f;
@@ -30,13 +38,19 @@ public:
         GLfloat upX, GLfloat upY, GLfloat upZ, 
         GLfloat yaw, GLfloat pitch);
 
-
     glm::mat4 GetViewMatrix();
     glm::vec3 GetFront();
     glm::vec3 GetPoistion();
     GLfloat GetZoom();
+    const AABB& getHitbox();
 
-    void ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime);
+    void SetPosition(glm::vec3 position);
+    void move(const glm::vec3 position);
+
+    void updateCameraSpeed(float speed, float duration);
+    void update();
+
+    void ProcessKeyboard(const std::vector<Camera_Movement>& directions, GLfloat deltaTime, Terrain& terrain);
     void ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean constrainPitch = true);
     void ProcessMouseScroll(GLfloat yoffset);
 
@@ -57,7 +71,16 @@ private:
     GLfloat MovementSpeed;
     GLfloat MouseSensitivity;
     GLfloat Zoom;
+    GLfloat shakeAmplitude = 0.025f;
+    GLfloat shakeFrequency = 15.0f;
+    GLfloat shakeTime = 0.0f;
 
+    AABB hitbox;
 
+    std::vector<std::unique_ptr<Sound>> stepSounds;
+    void initSounds();
+
+    std::chrono::steady_clock::time_point speedBoostTime;
+    bool speedBoostActivated = false;
 };
 

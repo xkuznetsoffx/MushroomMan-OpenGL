@@ -45,15 +45,27 @@
     <ClCompile Include="Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HealthBar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sound.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Text.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Skybox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="vertex_core.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="fragment_core.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="objects.vs">
       <Filter>Resource Files</Filter>
     </None>
@@ -64,6 +76,24 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="lamp.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="HealthBar.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="HealthBar.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="TextShader.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="TextShader.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Skybox.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Skybox.frag">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
@@ -99,6 +129,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HealthBar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sound.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Text.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Skybox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
