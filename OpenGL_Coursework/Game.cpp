@@ -12,7 +12,7 @@ Game::Game(
 	:
 	WINDOW_WIDTH(width), WINDOW_HEIGHT(height),
 	GL_VERSION_MAJOR(GLmajorVersion), GL_VERSION_MINOR(GLminorVersion),
-	camera(glm::vec3(4.33703f, 2.09519f, 4.10173f))
+	camera(glm::vec3(25.f, -0.16f, 25.f))
 {
 	window = NULL;
 
@@ -46,6 +46,18 @@ Game::Game(
 	
 	text = new Text("assets\\fonts\\DkHandRegular-orna.ttf", 128);
 
+	std::vector<std::string> faces
+	{
+		"assets\\skybox\\right.jpg",
+		"assets\\skybox\\left.jpg",
+		"assets\\skybox\\top.jpg",
+		"assets\\skybox\\bottom.jpg",
+		"assets\\skybox\\front.jpg",
+		"assets\\skybox\\back.jpg"
+	};
+
+	skybox = new Skybox(faces);
+
 	healthbar = std::make_unique<HealthBar>(
 		100.f,
 		glm::vec2(20.f, 20.f),
@@ -63,6 +75,7 @@ Game::~Game()
 	delete eatSound;
 	delete drinkSound;
 	delete text;
+	delete skybox;
 }
 
 int Game::getWindowShouldClose()
@@ -114,6 +127,8 @@ void Game::render()
 	for (const auto& lamp : meshesLamps){
 		lamp->render(shaders[SHADER_LAMP].get());
 	}
+
+	skybox->render(shaders[SHADER_SKYBOX].get());
 
 	text->render(shaders[SHADER_TEXT].get(),
 		"Scores: " + std::to_string(scores), 10.0f, 565.f, 0.35f, glm::vec3(1.f)
@@ -229,6 +244,11 @@ void Game::initShaders()
 		std::make_unique<Shader>
 		(GL_VERSION_MAJOR, GL_VERSION_MINOR, "TextShader.vs", "TextShader.frag")
 	);
+
+	shaders.push_back(
+		std::make_unique<Shader>
+		(GL_VERSION_MAJOR, GL_VERSION_MINOR, "Skybox.vs", "Skybox.frag")
+	);
 }
 
 void Game::initTextures()
@@ -342,11 +362,15 @@ void Game::initModels()
 
 void Game::initLights()
 {
+	glm::vec3 source = glm::vec3(-10.0f, 15.0f, -10.0f);
+	glm::vec3 target = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 lightDirection = glm::normalize(target - source);
+
 	directionLight = std::make_unique<DirectionLight>(
 		glm::vec3(0.2f, 0.2f, 0.2f),   // Ambient 
 		glm::vec3(0.8f, 0.7f, 0.6f),   // Diffuse 
-		glm::vec3(0.8f, 0.7f, 0.6f),   // Specular 
-		glm::vec3(-0.4f, -1.0f, -0.5f) // Direction 
+		glm::vec3(0.4f, 0.35f, 0.3f),   // Specular 
+		lightDirection				   // Direction 
 	);
 
 	pointLights.push_back(
@@ -387,6 +411,10 @@ void Game::initUniforms()
 	shaders[SHADER_HEALTH]->setMat4("projection", orthoProjection);
 
 	shaders[SHADER_TEXT]->setMat4("projection", orthoProjection);
+
+	shaders[SHADER_SKYBOX]->setMat4("view", viewMatrix);
+	shaders[SHADER_SKYBOX]->setMat4("projection", projectionMatrix);
+
 }
 
 void Game::initCallbacks()
@@ -444,7 +472,13 @@ void Game::updateUniforms()
 	shaders[SHADER_TEXT]->Use();
 	shaders[SHADER_TEXT]->setMat4("projection", orthoProjection);
 
-	shaders[SHADER_TEXT]->Unuse();
+	shaders[SHADER_SKYBOX]->Use();
+
+	shaders[SHADER_SKYBOX]->setMat4("view", viewMatrix);
+	shaders[SHADER_SKYBOX]->setMat4("projection", projectionMatrix);
+
+	shaders[SHADER_SKYBOX]->Unuse();
+
 }
 
 void Game::updateModels()

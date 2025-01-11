@@ -144,6 +144,7 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Primitives.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="Text.cpp" />
@@ -157,6 +158,8 @@
     <None Include="objects.frag" />
     <None Include="objects.vs" />
     <None Include="packages.config" />
+    <None Include="Skybox.frag" />
+    <None Include="Skybox.vs" />
     <None Include="TextShader.frag" />
     <None Include="TextShader.vs" />
   </ItemGroup>
@@ -172,6 +175,7 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="Primitives.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Skybox.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="Text.h" />
