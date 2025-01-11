@@ -44,6 +44,8 @@ Game::Game(
 	eatSound = new Sound("assets\\sounds\\eat1.wav");
 	drinkSound = new Sound("assets\\sounds\\drink.wav");
 	
+	text = new Text("assets\\fonts\\DkHandRegular-orna.ttf", 128);
+
 	healthbar = std::make_unique<HealthBar>(
 		100.f,
 		glm::vec2(20.f, 20.f),
@@ -60,6 +62,7 @@ Game::~Game()
 	delete cola;
 	delete eatSound;
 	delete drinkSound;
+	delete text;
 }
 
 int Game::getWindowShouldClose()
@@ -86,15 +89,13 @@ void Game::update()
 
 	if (!healthbar->isAlive())
 		setWindowShouldClose();
-
-	
-	
 }
 
 void Game::render()
 {
+
 	glClearColor(0.53f, 0.81f, 0.92f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	updateUniforms();
 
@@ -113,6 +114,10 @@ void Game::render()
 	for (const auto& lamp : meshesLamps){
 		lamp->render(shaders[SHADER_LAMP].get());
 	}
+
+	text->render(shaders[SHADER_TEXT].get(),
+		"Scores: " + std::to_string(scores), 10.0f, 565.f, 0.35f, glm::vec3(1.f)
+	);
 
 	glfwSwapBuffers(window);
 	glFlush();
@@ -135,6 +140,7 @@ void Game::initGLFW()
 void Game::initWindow(const char* title, bool resizable, bool fullscreen)
 {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GL_VERSION_MAJOR);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GL_VERSION_MINOR);
 	glfwWindowHint(GLFW_RESIZABLE, resizable);
@@ -199,6 +205,7 @@ void Game::initMatrices()
 		static_cast<GLfloat>(framebufferWidth) / static_cast<GLfloat>(framebufferHeight),
 		nearPlane, farPlane
 	);
+	orthoProjection = glm::ortho(0.0f, static_cast<float>(WINDOW_WIDTH), 0.0f, static_cast<float>(WINDOW_HEIGHT));
 }
 
 void Game::initShaders()
@@ -216,6 +223,11 @@ void Game::initShaders()
 	shaders.push_back(
 		std::make_unique<Shader>
 		(GL_VERSION_MAJOR, GL_VERSION_MINOR,"HealthBar.vs","HealthBar.frag")
+	);
+
+	shaders.push_back(
+		std::make_unique<Shader>
+		(GL_VERSION_MAJOR, GL_VERSION_MINOR, "TextShader.vs", "TextShader.frag")
 	);
 }
 
@@ -291,17 +303,16 @@ void Game::initMeshes()
 
 void Game::initModels()
 {
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> disX(0, terrain->getHeight() - 2);
+	std::uniform_int_distribution<> disZ(0, terrain->getWidth() - 2);
 
 	burger = new Model(
 		"assets\\models\\burger\\scene.gltf",
 		glm::vec3(0.0f, 0.f, 0.0f)
 	);
 	burger->scaleUp(glm::vec3(-0.5f));
-
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	std::uniform_int_distribution<> disX(0, terrain->getHeight() - 2);
-	std::uniform_int_distribution<> disZ(0, terrain->getWidth() - 2);
 
 	for (size_t i = 0; i < 8; ++i) {
 		burgers.emplace_back(
@@ -372,6 +383,10 @@ void Game::initUniforms()
 	shaders[SHADER_LAMP]->setMat4("view", viewMatrix);
 	shaders[SHADER_LAMP]->setMat4("projection", projectionMatrix);
 	shaders[SHADER_LAMP]->setVec3("lightColor", glm::vec3(1.f));
+
+	shaders[SHADER_HEALTH]->setMat4("projection", orthoProjection);
+
+	shaders[SHADER_TEXT]->setMat4("projection", orthoProjection);
 }
 
 void Game::initCallbacks()
@@ -423,9 +438,13 @@ void Game::updateUniforms()
 
 	shaders[SHADER_LAMP]->setVec3("lightColor", glm::vec3(1.f));
 
+	orthoProjection = glm::ortho(0.0f, static_cast<float>(WINDOW_WIDTH), 0.0f, static_cast<float>(WINDOW_HEIGHT));
 	shaders[SHADER_HEALTH]->Use();
-	glm::mat4 orthoProjection = glm::ortho(0.0f, static_cast<float>(WINDOW_WIDTH), 0.0f, static_cast<float>(WINDOW_HEIGHT));
 	shaders[SHADER_HEALTH]->setMat4("projection", orthoProjection);
+	shaders[SHADER_TEXT]->Use();
+	shaders[SHADER_TEXT]->setMat4("projection", orthoProjection);
+
+	shaders[SHADER_TEXT]->Unuse();
 }
 
 void Game::updateModels()
@@ -444,6 +463,7 @@ void Game::updateModels()
 			obj->setPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x, z) + 0.7f, z));
 			healthbar->increaseHealth(10.0f);
 			eatSound->play();
+			scores++;
 		}
 	}
 

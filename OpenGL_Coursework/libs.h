@@ -32,6 +32,7 @@
 #include "Model.h"
 #include "Terrain.h"
 #include "Sound.h"
+#include "Text.h"
 
 using UPtrShader = std::unique_ptr<Shader>;
 using UPtrTexture = std::unique_ptr<Texture>;

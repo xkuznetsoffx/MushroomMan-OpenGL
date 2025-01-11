@@ -57,6 +57,9 @@
     <ClCompile Include="Sound.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Text.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -76,6 +79,12 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="HealthBar.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="TextShader.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="TextShader.frag">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
@@ -123,6 +132,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sound.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Text.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -7,7 +7,8 @@ enum ShaderType
 {
 	SHADER_OBJ = 0,
 	SHADER_LAMP,
-	SHADER_HEALTH
+	SHADER_HEALTH,
+	SHADER_TEXT
 };
 
 enum TextureType
@@ -71,6 +72,7 @@ private:
 	Camera camera;
 	glm::mat4 viewMatrix;
 	glm::mat4 projectionMatrix;
+	glm::mat4 orthoProjection;
 	float nearPlane;
 	float farPlane;
 
@@ -90,8 +92,10 @@ private:
 	Sound* eatSound;
 	Sound* drinkSound;
 	
+	//Text
+	Text* text;
 
-
+	size_t scores = 0;
 	//Shaders
 	std::vector<UPtrShader> shaders;
 
@@ -118,6 +122,7 @@ private:
 	std::vector<UPtrPointLight> pointLights;
 	UPtrSpotLight spotLight;
 
+	//HP
 	std::unique_ptr<HealthBar> healthbar;
 
 	//functions

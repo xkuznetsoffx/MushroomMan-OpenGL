@@ -62,10 +62,14 @@ void Camera::move(const glm::vec3 position)
 
 void Camera::updateCameraSpeed(float speed, float duration)
 {
-	if(!speedBoostActivated)
+	if (!speedBoostActivated)
+	{
 		MovementSpeed += speed;
+		speedBoostTime = std::chrono::steady_clock::now() + std::chrono::milliseconds(static_cast<int>(duration * 1000));
+	}
+	else
+		speedBoostTime += std::chrono::milliseconds(static_cast<int>(duration * 1000));
 
-	speedBoostTime = std::chrono::steady_clock::now() + std::chrono::milliseconds(static_cast<int>(duration * 1000));
 	speedBoostActivated = true;
 }
 
