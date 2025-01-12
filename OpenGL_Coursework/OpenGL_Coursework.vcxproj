@@ -136,6 +136,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Grass.cpp" />
     <ClCompile Include="HealthBar.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
@@ -151,6 +152,8 @@
     <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="grass.frag" />
+    <None Include="grass.vs" />
     <None Include="HealthBar.frag" />
     <None Include="HealthBar.vs" />
     <None Include="lamp.frag" />
@@ -167,6 +170,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Grass.h" />
     <ClInclude Include="HealthBar.h" />
     <ClInclude Include="libs.h" />
     <ClInclude Include="Light.h" />

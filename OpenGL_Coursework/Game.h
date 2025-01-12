@@ -9,7 +9,8 @@ enum ShaderEnum
 	SHADER_LAMP,
 	SHADER_HEALTH,
 	SHADER_TEXT,
-	SHADER_SKYBOX
+	SHADER_SKYBOX,
+	SHADER_GRASS
 };
 
 enum TextureEnum
@@ -133,6 +134,8 @@ private:
 
 	//HP
 	std::unique_ptr<HealthBar> healthbar;
+
+	std::unique_ptr<Grass> grass;
 
 	//functions
 	void initGLFW();

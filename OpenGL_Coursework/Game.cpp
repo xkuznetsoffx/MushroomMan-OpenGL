@@ -49,6 +49,11 @@ Game::Game(
 		glm::vec2(20.f, 20.f),
 		glm::vec2(200.f, 20.f)
 	);
+
+	grass = std::make_unique<Grass>(
+		terrain.get(),
+		1000
+	);
 }
 
 Game::~Game()
@@ -112,6 +117,8 @@ void Game::render()
 	textManager->render(shaders[SHADER_TEXT].get(),
 		"Score: " + std::to_string(scores), 10.0f, 565.f, 0.35f, glm::vec3(0.9f, 0.84f, 0.564f)
 	);
+
+	grass->render(shaders[SHADER_GRASS].get());
 
 	glfwSwapBuffers(window);
 	glFlush();
@@ -228,6 +235,11 @@ void Game::initShaders()
 		std::make_unique<Shader>
 		(GL_VERSION_MAJOR, GL_VERSION_MINOR, "Skybox.vs", "Skybox.frag")
 	);
+
+	shaders.push_back(
+		std::make_unique<Shader>
+		(GL_VERSION_MAJOR, GL_VERSION_MINOR, "grass.vs", "grass.frag")
+	);
 }
 
 void Game::initTextures()
@@ -257,7 +269,7 @@ void Game::initTextures()
 	);
 	textures.push_back(
 		std::make_shared<Texture>
-		("assets/textures/grass-7_spec.jpg", GL_TEXTURE_2D, aiTextureType_DIFFUSE)
+		("assets/textures/grass-7_spec.jpg", GL_TEXTURE_2D, aiTextureType_SPECULAR)
 	);
 }
 
@@ -394,6 +406,9 @@ void Game::initUniforms()
 	shaders[SHADER_SKYBOX]->setMat4("view", viewMatrix);
 	shaders[SHADER_SKYBOX]->setMat4("projection", projectionMatrix);
 
+	shaders[SHADER_GRASS]->setMat4("view", viewMatrix);
+	shaders[SHADER_GRASS]->setMat4("projection", projectionMatrix);
+
 }
 
 void Game::initCallbacks()
@@ -488,7 +503,12 @@ void Game::updateUniforms()
 	shaders[SHADER_SKYBOX]->setMat4("view", viewMatrix);
 	shaders[SHADER_SKYBOX]->setMat4("projection", projectionMatrix);
 
-	shaders[SHADER_SKYBOX]->Unuse();
+	shaders[SHADER_GRASS]->Use();
+
+	shaders[SHADER_GRASS]->setMat4("view", viewMatrix);
+	shaders[SHADER_GRASS]->setMat4("projection", projectionMatrix);
+
+	shaders[SHADER_GRASS]->Unuse();
 
 }
 
