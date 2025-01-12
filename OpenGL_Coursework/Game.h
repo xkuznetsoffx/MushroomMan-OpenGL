@@ -41,7 +41,9 @@ enum MeshLampsEnum
 enum SoundsEnum
 {
 	SOUND_EAT = 0,
-	SOUND_DRINK
+	SOUND_DRINK,
+	SOUND_SPOTLIGHT_ON,
+	SOUND_SPOTLIGHT_OFF
 };
 
 class Game

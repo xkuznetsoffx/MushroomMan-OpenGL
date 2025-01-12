@@ -110,7 +110,7 @@ void Game::render()
 	skybox->render(shaders[SHADER_SKYBOX].get());
 
 	textManager->render(shaders[SHADER_TEXT].get(),
-		"Scores: " + std::to_string(scores), 10.0f, 565.f, 0.35f, glm::vec3(1.f)
+		"Score: " + std::to_string(scores), 10.0f, 565.f, 0.35f, glm::vec3(0.9f, 0.84f, 0.564f)
 	);
 
 	glfwSwapBuffers(window);
@@ -322,15 +322,15 @@ void Game::initModels()
 		burgers[i]->setPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x, z) + 0.7f, z));
 	}
 
-	Model cola(
-		"assets\\models\\cola\\scene.gltf",
+	Model drink(
+		"assets\\models\\lit_energy\\scene.gltf",
 		glm::vec3(0.0f, 0.f, 0.0f)
 	);
-	cola.scaleUp(glm::vec3(-0.9f));
+	drink.scaleUp(glm::vec3(-0.8f));
 
 	for (size_t i = 0; i < 2; ++i) {
 		drinks.emplace_back(
-			new Model(cola)
+			new Model(drink)
 		);
 		int x = disX(gen);
 		int z = disZ(gen);
@@ -435,6 +435,10 @@ void Game::initSounds()
 	sounds.back()->setVolume(0.4f);
 	sounds.emplace_back(std::make_unique<Sound>("assets\\sounds\\drink.wav"));
 	sounds.back()->setVolume(0.4f);
+	sounds.emplace_back(std::make_unique<Sound>("assets\\sounds\\spotlight_on.wav"));
+	sounds.back()->setVolume(0.1f);
+	sounds.emplace_back(std::make_unique<Sound>("assets\\sounds\\spotlight_off.wav"));
+	sounds.back()->setVolume(0.1f);
 }
 
 void Game::updateUniforms()
@@ -528,9 +532,15 @@ void Game::updateInput(int key, int action)
 		setWindowShouldClose();
 	if (key == GLFW_KEY_F && action == GLFW_PRESS) {
 		if (spotLight->isOn())
+		{
 			spotLight->turnOff();
+			sounds[SOUND_SPOTLIGHT_OFF]->play();
+		}
 		else
+		{
 			spotLight->turnOn();
+			sounds[SOUND_SPOTLIGHT_ON]->play();
+		}
 	}
 
 #ifdef DEBUG
