@@ -3,7 +3,7 @@
 #include "libs.h"
 #include "HealthBar.h"
 
-enum ShaderType
+enum ShaderEnum
 {
 	SHADER_OBJ = 0,
 	SHADER_LAMP,
@@ -12,7 +12,7 @@ enum ShaderType
 	SHADER_SKYBOX
 };
 
-enum TextureType
+enum TextureEnum
 {
 	TEX_CONTAINER_DIFMAP = 0,
 	TEX_CONTAINER_SPECMAP,
@@ -22,7 +22,7 @@ enum TextureType
 	TEX_GRASS_SPEC
 };
 
-enum MaterialType {
+enum MaterialEnum {
 	MAT_CONTAINER = 0,
 	MAT_WALL
 };
@@ -36,6 +36,12 @@ enum MeshObjectsEnum
 enum MeshLampsEnum
 {
 	MESH_LAMP = 0
+};
+
+enum SoundsEnum
+{
+	SOUND_EAT = 0,
+	SOUND_DRINK
 };
 
 class Game
@@ -90,15 +96,15 @@ private:
 	bool keys[1024];
 
 	//Sounds
-	Sound* eatSound;
-	Sound* drinkSound;
+	std::vector<std::unique_ptr<Sound>> sounds;
 	
 	//Skybox
-	Skybox* skybox;
-	//Text
-	Text* text;
+	std::unique_ptr<Skybox> skybox;
 
+	//Text
+	std::unique_ptr<Text> textManager;
 	size_t scores = 0;
+
 	//Shaders
 	std::vector<UPtrShader> shaders;
 
@@ -112,8 +118,6 @@ private:
 	std::vector<UPtrMesh> meshesLamps;
 
 	//Models
-	Model* burger;//kostil!!!
-	Model* cola;//kostil!!!
 
 	std::vector<SPtrModel> burgers;
 	std::vector<SPtrModel> drinks;
@@ -138,6 +142,9 @@ private:
 	void initTextures();
 	void initMaterials();
 	void initTerrain();
+	void initSkybox();
+	void initText();
+	void initSounds();
 	void initMeshes();
 	void initModels();
 	void initLights();

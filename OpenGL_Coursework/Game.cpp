@@ -34,30 +34,16 @@ Game::Game(
 	initShaders();
 	initTextures();
 	initMaterials();
+	initSkybox();
+	initText();
+	initSounds();
 	initMeshes();
 	initTerrain();
 	initModels();
 	initLights();
 	initUniforms();
 	initCallbacks();
-
-	eatSound = new Sound("assets\\sounds\\eat1.wav");
-	drinkSound = new Sound("assets\\sounds\\drink.wav");
 	
-	text = new Text("assets\\fonts\\DkHandRegular-orna.ttf", 128);
-
-	std::vector<std::string> faces
-	{
-		"assets\\skybox\\right.jpg",
-		"assets\\skybox\\left.jpg",
-		"assets\\skybox\\top.jpg",
-		"assets\\skybox\\bottom.jpg",
-		"assets\\skybox\\front.jpg",
-		"assets\\skybox\\back.jpg"
-	};
-
-	skybox = new Skybox(faces);
-
 	healthbar = std::make_unique<HealthBar>(
 		100.f,
 		glm::vec2(20.f, 20.f),
@@ -69,13 +55,6 @@ Game::~Game()
 {
 	glfwDestroyWindow(window);
 	glfwTerminate();
-
-	delete burger;
-	delete cola;
-	delete eatSound;
-	delete drinkSound;
-	delete text;
-	delete skybox;
 }
 
 int Game::getWindowShouldClose()
@@ -130,7 +109,7 @@ void Game::render()
 
 	skybox->render(shaders[SHADER_SKYBOX].get());
 
-	text->render(shaders[SHADER_TEXT].get(),
+	textManager->render(shaders[SHADER_TEXT].get(),
 		"Scores: " + std::to_string(scores), 10.0f, 565.f, 0.35f, glm::vec3(1.f)
 	);
 
@@ -328,30 +307,30 @@ void Game::initModels()
 	std::uniform_int_distribution<> disX(0, terrain->getHeight() - 2);
 	std::uniform_int_distribution<> disZ(0, terrain->getWidth() - 2);
 
-	burger = new Model(
+	Model burger(
 		"assets\\models\\burger\\scene.gltf",
 		glm::vec3(0.0f, 0.f, 0.0f)
 	);
-	burger->scaleUp(glm::vec3(-0.5f));
+	burger.scaleUp(glm::vec3(-0.5f));
 
 	for (size_t i = 0; i < 8; ++i) {
 		burgers.emplace_back(
-			new Model(*burger)
+			new Model(burger)
 		);
 		int x = disX(gen);
 		int z = disZ(gen);
 		burgers[i]->setPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x, z) + 0.7f, z));
 	}
 
-	cola = new Model(
+	Model cola(
 		"assets\\models\\cola\\scene.gltf",
 		glm::vec3(0.0f, 0.f, 0.0f)
 	);
-	cola->scaleUp(glm::vec3(-0.9f));
+	cola.scaleUp(glm::vec3(-0.9f));
 
 	for (size_t i = 0; i < 2; ++i) {
 		drinks.emplace_back(
-			new Model(*cola)
+			new Model(cola)
 		);
 		int x = disX(gen);
 		int z = disZ(gen);
@@ -367,10 +346,10 @@ void Game::initLights()
 	glm::vec3 lightDirection = glm::normalize(target - source);
 
 	directionLight = std::make_unique<DirectionLight>(
-		glm::vec3(0.2f, 0.2f, 0.2f),   // Ambient 
-		glm::vec3(0.8f, 0.7f, 0.6f),   // Diffuse 
-		glm::vec3(0.4f, 0.35f, 0.3f),   // Specular 
-		lightDirection				   // Direction 
+		glm::vec3(0.2f, 0.2f, 0.2f),		// Ambient 
+		glm::vec3(0.8f, 0.7f, 0.6f),		// Diffuse 
+		glm::vec3(0.4f, 0.35f, 0.3f),		// Specular 
+		lightDirection						// Direction 
 	);
 
 	pointLights.push_back(
@@ -428,6 +407,34 @@ void Game::initCallbacks()
 void Game::initTerrain()
 {
 	terrain = std::make_shared<Terrain>(50, 50, 0.05f, materials[2].get());
+}
+
+void Game::initSkybox()
+{
+	std::vector<std::string> faces
+	{
+		"assets\\skybox\\right.jpg",
+		"assets\\skybox\\left.jpg",
+		"assets\\skybox\\top.jpg",
+		"assets\\skybox\\bottom.jpg",
+		"assets\\skybox\\front.jpg",
+		"assets\\skybox\\back.jpg"
+	};
+
+	skybox = std::make_unique<Skybox>(faces);
+}
+
+void Game::initText()
+{
+	textManager = std::make_unique<Text>("assets\\fonts\\DkHandRegular-orna.ttf", 128);
+}
+
+void Game::initSounds()
+{
+	sounds.emplace_back(std::make_unique<Sound>("assets\\sounds\\eat1.wav"));
+	sounds.back()->setVolume(0.4f);
+	sounds.emplace_back(std::make_unique<Sound>("assets\\sounds\\drink.wav"));
+	sounds.back()->setVolume(0.4f);
 }
 
 void Game::updateUniforms()
@@ -496,7 +503,7 @@ void Game::updateModels()
 			int z = disZ(gen);
 			obj->setPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x, z) + 0.7f, z));
 			healthbar->increaseHealth(10.0f);
-			eatSound->play();
+			sounds[SOUND_EAT]->play();
 			scores++;
 		}
 	}
@@ -510,7 +517,7 @@ void Game::updateModels()
 			obj->setPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x, z) + 0.7f, z));
 			healthbar->increaseHealth(5.0f);
 			camera.updateCameraSpeed(2.0f, 3.0f);
-			drinkSound->play();
+			sounds[SOUND_DRINK]->play();
 		}
 	}
 }

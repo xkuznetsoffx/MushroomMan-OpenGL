@@ -1,13 +1,17 @@
-﻿  Camera.cpp
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Camera.cpp(118,65): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Camera.cpp(118,65): warning C4267:         with
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Camera.cpp(118,65): warning C4267:         [
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Camera.cpp(118,65): warning C4267:             _Ty=int
-D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Camera.cpp(118,65): warning C4267:         ]
-  LINK : D:\CppProjs\OpenGL_Coursework\x64\Debug\OpenGL_Coursework.exe not found or not built by the last incremental link; performing full link
-glew32sd.lib(glew.obj) : warning LNK4099: PDB '' was not found with 'glew32sd.lib(glew.obj)' or at ''; linking object as if no debug info
-soil2-debug.lib(SOIL2.obj) : warning LNK4099: PDB '' was not found with 'soil2-debug.lib(SOIL2.obj)' or at ''; linking object as if no debug info
-soil2-debug.lib(image_DXT.obj) : warning LNK4099: PDB '' was not found with 'soil2-debug.lib(image_DXT.obj)' or at ''; linking object as if no debug info
-soil2-debug.lib(wfETC.obj) : warning LNK4099: PDB '' was not found with 'soil2-debug.lib(wfETC.obj)' or at ''; linking object as if no debug info
-soil2-debug.lib(image_helper.obj) : warning LNK4099: PDB '' was not found with 'soil2-debug.lib(image_helper.obj)' or at ''; linking object as if no debug info
+﻿  Game.cpp
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(322,76): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(322,73): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(337,75): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(337,72): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(504,70): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(504,67): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(517,70): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(517,67): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(554,11): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(555,11): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(559,18): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(560,18): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(562,10): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(563,10): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(620,35): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
   OpenGL_Coursework.vcxproj -> D:\CppProjs\OpenGL_Coursework\x64\Debug\OpenGL_Coursework.exe
