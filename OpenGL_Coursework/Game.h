@@ -137,6 +137,8 @@ private:
 
 	std::unique_ptr<Grass> grass;
 
+	bool isGameOver = false;
+
 	//functions
 	void initGLFW();
 	void initWindow(const char* title, bool resizable, bool fullscreen);
@@ -170,6 +172,9 @@ private:
 	static void  key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	static void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 	static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+
+	void gameOver();
+	void restartGame();
 
 	void setWindowShouldClose();
 

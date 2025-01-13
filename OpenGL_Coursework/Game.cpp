@@ -67,6 +67,20 @@ int Game::getWindowShouldClose()
 	return glfwWindowShouldClose(window);
 }
 
+void Game::gameOver()
+{
+	isGameOver = true;
+	camera.SetPosition(glm::vec3(100.f, 0.f, 100.f));
+}
+
+void Game::restartGame()
+{
+	isGameOver = false;
+	scores = 0;
+	camera.SetPosition(glm::vec3(25.f, -0.16f, 25.f));
+	healthbar->setHealth(100.f);
+}
+
 void Game::setWindowShouldClose()
 {
 	glfwSetWindowShouldClose(window, GLFW_TRUE);
@@ -84,8 +98,10 @@ void Game::update()
 
 	healthbar->update(deltaTime);
 
-	if (!healthbar->isAlive())
-		setWindowShouldClose();
+	if (!healthbar->isAlive() && !isGameOver)
+		gameOver();
+	if(isGameOver)
+		camera.ProcessMouseMovement(0.25f, 0.f);
 }
 
 void Game::render()
@@ -113,12 +129,28 @@ void Game::render()
 	}
 
 	skybox->render(shaders[SHADER_SKYBOX].get());
-
-	textManager->render(shaders[SHADER_TEXT].get(),
-		"Score: " + std::to_string(scores), 10.0f, 565.f, 0.35f, glm::vec3(0.9f, 0.84f, 0.564f)
-	);
+	
 
 	grass->render(shaders[SHADER_GRASS].get());
+
+	if (!isGameOver)
+		textManager->render(shaders[SHADER_TEXT].get(),
+			"Score: " + std::to_string(scores), 10.0f, 565.f, 0.35f, glm::vec3(0.9f, 0.84f, 0.564f)
+		);
+	else
+	{
+		textManager->render(shaders[SHADER_TEXT].get(),
+			"GAME OVER!", WINDOW_WIDTH/4.f, WINDOW_HEIGHT / 2 , 0.8f, glm::vec3(0.9f, 0.1f, 0.1f)
+		);
+		textManager->render(shaders[SHADER_TEXT].get(),
+			("You have scored " + std::to_string(scores) + " points").c_str(),
+			WINDOW_WIDTH/40.f, WINDOW_HEIGHT / 2 - 100.f, 0.8f, glm::vec3(0.9f, 0.1f, 0.1f)
+		);
+		textManager->render(shaders[SHADER_TEXT].get(),
+			"Press 'ESC' to exit or 'R' to restart the game",
+			WINDOW_WIDTH * 0.01f, WINDOW_HEIGHT * 0.01f, 0.3f, glm::vec3(0.9f, 0.84f, 0.564f)
+		);
+	}
 
 	glfwSwapBuffers(window);
 	glFlush();
@@ -550,49 +582,58 @@ void Game::updateInput(int key, int action)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		setWindowShouldClose();
-	if (key == GLFW_KEY_F && action == GLFW_PRESS) {
-		if (spotLight->isOn())
-		{
-			spotLight->turnOff();
-			sounds[SOUND_SPOTLIGHT_OFF]->play();
+	if (!isGameOver) {
+		if (key == GLFW_KEY_F && action == GLFW_PRESS) {
+			if (spotLight->isOn())
+			{
+				spotLight->turnOff();
+				sounds[SOUND_SPOTLIGHT_OFF]->play();
+			}
+			else
+			{
+				spotLight->turnOn();
+				sounds[SOUND_SPOTLIGHT_ON]->play();
+			}
 		}
-		else
-		{
-			spotLight->turnOn();
-			sounds[SOUND_SPOTLIGHT_ON]->play();
-		}
-	}
 
 #ifdef DEBUG
-	if (key == GLFW_KEY_TAB && action == GLFW_PRESS)
-		std::cout << "Camera position: " <<
-		camera.GetPoistion().x << ' ' <<
-		camera.GetPoistion().y << ' ' <<
-		camera.GetPoistion().z << '\n';
+		if (key == GLFW_KEY_TAB && action == GLFW_PRESS)
+			std::cout << "Camera position: " <<
+			camera.GetPoistion().x << ' ' <<
+			camera.GetPoistion().y << ' ' <<
+			camera.GetPoistion().z << '\n';
 #endif // DEBUG
+
+		if (action == GLFW_PRESS)
+			keys[key] = true;
+		else if (action == GLFW_RELEASE)
+			keys[key] = false;
+	}
+	else if ((key == GLFW_KEY_R && action == GLFW_PRESS)) {
+			restartGame();
+	}
 	
-	if (action == GLFW_PRESS)
-		keys[key] = true;
-	else if (action == GLFW_RELEASE)
-		keys[key] = false;
 }
+	
 
 void Game::updateMouse(double xpos, double ypos)
 {
-	if (firstMouse)
-	{
+	if (!isGameOver) {
+		if (firstMouse) {
+			lastX = xpos;
+			lastY = ypos;
+			firstMouse = false;
+		}
+
+		GLfloat xoffset = xpos - lastX;
+		GLfloat yoffset = lastY - ypos;
+
 		lastX = xpos;
 		lastY = ypos;
-		firstMouse = false;
+
+		camera.ProcessMouseMovement(xoffset, yoffset);
 	}
-
-	GLfloat xoffset = xpos - lastX;
-	GLfloat yoffset = lastY - ypos;
-
-	lastX = xpos;
-	lastY = ypos;
-
-	camera.ProcessMouseMovement(xoffset, yoffset);
+	
 }
 
 void Game::updateDeltaTime()

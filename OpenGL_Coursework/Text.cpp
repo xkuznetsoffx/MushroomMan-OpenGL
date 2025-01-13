@@ -27,8 +27,7 @@ void Text::render(Shader* shader, const std::string& text, float x, float y, flo
 
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO);
-
-    // Рендеринг каждого символа  
+ 
     for (auto c : text) {
         Character ch = Characters[c];
 
@@ -38,7 +37,6 @@ void Text::render(Shader* shader, const std::string& text, float x, float y, flo
         float w = ch.Size.x * scale;
         float h = ch.Size.y * scale;
 
-        // Обновление VBO для каждого символа  
         float vertices[6][4] = {
             { xpos,     ypos + h,   0.0f, 0.0f },
             { xpos,     ypos,       0.0f, 1.0f },
@@ -49,18 +47,14 @@ void Text::render(Shader* shader, const std::string& text, float x, float y, flo
             { xpos + w, ypos + h,   1.0f, 0.0f }
         };
 
-        // Привязка текстуры символа  
         glBindTexture(GL_TEXTURE_2D, ch.TextureID);
 
-        // Обновление содержимого VBO  
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-        // Рендеринг символа  
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
-        // Смещение для следующего символа  
         x += (ch.Advance >> 6) * scale;
     }
 
