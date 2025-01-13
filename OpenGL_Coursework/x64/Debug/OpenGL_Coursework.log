@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿  Game.cpp
 D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(142,50): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
 D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(368,76): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
@@ -27,6 +28,45 @@ D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Grass.cpp(69,25): warning C4267:
   Skybox.cpp
   Sound.cpp
   Text.cpp
+=======
+﻿  Collision.cpp
+  Game.cpp
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(343,76): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(343,73): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(358,75): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(358,72): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(496,70): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(496,67): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(509,70): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(509,67): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(546,11): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(547,11): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(551,18): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(552,18): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(554,10): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(555,10): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Game.cpp(612,35): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
+  HealthBar.cpp
+  main.cpp
+  Material.cpp
+  Mesh.cpp
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Mesh.cpp(14,48): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Mesh.cpp(15,46): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Mesh.cpp(129,29): warning C4267: 'argument': conversion from 'size_t' to 'const GLuint', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Mesh.cpp(130,39): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Mesh.cpp(133,29): warning C4267: 'argument': conversion from 'size_t' to 'const GLuint', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Mesh.cpp(134,40): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  Model.cpp
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Model.cpp(216,31): warning C4267: 'argument': conversion from 'size_t' to 'const unsigned int', possible loss of data
+  Skybox.cpp
+  Sound.cpp
+  Terrain.cpp
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Terrain.cpp(90,55): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Terrain.cpp(91,55): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\CppProjs\OpenGL_Coursework\OpenGL_Coursework\Terrain.cpp(119,31): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+  Text.cpp
+  Texture.cpp
+>>>>>>> f4a586ff122a8596cb3d7b6776742388ab3edbe2
   Generating Code...
   LINK : D:\CppProjs\OpenGL_Coursework\x64\Debug\OpenGL_Coursework.exe not found or not built by the last incremental link; performing full link
 Camera.obj : warning LNK4099: PDB '' was not found with 'Camera.obj' or at ''; linking object as if no debug info
