@@ -1,174 +1,57 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Collision.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Grass.cpp" />
+    <ClCompile Include="HealthBar.cpp" />
+    <ClCompile Include="Light.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Material.cpp" />
+    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="Primitives.cpp" />
+    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Skybox.cpp" />
+    <ClCompile Include="Sound.cpp" />
+    <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="Text.cpp" />
+    <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Shader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Material.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Primitives.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Game.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Light.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Terrain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Collision.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HealthBar.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Sound.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Text.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Skybox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-<<<<<<< HEAD
-=======
-    <ClCompile Include="Grass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
->>>>>>> dev
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Collision.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="Grass.h" />
+    <ClInclude Include="HealthBar.h" />
+    <ClInclude Include="libs.h" />
+    <ClInclude Include="Light.h" />
+    <ClInclude Include="Material.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="Primitives.h" />
+    <ClInclude Include="Shader.h" />
+    <ClInclude Include="Skybox.h" />
+    <ClInclude Include="Sound.h" />
+    <ClInclude Include="Terrain.h" />
+    <ClInclude Include="Text.h" />
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="grass.frag" />
+    <None Include="grass.vs" />
+    <None Include="HealthBar.frag" />
+    <None Include="HealthBar.vs" />
+    <None Include="lamp.frag" />
+    <None Include="lamp.vs" />
+    <None Include="objects.frag" />
+    <None Include="objects.vs" />
+    <None Include="Skybox.frag" />
+    <None Include="Skybox.vs" />
+    <None Include="TextShader.frag" />
+    <None Include="TextShader.vs" />
     <None Include="packages.config" />
-    <None Include="objects.vs">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="objects.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="lamp.vs">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="lamp.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="HealthBar.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="HealthBar.vs">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="TextShader.vs">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="TextShader.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Skybox.vs">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Skybox.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-<<<<<<< HEAD
-=======
-    <None Include="grass.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="grass.vs">
-      <Filter>Resource Files</Filter>
-    </None>
->>>>>>> dev
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="libs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Vertex.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Primitives.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Game.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Light.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Terrain.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Collision.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HealthBar.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Sound.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Text.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Skybox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-<<<<<<< HEAD
-=======
-    <ClInclude Include="Grass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
->>>>>>> dev
   </ItemGroup>
 </Project>
