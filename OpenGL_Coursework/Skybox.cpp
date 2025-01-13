@@ -59,16 +59,17 @@ Skybox::~Skybox()
 void Skybox::render(Shader* shader)
 {
     // draw skybox as last
-    glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+    glDepthFunc(GL_LEQUAL); 
     shader->Use();
 
-    // skybox cube
     glBindVertexArray(VAO);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);
-    glDepthFunc(GL_LESS); // set depth function back to default
+
+    glDepthFunc(GL_LESS);
+
 }
 
 void Skybox::initVAO()

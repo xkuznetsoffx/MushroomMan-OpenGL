@@ -9,6 +9,8 @@ uniform mat4 view;
 void main()
 {
     TexCoords = aPos; 
-    mat4 viewNoTranslation = mat4(mat3(view)); // ”бираем трансл€цию
+
+    mat4 viewNoTranslation = mat4(mat3(view)); 
+
     gl_Position = projection * viewNoTranslation * vec4(aPos, 1.0);
 }

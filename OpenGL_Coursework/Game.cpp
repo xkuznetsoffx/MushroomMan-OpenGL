@@ -34,34 +34,25 @@ Game::Game(
 	initShaders();
 	initTextures();
 	initMaterials();
+	initSkybox();
+	initText();
+	initSounds();
 	initMeshes();
 	initTerrain();
 	initModels();
 	initLights();
 	initUniforms();
 	initCallbacks();
-
-	eatSound = new Sound("assets\\sounds\\eat1.wav");
-	drinkSound = new Sound("assets\\sounds\\drink.wav");
 	
-	text = new Text("assets\\fonts\\DkHandRegular-orna.ttf", 128);
-
-	std::vector<std::string> faces
-	{
-		"assets\\skybox\\right.jpg",
-		"assets\\skybox\\left.jpg",
-		"assets\\skybox\\top.jpg",
-		"assets\\skybox\\bottom.jpg",
-		"assets\\skybox\\front.jpg",
-		"assets\\skybox\\back.jpg"
-	};
-
-	skybox = new Skybox(faces);
-
 	healthbar = std::make_unique<HealthBar>(
 		100.f,
 		glm::vec2(20.f, 20.f),
 		glm::vec2(200.f, 20.f)
+	);
+
+	grass = std::make_unique<Grass>(
+		terrain.get(),
+		1000
 	);
 }
 
@@ -69,18 +60,25 @@ Game::~Game()
 {
 	glfwDestroyWindow(window);
 	glfwTerminate();
-
-	delete burger;
-	delete cola;
-	delete eatSound;
-	delete drinkSound;
-	delete text;
-	delete skybox;
 }
 
 int Game::getWindowShouldClose()
 {
 	return glfwWindowShouldClose(window);
+}
+
+void Game::gameOver()
+{
+	isGameOver = true;
+	camera.SetPosition(glm::vec3(100.f, 0.f, 100.f));
+}
+
+void Game::restartGame()
+{
+	isGameOver = false;
+	scores = 0;
+	camera.SetPosition(glm::vec3(25.f, -0.16f, 25.f));
+	healthbar->setHealth(100.f);
 }
 
 void Game::setWindowShouldClose()
@@ -100,8 +98,10 @@ void Game::update()
 
 	healthbar->update(deltaTime);
 
-	if (!healthbar->isAlive())
-		setWindowShouldClose();
+	if (!healthbar->isAlive() && !isGameOver)
+		gameOver();
+	if(isGameOver)
+		camera.ProcessMouseMovement(0.25f, 0.f);
 }
 
 void Game::render()
@@ -129,9 +129,27 @@ void Game::render()
 	}
 
 	skybox->render(shaders[SHADER_SKYBOX].get());
-	text->render(shaders[SHADER_TEXT].get(),
-		"Scores: " + std::to_string(scores), 10.0f, 565.f, 0.35f, glm::vec3(1.f)
-	);
+
+	grass->render(shaders[SHADER_GRASS].get());
+
+	if (!isGameOver)
+		textManager->render(shaders[SHADER_TEXT].get(),
+			"Score: " + std::to_string(scores), 10.0f, 565.f, 0.35f, glm::vec3(0.9f, 0.84f, 0.564f)
+		);
+	else
+	{
+		textManager->render(shaders[SHADER_TEXT].get(),
+			"GAME OVER!", WINDOW_WIDTH/4.f, WINDOW_HEIGHT / 2 , 0.8f, glm::vec3(0.9f, 0.1f, 0.1f)
+		);
+		textManager->render(shaders[SHADER_TEXT].get(),
+			("You have scored " + std::to_string(scores) + " points").c_str(),
+			WINDOW_WIDTH/40.f, WINDOW_HEIGHT / 2 - 100.f, 0.8f, glm::vec3(0.9f, 0.1f, 0.1f)
+		);
+		textManager->render(shaders[SHADER_TEXT].get(),
+			"Press 'ESC' to exit or 'R' to restart the game",
+			WINDOW_WIDTH * 0.01f, WINDOW_HEIGHT * 0.01f, 0.3f, glm::vec3(0.9f, 0.84f, 0.564f)
+		);
+	}
 
 	glfwSwapBuffers(window);
 	glFlush();
@@ -248,6 +266,12 @@ void Game::initShaders()
 		std::make_unique<Shader>
 		(GL_VERSION_MAJOR, GL_VERSION_MINOR, "Skybox.vs", "Skybox.frag")
 	);
+
+	shaders.push_back(
+		std::make_unique<Shader>
+		(GL_VERSION_MAJOR, GL_VERSION_MINOR, "grass.vs", "grass.frag")
+	);
+
 }
 
 void Game::initTextures()
@@ -277,7 +301,7 @@ void Game::initTextures()
 	);
 	textures.push_back(
 		std::make_shared<Texture>
-		("assets/textures/grass-7_spec.jpg", GL_TEXTURE_2D, aiTextureType_DIFFUSE)
+		("assets/textures/grass-7_spec.jpg", GL_TEXTURE_2D, aiTextureType_SPECULAR)
 	);
 }
 
@@ -326,32 +350,33 @@ void Game::initModels()
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> disX(0, terrain->getHeight() - 2);
 	std::uniform_int_distribution<> disZ(0, terrain->getWidth() - 2);
-	std::vector<SPtrMesh> grass;
-	
-	burger = new Model(
+
+
+
+	Model burger(
 		"assets\\models\\burger\\scene.gltf",
 		glm::vec3(0.0f, 0.f, 0.0f)
 	);
-	burger->scaleUp(glm::vec3(-0.5f));
+	burger.scaleUp(glm::vec3(-0.5f));
 
 	for (size_t i = 0; i < 8; ++i) {
 		burgers.emplace_back(
-			new Model(*burger)
+			new Model(burger)
 		);
 		int x = disX(gen);
 		int z = disZ(gen);
 		burgers[i]->setPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x, z) + 0.7f, z));
 	}
 
-	cola = new Model(
-		"assets\\models\\cola\\scene.gltf",
+	Model drink(
+		"assets\\models\\lit_energy\\scene.gltf",
 		glm::vec3(0.0f, 0.f, 0.0f)
 	);
-	cola->scaleUp(glm::vec3(-0.9f));
+	drink.scaleUp(glm::vec3(-0.8f));
 
 	for (size_t i = 0; i < 2; ++i) {
 		drinks.emplace_back(
-			new Model(*cola)
+			new Model(drink)
 		);
 		int x = disX(gen);
 		int z = disZ(gen);
@@ -366,10 +391,10 @@ void Game::initLights()
 	glm::vec3 lightDirection = glm::normalize(target - source);
 
 	directionLight = std::make_unique<DirectionLight>(
-		glm::vec3(0.2f, 0.2f, 0.2f),   // Ambient 
-		glm::vec3(0.8f, 0.7f, 0.6f),   // Diffuse 
-		glm::vec3(0.4f, 0.35f, 0.3f),   // Specular 
-		lightDirection				   // Direction 
+		glm::vec3(0.2f, 0.2f, 0.2f),		// Ambient 
+		glm::vec3(0.8f, 0.7f, 0.6f),		// Diffuse 
+		glm::vec3(0.4f, 0.35f, 0.3f),		// Specular 
+		lightDirection						// Direction 
 	);
 
 	pointLights.push_back(
@@ -414,6 +439,8 @@ void Game::initUniforms()
 	shaders[SHADER_SKYBOX]->setMat4("view", viewMatrix);
 	shaders[SHADER_SKYBOX]->setMat4("projection", projectionMatrix);
 
+	shaders[SHADER_GRASS]->setMat4("view", viewMatrix);
+	shaders[SHADER_GRASS]->setMat4("projection", projectionMatrix);
 }
 
 void Game::initCallbacks()
@@ -427,6 +454,38 @@ void Game::initCallbacks()
 void Game::initTerrain()
 {
 	terrain = std::make_shared<Terrain>(50, 50, 0.05f, materials[2].get());
+}
+
+void Game::initSkybox()
+{
+	std::vector<std::string> faces
+	{
+		"assets\\skybox\\right.jpg",
+		"assets\\skybox\\left.jpg",
+		"assets\\skybox\\top.jpg",
+		"assets\\skybox\\bottom.jpg",
+		"assets\\skybox\\front.jpg",
+		"assets\\skybox\\back.jpg"
+	};
+
+	skybox = std::make_unique<Skybox>(faces);
+}
+
+void Game::initText()
+{
+	textManager = std::make_unique<Text>("assets\\fonts\\DkHandRegular-orna.ttf", 128);
+}
+
+void Game::initSounds()
+{
+	sounds.emplace_back(std::make_unique<Sound>("assets\\sounds\\eat1.wav"));
+	sounds.back()->setVolume(0.4f);
+	sounds.emplace_back(std::make_unique<Sound>("assets\\sounds\\drink.wav"));
+	sounds.back()->setVolume(0.4f);
+	sounds.emplace_back(std::make_unique<Sound>("assets\\sounds\\spotlight_on.wav"));
+	sounds.back()->setVolume(0.1f);
+	sounds.emplace_back(std::make_unique<Sound>("assets\\sounds\\spotlight_off.wav"));
+	sounds.back()->setVolume(0.1f);
 }
 
 void Game::updateUniforms()
@@ -476,8 +535,12 @@ void Game::updateUniforms()
 	shaders[SHADER_SKYBOX]->setMat4("view", viewMatrix);
 	shaders[SHADER_SKYBOX]->setMat4("projection", projectionMatrix);
 
-	shaders[SHADER_SKYBOX]->Unuse();
+	shaders[SHADER_GRASS]->Use();
 
+	shaders[SHADER_GRASS]->setMat4("view", viewMatrix);
+	shaders[SHADER_GRASS]->setMat4("projection", projectionMatrix);
+
+	shaders[SHADER_GRASS]->Unuse();
 }
 
 void Game::updateModels()
@@ -495,7 +558,7 @@ void Game::updateModels()
 			int z = disZ(gen);
 			obj->setPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x, z) + 0.7f, z));
 			healthbar->increaseHealth(10.0f);
-			eatSound->play();
+			sounds[SOUND_EAT]->play();
 			scores++;
 		}
 	}
@@ -509,7 +572,7 @@ void Game::updateModels()
 			obj->setPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x, z) + 0.7f, z));
 			healthbar->increaseHealth(5.0f);
 			camera.updateCameraSpeed(2.0f, 3.0f);
-			drinkSound->play();
+			sounds[SOUND_DRINK]->play();
 		}
 	}
 }
@@ -518,43 +581,58 @@ void Game::updateInput(int key, int action)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		setWindowShouldClose();
-	if (key == GLFW_KEY_F && action == GLFW_PRESS) {
-		if (spotLight->isOn())
-			spotLight->turnOff();
-		else
-			spotLight->turnOn();
-	}
+	if (!isGameOver) {
+		if (key == GLFW_KEY_F && action == GLFW_PRESS) {
+			if (spotLight->isOn())
+			{
+				spotLight->turnOff();
+				sounds[SOUND_SPOTLIGHT_OFF]->play();
+			}
+			else
+			{
+				spotLight->turnOn();
+				sounds[SOUND_SPOTLIGHT_ON]->play();
+			}
+		}
 
 #ifdef DEBUG
-	if (key == GLFW_KEY_TAB && action == GLFW_PRESS)
-		std::cout << "Camera position: " <<
-		camera.GetPoistion().x << ' ' <<
-		camera.GetPoistion().y << ' ' <<
-		camera.GetPoistion().z << '\n';
+		if (key == GLFW_KEY_TAB && action == GLFW_PRESS)
+			std::cout << "Camera position: " <<
+			camera.GetPoistion().x << ' ' <<
+			camera.GetPoistion().y << ' ' <<
+			camera.GetPoistion().z << '\n';
 #endif // DEBUG
+
+		if (action == GLFW_PRESS)
+			keys[key] = true;
+		else if (action == GLFW_RELEASE)
+			keys[key] = false;
+	}
+	else if ((key == GLFW_KEY_R && action == GLFW_PRESS)) {
+			restartGame();
+	}
 	
-	if (action == GLFW_PRESS)
-		keys[key] = true;
-	else if (action == GLFW_RELEASE)
-		keys[key] = false;
 }
+	
 
 void Game::updateMouse(double xpos, double ypos)
 {
-	if (firstMouse)
-	{
+	if (!isGameOver) {
+		if (firstMouse) {
+			lastX = xpos;
+			lastY = ypos;
+			firstMouse = false;
+		}
+
+		GLfloat xoffset = xpos - lastX;
+		GLfloat yoffset = lastY - ypos;
+
 		lastX = xpos;
 		lastY = ypos;
-		firstMouse = false;
+
+		camera.ProcessMouseMovement(xoffset, yoffset);
 	}
-
-	GLfloat xoffset = xpos - lastX;
-	GLfloat yoffset = lastY - ypos;
-
-	lastX = xpos;
-	lastY = ypos;
-
-	camera.ProcessMouseMovement(xoffset, yoffset);
+	
 }
 
 void Game::updateDeltaTime()

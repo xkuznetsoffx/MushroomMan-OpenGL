@@ -30,7 +30,7 @@
 #include "Primitives.h"
 #include "Light.h"
 #include "Model.h"
-#include "Terrain.h"
+#include "Grass.h"
 #include "Sound.h"
 #include "Text.h"
 #include "Skybox.h"

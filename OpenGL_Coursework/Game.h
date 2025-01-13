@@ -3,16 +3,18 @@
 #include "libs.h"
 #include "HealthBar.h"
 
-enum ShaderType
+enum ShaderEnum
 {
 	SHADER_OBJ = 0,
 	SHADER_LAMP,
 	SHADER_HEALTH,
 	SHADER_TEXT,
-	SHADER_SKYBOX
+	SHADER_SKYBOX,
+	SHADER_GRASS
+
 };
 
-enum TextureType
+enum TextureEnum
 {
 	TEX_CONTAINER_DIFMAP = 0,
 	TEX_CONTAINER_SPECMAP,
@@ -23,7 +25,7 @@ enum TextureType
 	TEX_GRASS
 };
 
-enum MaterialType {
+enum MaterialEnum {
 	MAT_CONTAINER = 0,
 	MAT_WALL,
 	MAT_GRASS_TERR,
@@ -39,6 +41,14 @@ enum MeshObjectsEnum
 enum MeshLampsEnum
 {
 	MESH_LAMP = 0
+};
+
+enum SoundsEnum
+{
+	SOUND_EAT = 0,
+	SOUND_DRINK,
+	SOUND_SPOTLIGHT_ON,
+	SOUND_SPOTLIGHT_OFF
 };
 
 class Game
@@ -93,15 +103,15 @@ private:
 	bool keys[1024];
 
 	//Sounds
-	Sound* eatSound;
-	Sound* drinkSound;
+	std::vector<std::unique_ptr<Sound>> sounds;
 	
 	//Skybox
-	Skybox* skybox;
-	//Text
-	Text* text;
+	std::unique_ptr<Skybox> skybox;
 
+	//Text
+	std::unique_ptr<Text> textManager;
 	size_t scores = 0;
+
 	//Shaders
 	std::vector<UPtrShader> shaders;
 
@@ -115,10 +125,6 @@ private:
 	std::vector<UPtrMesh> meshesLamps;
 
 	//Models
-	Model* burger;//kostil!!!
-	Model* cola;//kostil!!!
-	
-
 	std::vector<SPtrModel> burgers;
 	std::vector<SPtrModel> drinks;
 
@@ -132,6 +138,10 @@ private:
 	//HP
 	std::unique_ptr<HealthBar> healthbar;
 
+	std::unique_ptr<Grass> grass;
+
+	bool isGameOver = false;
+
 	//functions
 	void initGLFW();
 	void initWindow(const char* title, bool resizable, bool fullscreen);
@@ -142,6 +152,9 @@ private:
 	void initTextures();
 	void initMaterials();
 	void initTerrain();
+	void initSkybox();
+	void initText();
+	void initSounds();
 	void initMeshes();
 	void initModels();
 	void initLights();
@@ -162,6 +175,9 @@ private:
 	static void  key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	static void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 	static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+
+	void gameOver();
+	void restartGame();
 
 	void setWindowShouldClose();
 

@@ -65,9 +65,16 @@ void HealthBar::update(float deltaTime) {
 }
 
 void HealthBar::setHealth(float health) {
-    if (health < 0.0f) health = 0.0f;
-    if (health > maxHealth) health = maxHealth;
-    currentHealth = health;
+    if (health <= 0.0f){
+        health = 0.0f;
+        currentHealth = health;
+        alive = false;
+    }
+    else {
+        if (health > maxHealth) health = maxHealth;
+        currentHealth = health;
+        alive = true;
+    }
 }
 
 void HealthBar::increaseHealth(float increaseRate)

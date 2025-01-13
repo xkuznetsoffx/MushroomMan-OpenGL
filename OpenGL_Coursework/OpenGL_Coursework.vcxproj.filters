@@ -63,6 +63,12 @@
     <ClCompile Include="Skybox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+<<<<<<< HEAD
+=======
+    <ClCompile Include="Grass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+>>>>>>> dev
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -96,6 +102,15 @@
     <None Include="Skybox.frag">
       <Filter>Resource Files</Filter>
     </None>
+<<<<<<< HEAD
+=======
+    <None Include="grass.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="grass.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+>>>>>>> dev
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="libs.h">
@@ -149,5 +164,11 @@
     <ClInclude Include="Skybox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+<<<<<<< HEAD
+=======
+    <ClInclude Include="Grass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+>>>>>>> dev
   </ItemGroup>
 </Project>

@@ -202,5 +202,5 @@ void Sound::initSource()
         std::cerr << "Error attaching buffer to source: " << alGetString(error) << std::endl;
         return;
     }
-    alSourcef(source, AL_GAIN, 0.5f);
+    alSourcef(source, AL_GAIN, 1.f);
 }
