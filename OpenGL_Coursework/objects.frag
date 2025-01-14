@@ -75,9 +75,10 @@ void main()
         result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);    
     // фаза 3: фонарик
     result += CalcSpotLight(spotLight, norm, FragPos, viewDir); 
-    
 
-    FragColor = vec4(result, 1.0);
+    vec4 texColor = texture(material.diffuse, TexCoords);  
+
+    FragColor = vec4(result, texColor.a);  
 }
 
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)

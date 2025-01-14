@@ -37,7 +37,6 @@ Game::Game(
 	initSkybox();
 	initText();
 	initSounds();
-	initMeshes();
 	initTerrain();
 	initModels();
 	initLights();
@@ -150,11 +149,10 @@ void Game::render()
 			cola->render(shaders[SHADER_OBJ].get());
 		}
 
-		for (const auto& lamp : meshesLamps) {
-			lamp->render(shaders[SHADER_LAMP].get());
-		}
-
 		grass->render(shaders[SHADER_GRASS].get());
+
+		teleport->render(shaders[SHADER_OBJ].get());
+
 		textManager->render(shaders[SHADER_TEXT].get(),
 			"Score: " + std::to_string(scores), WINDOW_WIDTH / 80.f, WINDOW_HEIGHT / 1.06f,
 			0.263f * (static_cast<float>(WINDOW_WIDTH) / WINDOW_HEIGHT), glm::vec3(0.9f, 0.84f, 0.564f)
@@ -346,15 +344,6 @@ void Game::initMaterials()
 
 void Game::initMeshes()
 {
-	//Lamp
-	meshesLamps.push_back(
-		std::make_unique<Mesh>(
-			Cube(),							//primitive
-			glm::vec3(3.0f, 4.0f, 3.0f),	//position
-			glm::vec3(0.0f),				//rotation
-			glm::vec3(0.25f)				//scale
-		)
-	);
 }
 
 void Game::initModels()
@@ -395,6 +384,13 @@ void Game::initModels()
 		int z = disZ(gen);
 		drinks[i]->setPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x, z) + 0.6f, z));
 	}
+	int x = disX(gen);
+	int z = disZ(gen);
+	teleport = std::make_shared<Model>(
+		"assets\\models\\teleport\\scene.gltf",
+		glm::vec3(x, terrain->getCurrentHeightFromMap(x, z) + 0.7f, z)
+	);
+	teleport->scaleUp(glm::vec3(-0.9f));
 }
 
 void Game::initLights()
@@ -415,7 +411,7 @@ void Game::initLights()
 			glm::vec3(0.05f, 0.05f, 0.05f), //ambient
 			glm::vec3(0.8f, 0.8f, 0.8f),	//diffuse
 			glm::vec3(1.0f, 1.0f, 1.0f),	//specular
-			meshesLamps[0]->getPosition(),	//position
+			glm::vec3(3.0f, 6.0f, 3.0f),	//position
 			1.0f,							//constant
 			0.18f,							//linear
 			0.064f							//quadratic
@@ -501,6 +497,8 @@ void Game::initSounds()
 	sounds.back()->setVolume(0.1f);
 	sounds.emplace_back(std::make_unique<Sound>("assets\\sounds\\sadMusic.wav"));
 	sounds.back()->setVolume(0.25f);
+	sounds.emplace_back(std::make_unique<Sound>("assets\\sounds\\teleport.wav"));
+	sounds.back()->setVolume(0.4f);
 }
 
 void Game::updateUniforms()
@@ -564,13 +562,13 @@ void Game::updateModels()
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<> disX(0, terrain->getHeight() - 2);
 	std::uniform_int_distribution<> disZ(0, terrain->getWidth() - 2);
-
+	static int x, z;
 	for (const auto& obj : burgers) {
 		obj->move(glm::vec3(0.0f, sin(glfwGetTime()) * deltaTime * 0.1f, 0.0f));
 		obj->rotate(glm::vec3(0.0f, 45.f * deltaTime, 0.0f)); ;
 		if (checkCollision(obj->getHitbox(), camera.getHitbox())) {
-			int x = disX(gen);
-			int z = disZ(gen);
+			x = disX(gen);
+			z = disZ(gen);
 			obj->setPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x, z) + 0.7f, z));
 			healthbar->increaseHealth(10.0f);
 			sounds[SOUND_EAT]->play();
@@ -582,14 +580,28 @@ void Game::updateModels()
 		obj->move(glm::vec3(0.0f, sin(glfwGetTime()) * deltaTime * 0.1f, 0.0f));
 		obj->rotate(glm::vec3(0.0f, 45.f * deltaTime, 0.0f)); ;
 		if (checkCollision(obj->getHitbox(), camera.getHitbox())) {
-			int x = disX(gen);
-			int z = disZ(gen);
-			obj->setPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x, z) + 0.7f, z));
+			x = disX(gen);
+			z = disZ(gen);
+			obj->setPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x, z) + 0.6f, z));
 			healthbar->increaseHealth(5.0f);
 			camera.updateCameraSpeed(2.0f, 3.0f);
 			sounds[SOUND_DRINK]->play();
 		}
 	}
+
+	teleport->move(glm::vec3(0.0f, sin(glfwGetTime()) * deltaTime * 0.1f, 0.0f));
+	teleport->rotate(glm::vec3(0.0f, 45.f * deltaTime, 0.0f)); ;
+	if (checkCollision(teleport->getHitbox(), camera.getHitbox())) {
+		x = disX(gen);
+		z = disZ(gen);
+		teleport->setPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x, z) + 0.7f, z));
+		x = disX(gen);
+		z = disZ(gen);
+		healthbar->increaseHealth(5.0f);
+		camera.SetPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x, z), z));
+		sounds[SOUND_TELEPORT]->play();
+	}
+
 }
 
 void Game::updateInput(int key, int action)

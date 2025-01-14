@@ -40,7 +40,7 @@ enum MeshObjectsEnum
 
 enum MeshLampsEnum
 {
-	MESH_LAMP = 0
+
 };
 
 enum SoundsEnum
@@ -49,7 +49,8 @@ enum SoundsEnum
 	SOUND_DRINK,
 	SOUND_SPOTLIGHT_ON,
 	SOUND_SPOTLIGHT_OFF,
-	SOUND_SAD
+	SOUND_SAD,
+	SOUND_TELEPORT
 };
 
 class Game
@@ -128,6 +129,7 @@ private:
 	//Models
 	std::vector<SPtrModel> burgers;
 	std::vector<SPtrModel> drinks;
+	SPtrModel teleport;
 
 	std::shared_ptr<Terrain> terrain;
 

@@ -1,9 +1,10 @@
 #include "Texture.h"
 
-Texture::Texture(const char* path, GLenum type, aiTextureType aiTexTypeName) :
+Texture::Texture(const char* path, GLenum type, aiTextureType aiTexTypeName, bool isTransparent) :
 	path(path), textureType(type), aiTexTypeName(aiTexTypeName)
 {
-	unsigned char* image = SOIL_load_image(path, &width, &height, NULL, SOIL_LOAD_RGBA);
+	
+	unsigned char* image = SOIL_load_image(path, &width, &height, NULL, STBI_rgb_alpha);
 
 	glGenTextures(1, &textureId);
 	glBindTexture(type, textureId);

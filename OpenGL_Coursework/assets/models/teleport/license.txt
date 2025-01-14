@@ -1,0 +1,11 @@
+Model Information:
+* title:	Potion Flask
+* source:	https://sketchfab.com/3d-models/potion-flask-598809e9ebab4dad8b26c456e7271b76
+* author:	Incg5764 (https://sketchfab.com/incg5764)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Potion Flask" (https://sketchfab.com/3d-models/potion-flask-598809e9ebab4dad8b26c456e7271b76) by Incg5764 (https://sketchfab.com/incg5764) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

@@ -9,14 +9,14 @@
 #include <GLFW/glfw3.h>
 
 #include <SOIL2/SOIL2.h>
-
+#include <SOIL2/stb_image.h>
 #include "assimp/types.h"
 #include "assimp/material.h"
 
 class Texture
 {
 public:
-	Texture(const char* path, GLenum type, aiTextureType aiTexTypeName);
+	Texture(const char* path, GLenum type, aiTextureType aiTexTypeName, bool isTransparent = false);
 	~Texture();
 
 	GLuint getID() const;

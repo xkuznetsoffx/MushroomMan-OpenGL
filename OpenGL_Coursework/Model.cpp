@@ -82,9 +82,6 @@ void Model::render(Shader* shader)
 	glActiveTexture(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	if(material)
-		material->sendToShader(shader);
-
 	for (auto& mesh : meshes) {
 		mesh->render(shader);
 	}
@@ -157,6 +154,8 @@ void Model::processNode(aiNode* node, const aiScene* scene)
 	for (size_t i = 0; i < node->mNumMeshes; ++i) {
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 		Mesh newMesh = processMesh(mesh, scene);
+		hitbox.min += pivotPoint;
+		hitbox.max += pivotPoint;
 		newMesh.move(pivotPoint);
 		newMesh.setOrigin(origin);
 		meshes.emplace_back(std::make_shared<Mesh>(newMesh));
