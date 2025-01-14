@@ -7,7 +7,7 @@ int main() {
 	bool Fullscreen = true;
 
 	Game game (
-		"Coursework",
+		"MashroomMan_Coursework",
 		800, 600,
 		GLmajorVersion, GLminorVersion,
 		Resizable,

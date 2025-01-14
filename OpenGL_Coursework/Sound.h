@@ -15,6 +15,7 @@ public:
 	Sound(const std::string& filename);
 	~Sound();
 	void play();
+	void stop();
 	void setVolume(float volume);
 
 private:

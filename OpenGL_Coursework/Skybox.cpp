@@ -58,7 +58,6 @@ Skybox::~Skybox()
 
 void Skybox::render(Shader* shader)
 {
-    // draw skybox as last
     glDepthFunc(GL_LEQUAL); 
     shader->Use();
 
@@ -69,7 +68,6 @@ void Skybox::render(Shader* shader)
     glBindVertexArray(0);
 
     glDepthFunc(GL_LESS);
-
 }
 
 void Skybox::initVAO()

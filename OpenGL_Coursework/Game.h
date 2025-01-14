@@ -48,7 +48,8 @@ enum SoundsEnum
 	SOUND_EAT = 0,
 	SOUND_DRINK,
 	SOUND_SPOTLIGHT_ON,
-	SOUND_SPOTLIGHT_OFF
+	SOUND_SPOTLIGHT_OFF,
+	SOUND_SAD
 };
 
 class Game
@@ -73,8 +74,8 @@ private:
 	//variables
 	//Window options
 	GLFWwindow* window;
-	const int WINDOW_WIDTH;
-	const int WINDOW_HEIGHT;
+	int WINDOW_WIDTH;
+	int WINDOW_HEIGHT;
 	int framebufferWidth;
 	int framebufferHeight;
 
@@ -142,6 +143,8 @@ private:
 
 	bool isGameOver = false;
 
+	bool sadMusicFlag = true;
+
 	//functions
 	void initGLFW();
 	void initWindow(const char* title, bool resizable, bool fullscreen);
@@ -177,6 +180,7 @@ private:
 	static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 	void gameOver();
+	void gameOverRender();
 	void restartGame();
 
 	void setWindowShouldClose();

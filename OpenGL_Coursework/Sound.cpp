@@ -79,6 +79,19 @@ void Sound::play()
     alcMakeContextCurrent(currentContext);
 }
 
+void Sound::stop()
+{
+    ALCcontext* currentContext = alcGetCurrentContext();
+
+    // Делаем наш контекст текущим  
+    alcMakeContextCurrent(context);
+
+    alSourceStop(source);
+ 
+    // Восстановим предыдущий контекст  
+    alcMakeContextCurrent(currentContext);
+}
+
 void Sound::setVolume(float volume)
 {
     // Ограничьте громкость диапазоном 0.0 - 1.0  
@@ -149,11 +162,6 @@ bool Sound::loadWAVFile(const std::string& filename)
         // Пропускаем этот чанк  
         file.seekg(dataSize, std::ios_base::cur);
     }
-
-    //std::cout << "Channels: " << channels
-    //    << ", Sample Rate: " << sampleRate
-    //    << ", Bits Per Sample: " << bitsPerSample
-    //    << ", Data Size: " << dataSize << std::endl;
 
     std::vector<char> data(dataSize);
     file.read(data.data(), dataSize);

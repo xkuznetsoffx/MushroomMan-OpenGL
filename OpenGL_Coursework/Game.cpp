@@ -47,7 +47,7 @@ Game::Game(
 	healthbar = std::make_unique<HealthBar>(
 		100.f,
 		glm::vec2(20.f, 20.f),
-		glm::vec2(200.f, 20.f)
+		glm::vec2(WINDOW_WIDTH/4.f, WINDOW_HEIGHT/30.f)
 	);
 
 	grass = std::make_unique<Grass>(
@@ -74,8 +74,29 @@ void Game::gameOver()
 	memset(keys, 0, sizeof(keys));
 }
 
+void Game::gameOverRender()
+{
+	if (sadMusicFlag) {
+		sounds[SOUND_SAD]->play();
+		sadMusicFlag = false;
+	}
+	textManager->render(shaders[SHADER_TEXT].get(),
+		"GAME OVER!", WINDOW_WIDTH / 4.f, WINDOW_HEIGHT / 2, 0.8f, glm::vec3(0.9f, 0.1f, 0.1f)
+	);
+	textManager->render(shaders[SHADER_TEXT].get(),
+		("You have scored " + std::to_string(scores) + " points").c_str(),
+		WINDOW_WIDTH / 40.f, WINDOW_HEIGHT / 2 - 100.f, 0.8f, glm::vec3(0.9f, 0.1f, 0.1f)
+	);
+	textManager->render(shaders[SHADER_TEXT].get(),
+		"Press 'ESC' to exit or 'R' to restart the game",
+		WINDOW_WIDTH * 0.01f, WINDOW_HEIGHT * 0.01f, 0.3f, glm::vec3(0.9f, 0.84f, 0.564f)
+	);
+}
+
 void Game::restartGame()
 {
+	sounds[SOUND_SAD]->stop();
+	sadMusicFlag = true;
 	isGameOver = false;
 	firstMouse = true;
 	scores = 0;
@@ -103,7 +124,7 @@ void Game::update()
 	if (!healthbar->isAlive() && !isGameOver)
 		gameOver();
 	if(isGameOver)
-		camera.ProcessMouseMovement(0.25f, 0.f);
+		camera.ProcessMouseMovement(35*deltaTime, 0.f);
 }
 
 void Game::render()
@@ -114,43 +135,33 @@ void Game::render()
 
 	updateUniforms();
 
-	healthbar->render(shaders[SHADER_HEALTH].get());
-
-	terrain->render(shaders[SHADER_OBJ].get());
-
-	for (const auto& burger : burgers) {
-		burger->render(shaders[SHADER_OBJ].get());
-	}
-
-	for (const auto& cola : drinks) {
-		cola->render(shaders[SHADER_OBJ].get());
-	}
-
-	for (const auto& lamp : meshesLamps){
-		lamp->render(shaders[SHADER_LAMP].get());
-	}
-
 	skybox->render(shaders[SHADER_SKYBOX].get());
 
-	grass->render(shaders[SHADER_GRASS].get());
+	if (!isGameOver) {
+		healthbar->render(shaders[SHADER_HEALTH].get());
 
-	if (!isGameOver)
+		terrain->render(shaders[SHADER_OBJ].get());
+
+		for (const auto& burger : burgers) {
+			burger->render(shaders[SHADER_OBJ].get());
+		}
+
+		for (const auto& cola : drinks) {
+			cola->render(shaders[SHADER_OBJ].get());
+		}
+
+		for (const auto& lamp : meshesLamps) {
+			lamp->render(shaders[SHADER_LAMP].get());
+		}
+
+		grass->render(shaders[SHADER_GRASS].get());
 		textManager->render(shaders[SHADER_TEXT].get(),
-			"Score: " + std::to_string(scores), 10.0f, 565.f, 0.35f, glm::vec3(0.9f, 0.84f, 0.564f)
+			"Score: " + std::to_string(scores), WINDOW_WIDTH / 80.f, WINDOW_HEIGHT / 1.06f,
+			0.263f * (static_cast<float>(WINDOW_WIDTH) / WINDOW_HEIGHT), glm::vec3(0.9f, 0.84f, 0.564f)
 		);
-	else
-	{
-		textManager->render(shaders[SHADER_TEXT].get(),
-			"GAME OVER!", WINDOW_WIDTH/4.f, WINDOW_HEIGHT / 2 , 0.8f, glm::vec3(0.9f, 0.1f, 0.1f)
-		);
-		textManager->render(shaders[SHADER_TEXT].get(),
-			("You have scored " + std::to_string(scores) + " points").c_str(),
-			WINDOW_WIDTH/40.f, WINDOW_HEIGHT / 2 - 100.f, 0.8f, glm::vec3(0.9f, 0.1f, 0.1f)
-		);
-		textManager->render(shaders[SHADER_TEXT].get(),
-			"Press 'ESC' to exit or 'R' to restart the game",
-			WINDOW_WIDTH * 0.01f, WINDOW_HEIGHT * 0.01f, 0.3f, glm::vec3(0.9f, 0.84f, 0.564f)
-		);
+	}
+	else{
+		gameOverRender();
 	}
 
 	glfwSwapBuffers(window);
@@ -382,7 +393,7 @@ void Game::initModels()
 		);
 		int x = disX(gen);
 		int z = disZ(gen);
-		drinks[i]->setPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x, z) + 0.7f, z));
+		drinks[i]->setPosition(glm::vec3(x, terrain->getCurrentHeightFromMap(x, z) + 0.6f, z));
 	}
 }
 
@@ -488,6 +499,8 @@ void Game::initSounds()
 	sounds.back()->setVolume(0.1f);
 	sounds.emplace_back(std::make_unique<Sound>("assets\\sounds\\spotlight_off.wav"));
 	sounds.back()->setVolume(0.1f);
+	sounds.emplace_back(std::make_unique<Sound>("assets\\sounds\\sadMusic.wav"));
+	sounds.back()->setVolume(0.25f);
 }
 
 void Game::updateUniforms()
