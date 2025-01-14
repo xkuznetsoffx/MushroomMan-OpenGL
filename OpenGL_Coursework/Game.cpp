@@ -71,11 +71,13 @@ void Game::gameOver()
 {
 	isGameOver = true;
 	camera.SetPosition(glm::vec3(100.f, 0.f, 100.f));
+	memset(keys, 0, sizeof(keys));
 }
 
 void Game::restartGame()
 {
 	isGameOver = false;
+	firstMouse = true;
 	scores = 0;
 	camera.SetPosition(glm::vec3(25.f, -0.16f, 25.f));
 	healthbar->setHealth(100.f);
