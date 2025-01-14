@@ -29,7 +29,7 @@ An educational computer graphics project (5th semester) - a 3D game in the "mush
  ## Installation and Setup 
 1. Clone the repository 
 ```bash 
-git clone https://github.com/xkuznetsoffx/OpenGL_Coursework.git
+git clone https://github.com/xkuznetsoffx/MushroomMan-OpenGL.git
 ```
 
 2. Install dependencies via NuGet:
