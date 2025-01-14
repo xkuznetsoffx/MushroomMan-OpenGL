@@ -3,8 +3,8 @@
 ## Project Overview 
 An educational computer graphics project (5th semester) - a 3D game in the "mushroom man" genre with a graphics engine functionality. The player moves through the world, exploring the environment and collecting objects. 
 ## Screenshots 
-![[Pasted image 20250114124901.png]]
-![[Pasted image 20250114124928.png]]
+![image](https://github.com/user-attachments/assets/646f2c30-5fb3-4508-bb93-125856534832)
+![image](https://github.com/user-attachments/assets/a8d2b6e4-04d6-43ee-8231-40c5f9e4530a)
 ## Functionality
 - 3D graphics using OpenGL
 - Dynamic character control
