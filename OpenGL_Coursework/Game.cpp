@@ -517,6 +517,7 @@ void Game::updateUniforms()
 	spotLight->updateDirection(camera.GetFront());
 	spotLight->sendToShader(shaders[SHADER_OBJ].get());
 
+
 	viewMatrix = camera.GetViewMatrix();
 	glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
 
@@ -529,6 +530,8 @@ void Game::updateUniforms()
 
 	shaders[SHADER_OBJ]->setMat4("view", viewMatrix);
 	shaders[SHADER_OBJ]->setMat4("projection", projectionMatrix);
+
+
 
 	shaders[SHADER_LAMP]->Use();
 
@@ -552,6 +555,19 @@ void Game::updateUniforms()
 
 	shaders[SHADER_GRASS]->setMat4("view", viewMatrix);
 	shaders[SHADER_GRASS]->setMat4("projection", projectionMatrix);
+
+	directionLight->sendToShader(shaders[SHADER_GRASS].get());
+
+	// Передача точечных источников света  
+	for (size_t i = 0; i < pointLights.size() && i < 4; ++i) {
+		pointLights[i]->sendToShader(shaders[SHADER_GRASS].get());
+	}
+
+	// Передача прожекторного света  
+	spotLight->sendToShader(shaders[SHADER_GRASS].get());
+
+	// Передача позиции камеры  
+	shaders[SHADER_GRASS]->setVec3("viewPos", camera.GetPoistion());
 
 	shaders[SHADER_GRASS]->Unuse();
 }
